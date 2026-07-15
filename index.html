@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เกมทศนิยม ป.5 🎯</title>
+<link rel="icon" href="data:,">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    background:linear-gradient(160deg,#4facfe 0%,#9b6ef3 100%);
+    background-attachment:fixed;
+    min-height:100vh;color:#2c3350;padding:18px 12px 40px;
+  }
+  .wrap{max-width:660px;margin:0 auto}
+  .card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(30,40,90,.25);margin-bottom:16px}
+  h1{font-size:26px;text-align:center;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.25);margin-bottom:4px}
+  .sub{text-align:center;color:#eaf2ff;font-size:14px;margin-bottom:18px}
+  .chapbtn{
+    display:block;width:100%;text-align:left;border:none;cursor:pointer;
+    border-radius:18px;padding:18px 20px;margin:10px 0;color:#fff;font-family:inherit;
+    font-size:18px;font-weight:700;box-shadow:0 6px 16px rgba(30,40,90,.25);
+    transition:transform .12s;
+  }
+  .chapbtn:hover{transform:translateY(-2px)}
+  .chapbtn small{display:block;font-weight:400;font-size:13px;opacity:.92;margin-top:4px}
+  .ch1{background:linear-gradient(135deg,#2f80ed,#56ccf2)}
+  .ch2{background:linear-gradient(135deg,#11998e,#38ef7d)}
+  .stat{font-size:13px;margin-top:8px;background:rgba(255,255,255,.22);border-radius:10px;padding:6px 10px;display:inline-block}
+  .sec-title{font-size:17px;font-weight:700;margin-bottom:10px;color:#39418a}
+  .hrow{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #eef0f8;font-size:14px;flex-wrap:wrap}
+  .hrow:last-child{border-bottom:none}
+  .tag{padding:2px 10px;border-radius:20px;color:#fff;font-size:12px;white-space:nowrap}
+  .tag.t1{background:#2f80ed}.tag.t2{background:#11998e}
+  .scorebadge{font-weight:700;margin-left:auto;white-space:nowrap}
+  .good{color:#27ae60}.mid{color:#e67e22}.bad{color:#e74c3c}
+  .linkbtn{border:none;background:#eef2ff;color:#3b5bdb;border-radius:10px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px}
+  .linkbtn:hover{background:#dde5ff}
+  /* quiz */
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#fff;font-weight:700}
+  .pill{background:rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:14px}
+  .exit{margin-left:auto;background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:20px;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:14px}
+  .bar{height:10px;background:rgba(255,255,255,.3);border-radius:6px;overflow:hidden;margin-bottom:14px}
+  .bar>div{height:100%;background:#ffd93d;border-radius:6px;transition:width .3s}
+  .qsec{display:inline-block;background:#f0ecff;color:#6c4bd8;font-size:12px;font-weight:700;border-radius:20px;padding:3px 12px;margin-bottom:10px}
+  .qtext{font-size:19px;line-height:1.7;margin-bottom:14px;font-weight:600}
+  .choice{
+    display:block;width:100%;text-align:left;padding:13px 16px;margin:9px 0;
+    border-radius:14px;border:2px solid #e4e8f5;background:#fff;font-size:17px;
+    font-family:inherit;cursor:pointer;transition:all .12s;color:#2c3350;line-height:1.5;
+  }
+  .choice:hover:not(:disabled){border-color:#7c9bff;background:#f6f8ff}
+  .choice:disabled{cursor:default}
+  .choice.correct{background:#e6f9ed;border-color:#27ae60;font-weight:700}
+  .choice.wrong{background:#fdecea;border-color:#e74c3c}
+  .choice .kbd{display:inline-block;width:26px;height:26px;line-height:24px;text-align:center;border-radius:50%;background:#eef2ff;color:#3b5bdb;font-weight:700;margin-right:10px;font-size:14px}
+  .choice.correct .kbd{background:#27ae60;color:#fff}
+  .choice.wrong .kbd{background:#e74c3c;color:#fff}
+  .fb{margin-top:12px;font-size:16px;font-weight:700;padding:12px 14px;border-radius:12px;display:none}
+  .fb.ok{display:block;background:#e6f9ed;color:#1e8449}
+  .fb.no{display:block;background:#fdecea;color:#c0392b}
+  .nextbtn{
+    display:none;width:100%;margin-top:14px;padding:14px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:18px;font-weight:700;
+    cursor:pointer;font-family:inherit;box-shadow:0 6px 14px rgba(80,60,180,.35);
+  }
+  .nextbtn:hover{filter:brightness(1.08)}
+  /* result */
+  .bigemoji{font-size:64px;text-align:center;margin:6px 0}
+  .resscore{font-size:40px;font-weight:800;text-align:center;color:#39418a}
+  .resmsg{text-align:center;font-size:17px;margin:6px 0 4px}
+  .restime{text-align:center;font-size:13px;color:#8a90ad;margin-bottom:14px}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap}
+  .btnrow .nextbtn{display:block;flex:1;min-width:150px;margin-top:6px}
+  .nextbtn.alt{background:linear-gradient(135deg,#f7971e,#ffd200);color:#5c4400}
+  .nextbtn.ghost{background:#eef2ff;color:#3b5bdb;box-shadow:none}
+  /* review */
+  .ritem{border:1.5px solid #e8ebf5;border-radius:14px;padding:14px;margin:12px 0}
+  .ritem .qtext{font-size:16px;margin-bottom:8px}
+  .rch{padding:7px 12px;border-radius:10px;margin:5px 0;font-size:15px;border:1.5px solid transparent}
+  .rch.c{background:#e6f9ed;border-color:#27ae60;font-weight:700}
+  .rch.w{background:#fdecea;border-color:#e74c3c}
+  .rnum{display:inline-block;background:#39418a;color:#fff;border-radius:8px;padding:1px 9px;font-size:13px;margin-right:8px}
+  .note{font-size:12px;color:#eaf2ff;text-align:center;margin-top:10px}
+  /* loading / error */
+  .loadbox{text-align:center;padding:50px 20px;color:#fff}
+  .spin{display:inline-block;width:44px;height:44px;border:5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp 0.9s linear infinite;margin-bottom:14px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  /* parent dashboard */
+  .pgrid{display:flex;gap:12px;flex-wrap:wrap}
+  .pcard{flex:1;min-width:150px;border-radius:16px;padding:14px;color:#fff}
+  .pcard .big{font-size:26px;font-weight:800}
+  .pcard .lbl{font-size:13px;opacity:.9}
+  .topicrow{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:14px}
+  .topicrow .tname{width:135px;flex-shrink:0}
+  .tbar{flex:1;height:14px;background:#eef0f8;border-radius:8px;overflow:hidden}
+  .tbar>div{height:100%;border-radius:8px}
+  .tpct{width:82px;text-align:right;font-weight:700;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+'use strict';
+/* ================= utils ================= */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[ri(0,a.length-1)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+/* จำนวนทั้งหมดเก็บเป็นจำนวนเต็มคูณ 10^d เพื่อเลี่ยง floating point */
+function fmt(v,d){v=Math.round(v);const neg=v<0;v=Math.abs(v);const s=String(v).padStart(d+1,'0');
+  const o=d? s.slice(0,-d)+'.'+s.slice(-d) : s; return (neg?'−':'')+o;}
+function ftr(v,d){let s=fmt(v,d);if(s.includes('.'))s=s.replace(/0+$/,'').replace(/\.$/,'');return s;}
+function genv(i1,i2,d){const ip=ri(i1,i2);let f;do{f=ri(1,10**d-1);}while(f%10===0);return ip*10**d+f;}
+function gen3(i1,i2,dp){return genv(i1,i2,dp)*10**(3-dp);}
+
+function mcNum(cv,d,opt={}){
+  const trim=opt.trim!==false;
+  const F=v=>trim?ftr(v,d):fmt(v,d);
+  const unit=10**Math.max(0,d-2);
+  const deltas=shuffle([1,-1,10,-10,100,-100,9,-9,11,-11]).map(x=>x*unit);
+  const set=new Set([F(cv)]);const vals=[cv];
+  const abs=(opt.extraVals||[]).slice();let n=1;
+  while(vals.length<4){
+    let v;
+    if(abs.length)v=abs.shift();
+    else if(deltas.length)v=cv+deltas.shift();
+    else v=cv+(n++)*unit*3;
+    v=Math.round(v);
+    if(!(v>0))continue;
+    const s=F(v);
+    if(!set.has(s)){set.add(s);vals.push(v);}
+  }
+  const ord=shuffle([0,1,2,3]);
+  return {choices:ord.map(i=>F(vals[i])),correct:ord.indexOf(0)};
+}
+
+/* ================= บทที่ 1 : ทศนิยมเบื้องต้น ================= */
+function g_place(){
+  const ds=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,4);
+  const numStr=`${ds[0]}.${ds[1]}${ds[2]}${ds[3]}`;
+  const pos=ri(1,3), dg=ds[pos], variant=ri(0,2);
+  let q,choices;
+  if(variant===0){
+    q=`${numStr} ตัวเลข ${dg} อยู่ในหลักใด`;
+    choices=['หลักหน่วย','หลักส่วนสิบ','หลักส่วนร้อย','หลักส่วนพัน'];
+  }else if(variant===1){
+    q=`${numStr} ตัวเลข ${dg} มีค่าเท่าไร`;
+    choices=[`${dg}`,ftr(dg*100,3),ftr(dg*10,3),ftr(dg,3)];
+  }else{
+    q=`${numStr} ตัวเลข ${dg} มีค่าประจำหลักเท่ากับข้อใด`;
+    choices=['1','1/10','1/100','1/1000'];
+  }
+  return {sec:'ค่าประจำหลัก',q,choices,correct:pos,sig:`p|${numStr}|${pos}|${variant}`};
+}
+function g_expand(){
+  const T=ri(1,9),O=ri(0,9),h=ri(1,9),k=ri(1,9);
+  const decs=ri(0,1)===0?[0,h,k]:[h,0,k];
+  const numStr=`${T}${O}.${decs.join('')}`;
+  const fr=[];decs.forEach((d,i)=>{if(d)fr.push({d,i});});
+  const mk=mode=>{
+    const parts=[String(T*10)];if(O)parts.push(String(O));
+    fr.forEach((f,idx)=>{
+      let m=1; /* ตัวลวง: คูณ 10 ผิดตำแหน่ง (ทุกพจน์/พจน์แรก/พจน์สุดท้าย) */
+      if(mode==='A')m=10;
+      else if(mode==='B'&&idx===0)m=10;
+      else if(mode==='C'&&idx===fr.length-1)m=10;
+      parts.push(ftr(f.d*10**(3-f.i)*m,4));
+    });
+    return parts.join(' + ');
+  };
+  const opts=[mk('X'),mk('A'),mk('B'),mk('C')];
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'การกระจาย',q:`${numStr} เขียนในรูปกระจายได้ตรงกับข้อใด`,
+    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`e|${numStr}`};
+}
+function g_compare(){
+  const X=genv(10,99,3), more=ri(0,1)===0, t=more?1:-1;
+  const set=new Set([ftr(X,3)]);const vals=[];
+  const cv=X+t*ri(1,45);vals.push(cv);set.add(ftr(cv,3));
+  while(vals.length<4){const v=X-t*ri(1,45);const s=ftr(v,3);
+    if(!set.has(s)){set.add(s);vals.push(v);}}
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'การเปรียบเทียบ',q:`จำนวนใดมีค่า${more?'มากกว่า':'น้อยกว่า'} ${ftr(X,3)}`,
+    choices:ord.map(i=>ftr(vals[i],3)),correct:ord.indexOf(0),sig:`c|${X}|${more}`};
+}
+function g_order(){
+  const x=ri(1,9),I=ri(1,99),desc=ri(0,1)===0;
+  const items=[{v:x*100,s:`${I}.${x}`},{v:x*10,s:`${I}.0${x}`},
+               {v:x*110,s:`${I}.${x}${x}`},{v:x*11,s:`${I}.0${x}${x}`}];
+  const correctStr=items.slice().sort((a,b)=>desc?b.v-a.v:a.v-b.v).map(o=>o.s).join(' , ');
+  const set=new Set([correctStr]);const opts=[correctStr];let g=0;
+  while(opts.length<4&&g<200){g++;
+    const p=shuffle(items.map(o=>o.s)).join(' , ');
+    if(!set.has(p)){set.add(p);opts.push(p);}}
+  const shown=shuffle(items.map(o=>o.s)).join('  ,  ');
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'การเรียงลำดับ',
+    q:`กำหนด ${shown} เรียงลำดับจาก${desc?'มากไปน้อย':'น้อยไปมาก'}ได้ตรงกับข้อใด`,
+    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`o|${I}|${x}|${desc}`};
+}
+const FRAC_POOL=[[1,2,500],[1,4,250],[3,4,750],[1,5,200],[2,5,400],[3,5,600],[4,5,800],
+ [3,20,150],[7,20,350],[9,20,450],[11,20,550],[13,20,650],[17,20,850],[19,20,950],
+ [1,25,40],[3,25,120],[6,25,240],[7,25,280],[9,25,360],[12,25,480],
+ [3,50,60],[7,50,140],[9,50,180],[11,50,220],[13,50,260],[21,50,420],[27,50,540],[33,50,660]];
+function g_frac(){
+  const v=ri(0,2);
+  if(v===0){
+    const den=pick([10,100,1000]);let n;do{n=ri(1,den-1);}while(n%10===0);
+    const set=new Set();const opts=[];
+    const push=(a,b)=>{const s=`${a}/${b}`;if(!set.has(s)){set.add(s);opts.push(s);}};
+    push(n,den);[[n,10],[n,100],[n,1000]].forEach(x=>push(x[0],x[1]));push(n*10,den);
+    const four=opts.slice(0,4);const ord=shuffle([0,1,2,3]);
+    return {sec:'ทศนิยมกับเศษส่วน',q:`${ftr(n*(1000/den),3)} เขียนเป็นเศษส่วนได้ตรงกับข้อใด`,
+      choices:ord.map(i=>four[i]),correct:ord.indexOf(0),sig:`f0|${n}|${den}`};
+  }
+  if(v===1){
+    const [n,d,val]=pick(FRAC_POOL);
+    const r=mcNum(val,3,{extraVals:[val*10,Math.max(1,Math.round(val/10))]});
+    return {sec:'ทศนิยมกับเศษส่วน',q:`เศษส่วน ${n}/${d} เขียนเป็นทศนิยมได้ตรงกับข้อใด`,
+      choices:r.choices,correct:r.correct,sig:`f1|${n}|${d}`};
+  }
+  let p;do{p=ri(5,99);}while(p%10===0);
+  const r=mcNum(p*10,3,{extraVals:[p*100,p]});
+  return {sec:'ทศนิยมกับเศษส่วน',q:`ร้อยละ ${p} เขียนเป็นทศนิยมได้ตรงกับข้อใด`,
+    choices:r.choices,correct:r.correct,sig:`f2|${p}`};
+}
+function g_round(){
+  const v=ri(0,2);
+  if(v===0){
+    const x=genv(1,99,3),rv=Math.round(x/100);
+    const fl=Math.floor(x/100);
+    const r=mcNum(rv,1,{trim:false,extraVals:fl!==rv?[fl]:[]});
+    return {sec:'ค่าประมาณ',q:`ค่าประมาณของ ${ftr(x,3)} เป็นทศนิยม 1 ตำแหน่ง ตรงกับข้อใด`,
+      choices:r.choices,correct:r.correct,sig:`r0|${x}`};
+  }
+  if(v===1){
+    const x=genv(1,99,3),rv=Math.round(x/10);
+    const fl=Math.floor(x/10);
+    const r=mcNum(rv,2,{trim:false,extraVals:fl!==rv?[fl]:[]});
+    return {sec:'ค่าประมาณ',q:`ค่าประมาณของ ${ftr(x,3)} เป็นทศนิยม 2 ตำแหน่ง ตรงกับข้อใด`,
+      choices:r.choices,correct:r.correct,sig:`r1|${x}`};
+  }
+  const t=ri(11,989);
+  const mk=tt=>{let vv=tt*100+ri(-40,40);if(vv%10===0)vv+=1;return vv;};
+  const vals=[mk(t),mk(t+1),mk(t-1),mk(t+2)];
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'ค่าประมาณ',
+    q:`จำนวนในข้อใดมีค่าประมาณเป็นทศนิยม 1 ตำแหน่งเป็น ${fmt(t,1)}`,
+    choices:ord.map(i=>fmt(vals[i],3)),correct:ord.indexOf(0),sig:`r2|${vals[0]}`};
+}
+
+/* ================= บทที่ 2 : บวก ลบ และโจทย์ปัญหา ================= */
+function g_add(){
+  if(ri(0,3)===0){
+    const a=gen3(1,9,1),b=gen3(0,9,2),c=gen3(0,9,3);
+    const disp=`${ftr(a,3)} + ${ftr(b,3)} + ${ftr(c,3)}`;
+    const r=mcNum(a+b+c,3);
+    return {sec:'การบวกทศนิยม',q:`${disp} มีค่าเท่าไร`,choices:r.choices,correct:r.correct,sig:`a3|${a}|${b}|${c}`};
+  }
+  const a=gen3(0,89,pick([2,3])),b=gen3(0,49,pick([2,3]));
+  const r=mcNum(a+b,3);
+  return {sec:'การบวกทศนิยม',q:`${ftr(a,3)} + ${ftr(b,3)} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`a2|${a}|${b}`};
+}
+function g_sub(){
+  if(ri(0,2)===2){
+    const M=ri(20,400),b=gen3(1,Math.min(99,M-2),2);
+    const r=mcNum(M*1000-b,3);
+    return {sec:'การลบทศนิยม',q:`${M} − ${ftr(b,3)} มีค่าเท่าไร`,
+      choices:r.choices,correct:r.correct,sig:`s1|${M}|${b}`};
+  }
+  let a=gen3(1,99,pick([2,3])),b=gen3(1,99,pick([2,3]));
+  if(a===b)a+=1230;
+  if(a<b){const t=a;a=b;b=t;}
+  const r=mcNum(a-b,3);
+  return {sec:'การลบทศนิยม',q:`${ftr(a,3)} − ${ftr(b,3)} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`s0|${a}|${b}`};
+}
+function g_miss(){
+  const f=ri(0,2),x=genv(5,60,2),a=genv(5,60,2);
+  let q,ans,extra;
+  if(f===0){q=`${ftr(a,2)} + □ = ${ftr(a+x,2)} จำนวนใน □ มีค่าเท่าไร`;ans=x;extra=[a+x+a];}
+  else if(f===1){q=`□ − ${ftr(a,2)} = ${ftr(x,2)} จำนวนใน □ มีค่าเท่าไร`;ans=a+x;extra=[Math.abs(x-a)||x+1];}
+  else{q=`${ftr(a+x,2)} − □ = ${ftr(x,2)} จำนวนใน □ มีค่าเท่าไร`;ans=a;extra=[a+x+x];}
+  const r=mcNum(ans,2,{extraVals:extra});
+  return {sec:'หาจำนวนที่หายไป',q,choices:r.choices,correct:r.correct,sig:`m|${f}|${a}|${x}`};
+}
+function g_cmp2(){
+  const isSum=ri(0,1)===0,wantMax=ri(0,1)===0,base=ri(15000,40000);
+  const rset=new Set();const rs=[];
+  while(rs.length<4){const r=base+ri(-90,90);if(!rset.has(r)){rset.add(r);rs.push(r);}}
+  const exprs=rs.map(r=>{
+    if(isSum){const a=ri(5000,r-5000);return {r,s:`${fmt(a,2)} + ${fmt(r-a,2)}`};}
+    const b=ri(5000,30000);return {r,s:`${fmt(b+r,2)} − ${fmt(b,2)}`};
+  });
+  let ci=0;exprs.forEach((e,i)=>{if(wantMax?e.r>exprs[ci].r:e.r<exprs[ci].r)ci=i;});
+  return {sec:'เปรียบเทียบผลลัพธ์',
+    q:`${isSum?'ผลบวก':'ผลลบ'}ข้อใดมีค่า${wantMax?'มากที่สุด':'น้อยที่สุด'}`,
+    choices:exprs.map(e=>e.s),correct:ci,sig:`q|${rs.join(',')}|${isSum}|${wantMax}`};
+}
+/* ---- โจทย์ปัญหา ---- */
+const NAMES=['ก้อง','แก้ว','ดาว','ต้น','บีม','ปลา','เก่ง','ฝน','นัท','มายด์'];
+const ITEMS=['หนังสือ','ปากกา','สมุด','กระเป๋า','เสื้อ','ดินสอ','ขนม','ตุ๊กตา'];
+const FRUITS=['ส้ม','มังคุด','เงาะ','กล้วย','มะม่วง','ชมพู่','ลองกอง'];
+function two(arr){const s=shuffle(arr.slice());return [s[0],s[1]];}
+function wordQ(q,ansV,d,unit,extra,sig,trim){
+  const r=mcNum(ansV,d,{extraVals:extra||[],trim:trim!==false});
+  return {sec:'โจทย์ปัญหา',q,
+    choices:r.choices.map(c=>unit?`${c} ${unit}`:c),correct:r.correct,sig};
+}
+function w_money(){
+  const M=pick([20000,30000,50000,100000]);
+  const A=ri(80,Math.floor(M*0.45/25))*25,B=ri(80,Math.floor(M*0.45/25))*25;
+  const [i1,i2]=two(ITEMS);
+  return wordQ(`มีเงิน ${ftr(M,2)} บาท ซื้อ${i1}ราคา ${fmt(A,2)} บาท และ${i2}ราคา ${fmt(B,2)} บาท จะเหลือเงินกี่บาท`,
+    M-A-B,2,'บาท',[M-A+B>0?M-A+B:0],`w1|${M}|${A}|${B}`,false);
+}
+function w_rope(){
+  const L=genv(10,30,1)*10,C=ri(200,L-150);
+  return wordQ(`เชือกเส้นหนึ่งยาว ${ftr(L,2)} เมตร ตัดไปใช้ ${ftr(C,2)} เมตร จะเหลือเชือกยาวกี่เมตร`,
+    L-C,2,'เมตร',[L+C],`w2|${L}|${C}`);
+}
+function w_weight(){
+  let W1=genv(30,60,2),W2=genv(30,60,2);
+  if(W1===W2)W1+=123;
+  const [n1,n2]=two(NAMES);
+  const heavy=W1>W2?n1:n2,light=W1>W2?n2:n1;
+  return wordQ(`${n1}มีน้ำหนัก ${ftr(W1,2)} กิโลกรัม ${n2}มีน้ำหนัก ${ftr(W2,2)} กิโลกรัม ${heavy}หนักกว่า${light}กี่กิโลกรัม`,
+    Math.abs(W1-W2),2,'กิโลกรัม',[W1+W2],`w3|${W1}|${W2}`);
+}
+function w_race(){
+  let T1=genv(45,58,2),T2=genv(45,58,2);
+  if(T1===T2)T1+=57;
+  const [n1,n2]=two(NAMES);
+  const fast=T1<T2?n1:n2,slow=T1<T2?n2:n1;
+  return wordQ(`ในการวิ่งแข่งขัน ${n1}ใช้เวลา ${ftr(T1,2)} วินาที ${n2}ใช้เวลา ${ftr(T2,2)} วินาที ${fast}วิ่งเร็วกว่า${slow}กี่วินาที`,
+    Math.abs(T1-T2),2,'วินาที',null,`w4|${T1}|${T2}`);
+}
+function w_tank(){
+  const K=ri(40,120)*50,P=ri(1000,K-1700),Q=ri(300,K-P-200);
+  return wordQ(`ถังน้ำใบหนึ่งจุน้ำได้ ${ftr(K,2)} ลิตร มีน้ำอยู่แล้ว ${ftr(P,2)} ลิตร เติมน้ำลงไปอีก ${ftr(Q,2)} ลิตร ต้องเติมน้ำอีกกี่ลิตรจึงจะเต็มถัง`,
+    K-P-Q,2,'ลิตร',[K-P+Q>0?K-P+Q:0],`w5|${K}|${P}|${Q}`);
+}
+function w_fruit(){
+  const fs=shuffle(FRUITS.slice()).slice(0,3);
+  const ws=fs.map(()=>gen3(1,4,pick([2,3])));
+  return wordQ(`ซื้อ${fs[0]}หนัก ${ftr(ws[0],3)} กิโลกรัม ${fs[1]}หนัก ${ftr(ws[1],3)} กิโลกรัม และ${fs[2]}หนัก ${ftr(ws[2],3)} กิโลกรัม รวมผลไม้หนักทั้งหมดกี่กิโลกรัม`,
+    ws[0]+ws[1]+ws[2],3,'กิโลกรัม',null,`w6|${ws.join(',')}`);
+}
+function w_height(){
+  const F=ri(160,189)*10;let K=ri(1150,1580);if(K%10===0)K+=3;
+  return wordQ(`คุณพ่อสูง ${ftr(F,3)} เมตร ลูกสูง ${ftr(K,3)} เมตร คุณพ่อสูงกว่าลูกกี่เมตร`,
+    F-K,3,'เมตร',[F+K],`w7|${F}|${K}`);
+}
+function w_dist(){
+  const D1=gen3(1,8,pick([2,3])),D2=gen3(1,8,pick([2,3]));
+  return wordQ(`บ้านอยู่ห่างโรงเรียน ${ftr(D1,3)} กิโลเมตร โรงเรียนอยู่ห่างตลาด ${ftr(D2,3)} กิโลเมตร ถ้าเดินทางจากบ้านผ่านโรงเรียนไปตลาด จะได้ระยะทางทั้งหมดกี่กิโลเมตร`,
+    D1+D2,3,'กิโลเมตร',[Math.abs(D1-D2)||D1+D2+100],`w8|${D1}|${D2}`);
+}
+function w_tax(){
+  const A=genv(100,400,2),B=genv(100,400,2);
+  return wordQ(`คุณพ่อเสียภาษี ${ftr(A,2)} บาท ต่อมาต้องเสียภาษีเพิ่มอีก ${ftr(B,2)} บาท คุณพ่อเสียภาษีทั้งหมดกี่บาท`,
+    A+B,2,'บาท',[Math.abs(A-B)||A+B+50],`w9|${A}|${B}`);
+}
+function w_sumdiff(){
+  const A=genv(5,15,2),B=genv(5,15,2),C=ri(16,30)*100,Dv=C-ri(200,900);
+  const diff=C-Dv,ans=A+B-diff;
+  return wordQ(`ผลบวกของ ${ftr(A,2)} กับ ${ftr(B,2)} มากกว่าผลต่างของ ${ftr(C,2)} กับ ${ftr(Dv,2)} อยู่เท่าไร`,
+    ans,2,'',[A+B+diff],`w10|${A}|${B}|${C}|${Dv}`);
+}
+const WORDS=[w_money,w_rope,w_weight,w_race,w_tank,w_fruit,w_height,w_dist,w_tax,w_sumdiff];
+
+const CH1_MIX=[g_place,g_place,g_place,g_place,g_expand,g_expand,g_expand,
+  g_compare,g_compare,g_compare,g_order,g_order,g_order,
+  g_frac,g_frac,g_frac,g_frac,g_round,g_round,g_round];
+const CH2_BASE=[g_add,g_add,g_add,g_add,g_sub,g_sub,g_sub,g_sub,
+  g_miss,g_miss,g_miss,g_cmp2,g_cmp2];
+
+/* ================= server API ================= */
+const ROOT='https://ycstpsjkpsqoukpvfcxz.supabase.co/functions/v1/quiz';
+const IS_PARENT=location.pathname.includes('parent')||new URLSearchParams(location.search).has('parent');
+let HIST=[],SIGS=new Set();
+
+async function apiState(){
+  const r=await fetch(ROOT+'/api/state');
+  if(!r.ok)throw new Error('state '+r.status);
+  return r.json();
+}
+async function apiSubmit(rec){
+  const r=await fetch(ROOT+'/api/submit',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});
+  if(!r.ok)throw new Error('submit '+r.status);
+  return r.json();
+}
+function mapRow(r){
+  return {ts:Date.parse(r.created_at),ch:r.chapter,score:r.score,total:r.total,
+    secs:r.secs,items:r.items};
+}
+function showLoading(msg){
+  document.getElementById('app').innerHTML=
+    `<div class="loadbox"><div class="spin"></div><div>${msg}</div></div>`;
+}
+function showError(msg,retryFn){
+  window._retry=retryFn;
+  document.getElementById('app').innerHTML=`
+  <div class="card" style="text-align:center">
+    <div class="bigemoji">📡</div>
+    <div class="resmsg">${msg}</div>
+    <button class="nextbtn" style="display:block;margin-top:14px" onclick="_retry()">ลองใหม่อีกครั้ง</button>
+  </div>`;
+}
+async function boot(){
+  showLoading('กำลังโหลดข้อมูล...');
+  try{
+    const st=await apiState();
+    HIST=st.hist.map(mapRow);
+    SIGS=new Set(st.sigs);
+    if(IS_PARENT)parentHome();else home();
+  }catch(e){
+    showError('เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่นะ',boot);
+  }
+}
+
+/* ================= quiz engine ================= */
+const QN=20;
+const CHNAME={1:'บทที่ 1 ทศนิยมเบื้องต้น',2:'บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา'};
+const LET=['ก','ข','ค','ง'];
+let G=null;
+
+function buildQuiz(ch){
+  let gens=ch===1?CH1_MIX.slice():CH2_BASE.slice().concat(shuffle(WORDS.slice()).slice(0,7));
+  shuffle(gens);
+  const qs=[];const round=new Set();
+  for(const g of gens){
+    let q,tries=0;
+    do{q=g();tries++;}while((SIGS.has(q.sig)||round.has(q.sig))&&tries<300);
+    round.add(q.sig);qs.push(q);
+  }
+  return qs;
+}
+function startQuiz(ch){
+  G={ch,qs:buildQuiz(ch),i:0,score:0,answers:[],t0:Date.now()};
+  renderQ();
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderQ(){
+  const cur=G.qs[G.i];
+  document.getElementById('app').innerHTML=`
+  <div class="topbar">
+    <span class="pill">${CHNAME[G.ch]}</span>
+    <span class="pill">ข้อ ${G.i+1}/${QN}</span>
+    <span class="pill">⭐ ${G.score}</span>
+    <button class="exit" onclick="exitQuiz()">ออก</button>
+  </div>
+  <div class="bar"><div style="width:${(G.i)/QN*100}%"></div></div>
+  <div class="card">
+    <span class="qsec">${esc(cur.sec)}</span>
+    <div class="qtext">${esc(cur.q)}</div>
+    ${cur.choices.map((c,j)=>`<button class="choice" id="ch${j}" onclick="answer(${j})"><span class="kbd">${LET[j]}</span>${esc(c)}</button>`).join('')}
+    <div class="fb" id="fb"></div>
+    <button class="nextbtn" id="nx" onclick="next()">${G.i===QN-1?'ดูผลคะแนน 🏁':'ข้อถัดไป ▶'}</button>
+  </div>`;
+  window.scrollTo(0,0);
+}
+function answer(j){
+  if(G.answers[G.i]!==undefined)return;
+  const cur=G.qs[G.i];
+  G.answers[G.i]=j;
+  for(let k=0;k<4;k++)document.getElementById('ch'+k).disabled=true;
+  document.getElementById('ch'+cur.correct).classList.add('correct');
+  const fb=document.getElementById('fb');
+  if(j===cur.correct){
+    G.score++;
+    fb.className='fb ok';fb.textContent='✓ เก่งมาก! ถูกต้อง';
+  }else{
+    document.getElementById('ch'+j).classList.add('wrong');
+    fb.className='fb no';fb.textContent=`✗ ยังไม่ถูก คำตอบที่ถูกคือ ${LET[cur.correct]}. ${cur.choices[cur.correct]}`;
+  }
+  document.getElementById('nx').style.display='block';
+}
+function next(){
+  G.i++;
+  if(G.i<QN)renderQ();else finish();
+}
+function exitQuiz(){
+  if(confirm('ออกจากเกม? รอบนี้จะไม่ถูกบันทึก'))home();
+}
+async function finish(){
+  const secs=Math.round((Date.now()-G.t0)/1000);
+  const rec={chapter:G.ch,score:G.score,total:QN,secs,
+    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,choices:q.choices,correct:q.correct,user:G.answers[j]})),
+    sigs:G.qs.map(q=>q.sig)};
+  showLoading('กำลังบันทึกคะแนน...');
+  try{
+    await apiSubmit(rec);
+  }catch(e){
+    const saved=G; /* เก็บสถานะไว้ให้กดบันทึกซ้ำ */
+    showError('บันทึกคะแนนไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วกดลองใหม่ (คะแนน '+G.score+'/'+QN+' ยังอยู่ครบ)',
+      ()=>{G=saved;finish();});
+    return;
+  }
+  HIST.unshift({ts:Date.now(),ch:G.ch,score:G.score,total:QN,secs,items:rec.items});
+  rec.sigs.forEach(s=>SIGS.add(s));
+  const pct=G.score/QN*100;
+  const emo=pct>=90?'🏆':pct>=70?'🌟':pct>=50?'💪':'📚';
+  const msg=pct>=90?'สุดยอดไปเลย! เก่งมากๆ':pct>=70?'เก่งมาก! อีกนิดเดียวเต็มแล้ว':pct>=50?'ดีมาก! ฝึกอีกหน่อยนะ':'ไม่เป็นไร ลองใหม่อีกครั้งนะ สู้ๆ';
+  const mm=Math.floor(secs/60),ss=secs%60;
+  const lastCh=G.ch;
+  document.getElementById('app').innerHTML=`
+  <div class="card">
+    <div class="bigemoji">${emo}</div>
+    <div class="resscore">${G.score} / ${QN}</div>
+    <div class="resmsg">${msg}</div>
+    <div class="restime">${esc(CHNAME[lastCh])} • ใช้เวลา ${mm} นาที ${ss} วินาที • บันทึกขึ้นระบบแล้ว ✓</div>
+    <div class="btnrow">
+      <button class="nextbtn" onclick="startQuiz(${lastCh})">🔄 ทำชุดใหม่ (โจทย์ไม่ซ้ำ)</button>
+      <button class="nextbtn alt" onclick="review(0)">📋 ดูเฉลยชุดนี้</button>
+      <button class="nextbtn ghost" onclick="home()">🏠 หน้าหลัก</button>
+    </div>
+  </div>`;
+  window.scrollTo(0,0);
+}
+function review(k){
+  const r=HIST[k];
+  if(!r)return home();
+  const d=new Date(r.ts).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'});
+  const backFn=IS_PARENT?'parentHome()':'home()';
+  document.getElementById('app').innerHTML=`
+  <div class="card">
+    <div class="sec-title">📋 เฉลย — ${esc(CHNAME[r.ch])}</div>
+    <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${d} • ได้ ${r.score}/${r.total} คะแนน</div>
+    ${r.items.map((it,n)=>`
+      <div class="ritem">
+        <div class="qtext"><span class="rnum">${n+1}</span>${esc(it.q)}</div>
+        ${it.choices.map((c,j)=>{
+          let cls='rch';let mark='';
+          if(j===it.correct){cls+=' c';mark=' ✓';}
+          else if(j===it.user){cls+=' w';mark=' ✗ (ที่ตอบ)';}
+          return `<div class="${cls}">${LET[j]}. ${esc(c)}${mark}</div>`;
+        }).join('')}
+      </div>`).join('')}
+    <button class="nextbtn" style="display:block" onclick="${backFn}">🏠 กลับ</button>
+  </div>`;
+  window.scrollTo(0,0);
+}
+function chStat(ch){
+  const rs=HIST.filter(r=>r.ch===ch);
+  if(!rs.length)return 'ยังไม่เคยทำ';
+  const best=Math.max(...rs.map(r=>r.score));
+  return `ทำแล้ว ${rs.length} ครั้ง • ดีที่สุด ${best}/${QN} • ล่าสุด ${rs[0].score}/${QN}`;
+}
+function scoreCls(r){const p=r.score/r.total;return p>=0.8?'good':p>=0.5?'mid':'bad';}
+function histRows(limit){
+  return HIST.slice(0,limit).map((r,k)=>{
+    const d=new Date(r.ts).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="hrow">
+      <span class="tag t${r.ch}">บทที่ ${r.ch}</span>
+      <span>${d}</span>
+      <span class="scorebadge ${scoreCls(r)}">${r.score}/${r.total}</span>
+      <button class="linkbtn" onclick="review(${k})">ดูเฉลย</button>
+    </div>`;
+  }).join('');
+}
+function home(){
+  G=null;
+  document.getElementById('app').innerHTML=`
+  <h1>🧮 เกมทศนิยม ป.5 🎯</h1>
+  <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ — โจทย์สุ่มใหม่ทุกครั้ง ไม่ซ้ำของเดิม</div>
+  <button class="chapbtn ch1" onclick="startQuiz(1)">
+    📘 บทที่ 1 ทศนิยมเบื้องต้น
+    <small>ค่าประจำหลัก • การกระจาย • เปรียบเทียบ • เรียงลำดับ • เศษส่วน • ค่าประมาณ</small>
+    <span class="stat">${chStat(1)}</span>
+  </button>
+  <button class="chapbtn ch2" onclick="startQuiz(2)">
+    📗 บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา
+    <small>การบวก • การลบ • หาจำนวนที่หายไป • เปรียบเทียบผลลัพธ์ • โจทย์ปัญหา</small>
+    <span class="stat">${chStat(2)}</span>
+  </button>
+  ${HIST.length?`
+  <div class="card">
+    <div class="sec-title">🗂️ ประวัติการเล่น</div>
+    ${histRows(15)}
+  </div>`:''}
+  <div class="note">คะแนนถูกบันทึกขึ้นระบบอัตโนมัติ เปิดจากเครื่องไหนก็เห็นประวัติเดียวกัน</div>`;
+  window.scrollTo(0,0);
+}
+
+/* ================= parent dashboard ================= */
+function pctColor(p){return p>=80?'#27ae60':p>=50?'#e67e22':'#e74c3c';}
+function parentHome(){
+  G=null;
+  const cards=[1,2].map(ch=>{
+    const rs=HIST.filter(r=>r.ch===ch);
+    const n=rs.length;
+    const best=n?Math.max(...rs.map(r=>r.score)):0;
+    const avg=n?(rs.reduce((a,r)=>a+r.score,0)/n).toFixed(1):'-';
+    const bg=ch===1?'linear-gradient(135deg,#2f80ed,#56ccf2)':'linear-gradient(135deg,#11998e,#38ef7d)';
+    return `<div class="pcard" style="background:${bg}">
+      <div class="lbl">${CHNAME[ch]}</div>
+      <div class="big">${n? avg+' / '+QN : '—'}</div>
+      <div class="lbl">คะแนนเฉลี่ย • ทำ ${n} ครั้ง • ดีที่สุด ${n?best:'-'}/${QN}</div>
+    </div>`;
+  }).join('');
+  /* สรุปความแม่นยำรายหัวข้อ จากทุกครั้งที่โหลดมา */
+  const topics={};
+  HIST.forEach(r=>r.items.forEach(it=>{
+    if(!topics[it.sec])topics[it.sec]={n:0,c:0};
+    topics[it.sec].n++;
+    if(it.user===it.correct)topics[it.sec].c++;
+  }));
+  const topicRows=Object.entries(topics)
+    .sort((a,b)=>(a[1].c/a[1].n)-(b[1].c/b[1].n))
+    .map(([sec,t])=>{
+      const p=Math.round(t.c/t.n*100);
+      return `<div class="topicrow">
+        <span class="tname">${esc(sec)}</span>
+        <div class="tbar"><div style="width:${p}%;background:${pctColor(p)}"></div></div>
+        <span class="tpct">${p}% (${t.c}/${t.n})</span>
+      </div>`;
+    }).join('');
+  document.getElementById('app').innerHTML=`
+  <h1>👨‍👩‍👧 หน้าสรุปสำหรับผู้ปกครอง</h1>
+  <div class="sub">เกมทศนิยม ป.5 — รวมผลทุกครั้งที่ลูกทำ</div>
+  <div class="pgrid">${cards}</div>
+  <div class="card" style="margin-top:16px">
+    <div class="sec-title">🎯 ความแม่นยำรายหัวข้อ (เรียงจากจุดที่ควรฝึกเพิ่ม)</div>
+    ${topicRows||'<div style="font-size:14px;color:#8a90ad">ยังไม่มีข้อมูล</div>'}
+  </div>
+  <div class="card">
+    <div class="sec-title">🗂️ ประวัติการทำทั้งหมด</div>
+    ${histRows(50)||'<div style="font-size:14px;color:#8a90ad">ยังไม่มีข้อมูล</div>'}
+  </div>
+  <div class="note">หน้าเด็กทำโจทย์: เปิด index.html (ลิงก์หลักของเว็บ)</div>`;
+  window.scrollTo(0,0);
+}
+
+boot();
+</script>
+</body>
+</html>
