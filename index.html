@@ -44,6 +44,22 @@
   .good{color:#27ae60}.mid{color:#e67e22}.bad{color:#e74c3c}
   .linkbtn{border:none;background:#eef2ff;color:#3b5bdb;border-radius:10px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px}
   .linkbtn:hover{background:#dde5ff}
+  /* lesson mode + why box */
+  .btnpair{display:flex;gap:8px;margin-top:10px}
+  .btnpair button{flex:1;border:none;border-radius:10px;padding:9px 6px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.25);color:#fff;transition:background .12s}
+  .btnpair button:hover{background:rgba(255,255,255,.45)}
+  .lesson{font-size:16px;line-height:1.9}
+  .lesson p{margin:6px 0}
+  .lesson b{color:#c2185b}
+  .tipbox{background:#fff8e1;border:2px solid #f5c518;border-radius:14px;padding:10px 14px;margin:10px 0;font-size:15px;line-height:1.8}
+  .exbox{background:#eef6ff;border:2px solid #9ec5f8;border-radius:14px;padding:10px 14px;margin:10px 0;font-size:15px;line-height:1.9}
+  .vmath{font-family:Consolas,'Courier New',monospace;white-space:pre;background:#f4f6fb;border-radius:10px;padding:10px 16px;font-size:17px;line-height:1.55;display:inline-block;text-align:left;overflow-x:auto;max-width:100%}
+  .bigf{font-size:18px;font-weight:800;color:#7c3aed;text-align:center;background:#f5f3ff;border-radius:12px;padding:10px;margin:10px 0;line-height:1.7}
+  .pvt{border-collapse:collapse;margin:8px auto}
+  .pvt th,.pvt td{border:1.5px solid #b9c4e0;padding:4px 12px;text-align:center}
+  .pvt th{background:#eef2ff;color:#39418a;font-size:13px}
+  .pvt td{font-size:17px;font-weight:700}
+  .whybox{background:#f0fdf4;border:2px dashed #34d399;border-radius:12px;padding:10px 14px;margin-top:10px;font-size:14.5px;line-height:1.8;display:none}
   /* quiz */
   .topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#fff;font-weight:700}
   .pill{background:rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:14px}
@@ -159,7 +175,8 @@ function g_place(){
     q=`${numStr} ตัวเลข ${dg} มีค่าประจำหลักเท่ากับข้อใด`;
     choices=['1','1/10','1/100','1/1000'];
   }
-  return {sec:'ค่าประจำหลัก',q,choices,correct:pos,sig:`p|${numStr}|${pos}|${variant}`};
+  return {sec:'ค่าประจำหลัก',q,choices,correct:pos,sig:`p|${numStr}|${pos}|${variant}`,
+    ex:`เลข ${dg} อยู่ตำแหน่งที่ ${pos} หลังจุดทศนิยม คือหลัก${['','ส่วนสิบ','ส่วนร้อย','ส่วนพัน'][pos]} จึงมีค่า ${ftr(dg*10**(3-pos),3)} (ค่าประจำหลัก 1/${10**pos})`};
 }
 function g_expand(){
   const T=ri(1,9),O=ri(0,9),h=ri(1,9),k=ri(1,9);
@@ -180,7 +197,8 @@ function g_expand(){
   const opts=[mk('X'),mk('A'),mk('B'),mk('C')];
   const ord=shuffle([0,1,2,3]);
   return {sec:'การกระจาย',q:`${numStr} เขียนในรูปกระจายได้ตรงกับข้อใด`,
-    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`e|${numStr}`};
+    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`e|${numStr}`,
+    ex:`คิดค่าทีละหลักแล้วนำมาบวกกัน: ${numStr} = ${opts[0]} (หลักที่เป็น 0 ไม่ต้องเขียน)`};
 }
 function g_compare(){
   const X=genv(10,99,3), more=ri(0,1)===0, t=more?1:-1;
@@ -190,7 +208,8 @@ function g_compare(){
     if(!set.has(s)){set.add(s);vals.push(v);}}
   const ord=shuffle([0,1,2,3]);
   return {sec:'การเปรียบเทียบ',q:`จำนวนใดมีค่า${more?'มากกว่า':'น้อยกว่า'} ${ftr(X,3)}`,
-    choices:ord.map(i=>ftr(vals[i],3)),correct:ord.indexOf(0),sig:`c|${X}|${more}`};
+    choices:ord.map(i=>ftr(vals[i],3)),correct:ord.indexOf(0),sig:`c|${X}|${more}`,
+    ex:`เติม 0 ให้ตำแหน่งเท่ากัน แล้วเทียบทีละหลักจากซ้ายไปขวา — ${ftr(cv,3)} ${more?'มากกว่า':'น้อยกว่า'} ${ftr(X,3)} ส่วนตัวเลือกอื่น${more?'น้อยกว่า':'มากกว่า'}ทั้งหมด`};
 }
 function g_order(){
   const x=ri(1,9),I=ri(1,99),desc=ri(0,1)===0;
@@ -205,7 +224,8 @@ function g_order(){
   const ord=shuffle([0,1,2,3]);
   return {sec:'การเรียงลำดับ',
     q:`กำหนด ${shown} เรียงลำดับจาก${desc?'มากไปน้อย':'น้อยไปมาก'}ได้ตรงกับข้อใด`,
-    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`o|${I}|${x}|${desc}`};
+    choices:ord.map(i=>opts[i]),correct:ord.indexOf(0),sig:`o|${I}|${x}|${desc}`,
+    ex:`เติม 0 ให้ครบ 3 ตำแหน่งแล้วเทียบทีละหลัก จะเรียงได้ ${correctStr}`};
 }
 const FRAC_POOL=[[1,2,500],[1,4,250],[3,4,750],[1,5,200],[2,5,400],[3,5,600],[4,5,800],
  [3,20,150],[7,20,350],[9,20,450],[11,20,550],[13,20,650],[17,20,850],[19,20,950],
@@ -220,18 +240,21 @@ function g_frac(){
     push(n,den);[[n,10],[n,100],[n,1000]].forEach(x=>push(x[0],x[1]));push(n*10,den);
     const four=opts.slice(0,4);const ord=shuffle([0,1,2,3]);
     return {sec:'ทศนิยมกับเศษส่วน',q:`${ftr(n*(1000/den),3)} เขียนเป็นเศษส่วนได้ตรงกับข้อใด`,
-      choices:ord.map(i=>four[i]),correct:ord.indexOf(0),sig:`f0|${n}|${den}`};
+      choices:ord.map(i=>four[i]),correct:ord.indexOf(0),sig:`f0|${n}|${den}`,
+      ex:`${ftr(n*(1000/den),3)} มีทศนิยม ${String(den).length-1} ตำแหน่ง ตัวส่วนจึงเป็น ${den} → ${n}/${den}`};
   }
   if(v===1){
     const [n,d,val]=pick(FRAC_POOL);
     const r=mcNum(val,3,{extraVals:[val*10,Math.max(1,Math.round(val/10))]});
     return {sec:'ทศนิยมกับเศษส่วน',q:`เศษส่วน ${n}/${d} เขียนเป็นทศนิยมได้ตรงกับข้อใด`,
-      choices:r.choices,correct:r.correct,sig:`f1|${n}|${d}`};
+      choices:r.choices,correct:r.correct,sig:`f1|${n}|${d}`,
+      ex:`ทำตัวส่วนให้เป็น 100: ${n}/${d} = ${n*100/d}/100 = ${ftr(val,3)}`};
   }
   let p;do{p=ri(5,99);}while(p%10===0);
   const r=mcNum(p*10,3,{extraVals:[p*100,p]});
   return {sec:'ทศนิยมกับเศษส่วน',q:`ร้อยละ ${p} เขียนเป็นทศนิยมได้ตรงกับข้อใด`,
-    choices:r.choices,correct:r.correct,sig:`f2|${p}`};
+    choices:r.choices,correct:r.correct,sig:`f2|${p}`,
+    ex:`ร้อยละ ${p} คือ ${p}/100 = ${ftr(p*10,3)}`};
 }
 function g_round(){
   const v=ri(0,2);
@@ -240,14 +263,16 @@ function g_round(){
     const fl=Math.floor(x/100);
     const r=mcNum(rv,1,{trim:false,extraVals:fl!==rv?[fl]:[]});
     return {sec:'ค่าประมาณ',q:`ค่าประมาณของ ${ftr(x,3)} เป็นทศนิยม 1 ตำแหน่ง ตรงกับข้อใด`,
-      choices:r.choices,correct:r.correct,sig:`r0|${x}`};
+      choices:r.choices,correct:r.correct,sig:`r0|${x}`,
+      ex:`ดูเลขตำแหน่งถัดไป (ส่วนร้อย) คือ ${Math.floor(x/10)%10} ${Math.floor(x/10)%10>=5?'ถึง 5 ปัดขึ้น':'ไม่ถึง 5 ปัดทิ้ง'} จึงได้ ${fmt(rv,1)}`};
   }
   if(v===1){
     const x=genv(1,99,3),rv=Math.round(x/10);
     const fl=Math.floor(x/10);
     const r=mcNum(rv,2,{trim:false,extraVals:fl!==rv?[fl]:[]});
     return {sec:'ค่าประมาณ',q:`ค่าประมาณของ ${ftr(x,3)} เป็นทศนิยม 2 ตำแหน่ง ตรงกับข้อใด`,
-      choices:r.choices,correct:r.correct,sig:`r1|${x}`};
+      choices:r.choices,correct:r.correct,sig:`r1|${x}`,
+      ex:`ดูเลขตำแหน่งถัดไป (ส่วนพัน) คือ ${x%10} ${x%10>=5?'ถึง 5 ปัดขึ้น':'ไม่ถึง 5 ปัดทิ้ง'} จึงได้ ${fmt(rv,2)}`};
   }
   const t=ri(11,989);
   const mk=tt=>{let vv=tt*100+ri(-40,40);if(vv%10===0)vv+=1;return vv;};
@@ -255,7 +280,8 @@ function g_round(){
   const ord=shuffle([0,1,2,3]);
   return {sec:'ค่าประมาณ',
     q:`จำนวนในข้อใดมีค่าประมาณเป็นทศนิยม 1 ตำแหน่งเป็น ${fmt(t,1)}`,
-    choices:ord.map(i=>fmt(vals[i],3)),correct:ord.indexOf(0),sig:`r2|${vals[0]}`};
+    choices:ord.map(i=>fmt(vals[i],3)),correct:ord.indexOf(0),sig:`r2|${vals[0]}`,
+    ex:`${fmt(vals[0],3)} ปัดเศษที่ตำแหน่งส่วนร้อยแล้วได้ ${fmt(t,1)} พอดี ส่วนตัวเลือกอื่นปัดแล้วไม่ตรง`};
 }
 
 /* ================= บทที่ 2 : บวก ลบ และโจทย์ปัญหา ================= */
@@ -264,26 +290,30 @@ function g_add(){
     const a=gen3(1,9,1),b=gen3(0,9,2),c=gen3(0,9,3);
     const disp=`${ftr(a,3)} + ${ftr(b,3)} + ${ftr(c,3)}`;
     const r=mcNum(a+b+c,3);
-    return {sec:'การบวกทศนิยม',q:`${disp} มีค่าเท่าไร`,choices:r.choices,correct:r.correct,sig:`a3|${a}|${b}|${c}`};
+    return {sec:'การบวกทศนิยม',q:`${disp} มีค่าเท่าไร`,choices:r.choices,correct:r.correct,sig:`a3|${a}|${b}|${c}`,
+      ex:`ตั้งจุดให้ตรงกัน เติม 0 ให้ครบทุกตัว แล้วบวกทีละหลัก: ${disp} = ${ftr(a+b+c,3)}`};
   }
   const a=gen3(0,89,pick([2,3])),b=gen3(0,49,pick([2,3]));
   const r=mcNum(a+b,3);
   return {sec:'การบวกทศนิยม',q:`${ftr(a,3)} + ${ftr(b,3)} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`a2|${a}|${b}`};
+    choices:r.choices,correct:r.correct,sig:`a2|${a}|${b}`,
+    ex:`ตั้งจุดให้ตรงกัน เติม 0 ให้ตำแหน่งเท่ากัน แล้วบวก: ${ftr(a,3)} + ${ftr(b,3)} = ${ftr(a+b,3)}`};
 }
 function g_sub(){
   if(ri(0,2)===2){
     const M=ri(20,400),b=gen3(1,Math.min(99,M-2),2);
     const r=mcNum(M*1000-b,3);
     return {sec:'การลบทศนิยม',q:`${M} − ${ftr(b,3)} มีค่าเท่าไร`,
-      choices:r.choices,correct:r.correct,sig:`s1|${M}|${b}`};
+      choices:r.choices,correct:r.correct,sig:`s1|${M}|${b}`,
+      ex:`เขียน ${M} เป็นทศนิยมก่อน (เติมจุดกับ 0) แล้วตั้งลบ: ${M} − ${ftr(b,3)} = ${ftr(M*1000-b,3)}`};
   }
   let a=gen3(1,99,pick([2,3])),b=gen3(1,99,pick([2,3]));
   if(a===b)a+=1230;
   if(a<b){const t=a;a=b;b=t;}
   const r=mcNum(a-b,3);
   return {sec:'การลบทศนิยม',q:`${ftr(a,3)} − ${ftr(b,3)} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`s0|${a}|${b}`};
+    choices:r.choices,correct:r.correct,sig:`s0|${a}|${b}`,
+    ex:`ตั้งจุดให้ตรงกัน เติม 0 แล้วลบทีละหลัก (ยืมได้เหมือนจำนวนเต็ม): ${ftr(a,3)} − ${ftr(b,3)} = ${ftr(a-b,3)}`};
 }
 function g_miss(){
   const f=ri(0,2),x=genv(5,60,2),a=genv(5,60,2);
@@ -292,7 +322,10 @@ function g_miss(){
   else if(f===1){q=`□ − ${ftr(a,2)} = ${ftr(x,2)} จำนวนใน □ มีค่าเท่าไร`;ans=a+x;extra=[Math.abs(x-a)||x+1];}
   else{q=`${ftr(a+x,2)} − □ = ${ftr(x,2)} จำนวนใน □ มีค่าเท่าไร`;ans=a;extra=[a+x+x];}
   const r=mcNum(ans,2,{extraVals:extra});
-  return {sec:'หาจำนวนที่หายไป',q,choices:r.choices,correct:r.correct,sig:`m|${f}|${a}|${x}`};
+  const exm=f===0?`ย้ายข้าง: □ = ${ftr(a+x,2)} − ${ftr(a,2)} = ${ftr(x,2)}`
+    :f===1?`ย้ายข้าง: □ = ${ftr(x,2)} + ${ftr(a,2)} = ${ftr(a+x,2)}`
+    :`ย้ายข้าง: □ = ${ftr(a+x,2)} − ${ftr(x,2)} = ${ftr(a,2)}`;
+  return {sec:'หาจำนวนที่หายไป',q,choices:r.choices,correct:r.correct,sig:`m|${f}|${a}|${x}`,ex:exm};
 }
 function g_cmp2(){
   const isSum=ri(0,1)===0,wantMax=ri(0,1)===0,base=ri(15000,40000);
@@ -305,29 +338,32 @@ function g_cmp2(){
   let ci=0;exprs.forEach((e,i)=>{if(wantMax?e.r>exprs[ci].r:e.r<exprs[ci].r)ci=i;});
   return {sec:'เปรียบเทียบผลลัพธ์',
     q:`${isSum?'ผลบวก':'ผลลบ'}ข้อใดมีค่า${wantMax?'มากที่สุด':'น้อยที่สุด'}`,
-    choices:exprs.map(e=>e.s),correct:ci,sig:`q|${rs.join(',')}|${isSum}|${wantMax}`};
+    choices:exprs.map(e=>e.s),correct:ci,sig:`q|${rs.join(',')}|${isSum}|${wantMax}`,
+    ex:`คิดทีละข้อ: ${exprs.map((e,i)=>`${['ก','ข','ค','ง'][i]}. ${e.s} = ${fmt(e.r,2)}`).join(' • ')} → ${wantMax?'มากที่สุด':'น้อยที่สุด'}คือข้อ ${['ก','ข','ค','ง'][ci]}`};
 }
 /* ---- โจทย์ปัญหา ---- */
 const NAMES=['ก้อง','แก้ว','ดาว','ต้น','บีม','ปลา','เก่ง','ฝน','นัท','มายด์'];
 const ITEMS=['หนังสือ','ปากกา','สมุด','กระเป๋า','เสื้อ','ดินสอ','ขนม','ตุ๊กตา'];
 const FRUITS=['ส้ม','มังคุด','เงาะ','กล้วย','มะม่วง','ชมพู่','ลองกอง'];
 function two(arr){const s=shuffle(arr.slice());return [s[0],s[1]];}
-function wordQ(q,ansV,d,unit,extra,sig,trim){
+function wordQ(q,ansV,d,unit,extra,sig,trim,ex){
   const r=mcNum(ansV,d,{extraVals:extra||[],trim:trim!==false});
   return {sec:'โจทย์ปัญหา',q,
-    choices:r.choices.map(c=>unit?`${c} ${unit}`:c),correct:r.correct,sig};
+    choices:r.choices.map(c=>unit?`${c} ${unit}`:c),correct:r.correct,sig,ex};
 }
 function w_money(){
   const M=pick([20000,30000,50000,100000]);
   const A=ri(80,Math.floor(M*0.45/25))*25,B=ri(80,Math.floor(M*0.45/25))*25;
   const [i1,i2]=two(ITEMS);
   return wordQ(`มีเงิน ${ftr(M,2)} บาท ซื้อ${i1}ราคา ${fmt(A,2)} บาท และ${i2}ราคา ${fmt(B,2)} บาท จะเหลือเงินกี่บาท`,
-    M-A-B,2,'บาท',[M-A+B>0?M-A+B:0],`w1|${M}|${A}|${B}`,false);
+    M-A-B,2,'บาท',[M-A+B>0?M-A+B:0],`w1|${M}|${A}|${B}`,false,
+    `เหลือเงิน = เงินที่มี − ราคาของทั้งสองชิ้น = ${ftr(M,2)} − ${fmt(A,2)} − ${fmt(B,2)} = ${fmt(M-A-B,2)} บาท`);
 }
 function w_rope(){
   const L=genv(10,30,1)*10,C=ri(200,L-150);
   return wordQ(`เชือกเส้นหนึ่งยาว ${ftr(L,2)} เมตร ตัดไปใช้ ${ftr(C,2)} เมตร จะเหลือเชือกยาวกี่เมตร`,
-    L-C,2,'เมตร',[L+C],`w2|${L}|${C}`);
+    L-C,2,'เมตร',[L+C],`w2|${L}|${C}`,true,
+    `"เหลือ" ใช้การลบ: ${ftr(L,2)} − ${ftr(C,2)} = ${ftr(L-C,2)} เมตร`);
 }
 function w_weight(){
   let W1=genv(30,60,2),W2=genv(30,60,2);
@@ -335,7 +371,8 @@ function w_weight(){
   const [n1,n2]=two(NAMES);
   const heavy=W1>W2?n1:n2,light=W1>W2?n2:n1;
   return wordQ(`${n1}มีน้ำหนัก ${ftr(W1,2)} กิโลกรัม ${n2}มีน้ำหนัก ${ftr(W2,2)} กิโลกรัม ${heavy}หนักกว่า${light}กี่กิโลกรัม`,
-    Math.abs(W1-W2),2,'กิโลกรัม',[W1+W2],`w3|${W1}|${W2}`);
+    Math.abs(W1-W2),2,'กิโลกรัม',[W1+W2],`w3|${W1}|${W2}`,true,
+    `"หนักกว่ากัน" ใช้การลบ: ${ftr(Math.max(W1,W2),2)} − ${ftr(Math.min(W1,W2),2)} = ${ftr(Math.abs(W1-W2),2)} กิโลกรัม`);
 }
 function w_race(){
   let T1=genv(45,58,2),T2=genv(45,58,2);
@@ -343,39 +380,46 @@ function w_race(){
   const [n1,n2]=two(NAMES);
   const fast=T1<T2?n1:n2,slow=T1<T2?n2:n1;
   return wordQ(`ในการวิ่งแข่งขัน ${n1}ใช้เวลา ${ftr(T1,2)} วินาที ${n2}ใช้เวลา ${ftr(T2,2)} วินาที ${fast}วิ่งเร็วกว่า${slow}กี่วินาที`,
-    Math.abs(T1-T2),2,'วินาที',null,`w4|${T1}|${T2}`);
+    Math.abs(T1-T2),2,'วินาที',null,`w4|${T1}|${T2}`,true,
+    `ใครใช้เวลาน้อยกว่าคือเร็วกว่า แล้วหาผลต่าง: ${ftr(Math.max(T1,T2),2)} − ${ftr(Math.min(T1,T2),2)} = ${ftr(Math.abs(T1-T2),2)} วินาที`);
 }
 function w_tank(){
   const K=ri(40,120)*50,P=ri(1000,K-1700),Q=ri(300,K-P-200);
   return wordQ(`ถังน้ำใบหนึ่งจุน้ำได้ ${ftr(K,2)} ลิตร มีน้ำอยู่แล้ว ${ftr(P,2)} ลิตร เติมน้ำลงไปอีก ${ftr(Q,2)} ลิตร ต้องเติมน้ำอีกกี่ลิตรจึงจะเต็มถัง`,
-    K-P-Q,2,'ลิตร',[K-P+Q>0?K-P+Q:0],`w5|${K}|${P}|${Q}`);
+    K-P-Q,2,'ลิตร',[K-P+Q>0?K-P+Q:0],`w5|${K}|${P}|${Q}`,true,
+    `ต้องเติมอีก = ความจุถัง − น้ำที่มีอยู่ − น้ำที่เติมไปแล้ว = ${ftr(K,2)} − ${ftr(P,2)} − ${ftr(Q,2)} = ${ftr(K-P-Q,2)} ลิตร`);
 }
 function w_fruit(){
   const fs=shuffle(FRUITS.slice()).slice(0,3);
   const ws=fs.map(()=>gen3(1,4,pick([2,3])));
   return wordQ(`ซื้อ${fs[0]}หนัก ${ftr(ws[0],3)} กิโลกรัม ${fs[1]}หนัก ${ftr(ws[1],3)} กิโลกรัม และ${fs[2]}หนัก ${ftr(ws[2],3)} กิโลกรัม รวมผลไม้หนักทั้งหมดกี่กิโลกรัม`,
-    ws[0]+ws[1]+ws[2],3,'กิโลกรัม',null,`w6|${ws.join(',')}`);
+    ws[0]+ws[1]+ws[2],3,'กิโลกรัม',null,`w6|${ws.join(',')}`,true,
+    `"รวมทั้งหมด" ใช้การบวก (ตั้งจุดให้ตรงกัน): ${ftr(ws[0],3)} + ${ftr(ws[1],3)} + ${ftr(ws[2],3)} = ${ftr(ws[0]+ws[1]+ws[2],3)} กิโลกรัม`);
 }
 function w_height(){
   const F=ri(160,189)*10;let K=ri(1150,1580);if(K%10===0)K+=3;
   return wordQ(`คุณพ่อสูง ${ftr(F,3)} เมตร ลูกสูง ${ftr(K,3)} เมตร คุณพ่อสูงกว่าลูกกี่เมตร`,
-    F-K,3,'เมตร',[F+K],`w7|${F}|${K}`);
+    F-K,3,'เมตร',[F+K],`w7|${F}|${K}`,true,
+    `"สูงกว่ากัน" ใช้การลบ: ${ftr(F,3)} − ${ftr(K,3)} = ${ftr(F-K,3)} เมตร`);
 }
 function w_dist(){
   const D1=gen3(1,8,pick([2,3])),D2=gen3(1,8,pick([2,3]));
   return wordQ(`บ้านอยู่ห่างโรงเรียน ${ftr(D1,3)} กิโลเมตร โรงเรียนอยู่ห่างตลาด ${ftr(D2,3)} กิโลเมตร ถ้าเดินทางจากบ้านผ่านโรงเรียนไปตลาด จะได้ระยะทางทั้งหมดกี่กิโลเมตร`,
-    D1+D2,3,'กิโลเมตร',[Math.abs(D1-D2)||D1+D2+100],`w8|${D1}|${D2}`);
+    D1+D2,3,'กิโลเมตร',[Math.abs(D1-D2)||D1+D2+100],`w8|${D1}|${D2}`,true,
+    `เดินผ่านทั้งสองช่วง ระยะทางรวม = ${ftr(D1,3)} + ${ftr(D2,3)} = ${ftr(D1+D2,3)} กิโลเมตร`);
 }
 function w_tax(){
   const A=genv(100,400,2),B=genv(100,400,2);
   return wordQ(`คุณพ่อเสียภาษี ${ftr(A,2)} บาท ต่อมาต้องเสียภาษีเพิ่มอีก ${ftr(B,2)} บาท คุณพ่อเสียภาษีทั้งหมดกี่บาท`,
-    A+B,2,'บาท',[Math.abs(A-B)||A+B+50],`w9|${A}|${B}`);
+    A+B,2,'บาท',[Math.abs(A-B)||A+B+50],`w9|${A}|${B}`,true,
+    `"ทั้งหมด" ใช้การบวก: ${ftr(A,2)} + ${ftr(B,2)} = ${ftr(A+B,2)} บาท`);
 }
 function w_sumdiff(){
   const A=genv(5,15,2),B=genv(5,15,2),C=ri(16,30)*100,Dv=C-ri(200,900);
   const diff=C-Dv,ans=A+B-diff;
   return wordQ(`ผลบวกของ ${ftr(A,2)} กับ ${ftr(B,2)} มากกว่าผลต่างของ ${ftr(C,2)} กับ ${ftr(Dv,2)} อยู่เท่าไร`,
-    ans,2,'',[A+B+diff],`w10|${A}|${B}|${C}|${Dv}`);
+    ans,2,'',[A+B+diff],`w10|${A}|${B}|${C}|${Dv}`,true,
+    `ขั้น 1 ผลบวก: ${ftr(A,2)} + ${ftr(B,2)} = ${ftr(A+B,2)} • ขั้น 2 ผลต่าง: ${ftr(C,2)} − ${ftr(Dv,2)} = ${ftr(diff,2)} • ขั้น 3 นำมาลบกัน: ${ftr(A+B,2)} − ${ftr(diff,2)} = ${ftr(ans,2)}`);
 }
 const WORDS=[w_money,w_rope,w_weight,w_race,w_tank,w_fruit,w_height,w_dist,w_tax,w_sumdiff];
 
@@ -389,7 +433,8 @@ function d3_mul(){
   const ans=va*f;
   const r=mcNum(ans,4,{extraVals:[ans*10,ans/10,va]});
   const q=ri(0,1)===0?`${f4(va)} × ${f} มีค่าเท่าไร`:`${f} เท่าของ ${f4(va)} มีค่าเท่าไร`;
-  return {sec:'คูณด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3m|${va}|${f}`};
+  return {sec:'คูณด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3m|${va}|${f}`,
+    ex:`คูณ ${f} จุดทศนิยมเลื่อนไปทางขวา ${String(f).length-1} ตำแหน่ง: ${f4(va)} → ${f4(ans)}`};
 }
 function d3_div(){
   const f=pick([10,100,1000]);
@@ -399,7 +444,8 @@ function d3_div(){
   const ans=va/f;
   const r=mcNum(ans,4,{extraVals:[va*f,ans*10,va]});
   const q=ri(0,1)===0?`${f4(va)} ÷ ${f} มีค่าเท่าไร`:`1 ใน ${f} ของ ${f4(va)} มีค่าเท่าไร`;
-  return {sec:'หารด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3d|${va}|${f}`};
+  return {sec:'หารด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3d|${va}|${f}`,
+    ex:`หารด้วย ${f} จุดทศนิยมเลื่อนไปทางซ้าย ${String(f).length-1} ตำแหน่ง: ${f4(va)} → ${f4(ans)} (ไม่มีตัวเลขให้เติม 0)`};
 }
 function d3_fillmul(){
   const dp=pick([1,2]);
@@ -408,7 +454,8 @@ function d3_fillmul(){
   const opts=['10','100','1000','10000'];
   return {sec:'คูณด้วย 10 100 1000',
     q:`□ เท่าของ ${f4(va)} เท่ากับ ${f4(va*f)} จำนวนใน □ คือข้อใด`,
-    choices:opts,correct:opts.indexOf(String(f)),sig:`3fm|${va}|${f}`};
+    choices:opts,correct:opts.indexOf(String(f)),sig:`3fm|${va}|${f}`,
+    ex:`จาก ${f4(va)} เป็น ${f4(va*f)} จุดเลื่อนขวา ${String(f).length-1} ตำแหน่ง = คูณด้วย ${f}`};
 }
 function d3_filldiv(){
   const f=pick([10,100,1000]);
@@ -418,7 +465,8 @@ function d3_filldiv(){
   const key={'10':'1/10','100':'1/100','1000':'1/1000'}[String(f)];
   return {sec:'หารด้วย 10 100 1000',
     q:`□ ของ ${f4(va)} เท่ากับ ${f4(va/f)} จำนวนใน □ คือข้อใด`,
-    choices:opts,correct:opts.indexOf(key),sig:`3fd|${va}|${f}`};
+    choices:opts,correct:opts.indexOf(key),sig:`3fd|${va}|${f}`,
+    ex:`จาก ${f4(va)} เป็น ${f4(va/f)} จุดเลื่อนซ้าย ${String(f).length-1} ตำแหน่ง = หารด้วย ${f} หรือคูณ ${key}`};
 }
 const UCONV=[
   {from:'เมตร',to:'เซนติเมตร',f:100,mk:()=>{const dp=pick([1,2]);return genv(1,20,dp)*10**(4-dp);}},
@@ -435,7 +483,8 @@ function d3_unit(){
   const r=mcNum(ans,4,{extraVals:[wrongDir,ans*10,ans/10]});
   return {sec:'หน่วยความยาว',
     q:`${f4(va)} ${c.from} เท่ากับกี่${c.to}`,
-    choices:r.choices,correct:r.correct,sig:`3u|${c.from}|${c.to}|${va}`};
+    choices:r.choices,correct:r.correct,sig:`3u|${c.from}|${c.to}|${va}`,
+    ex:`${c.from} → ${c.to} ต้อง${c.f>0?'คูณ':'หาร'}ด้วย ${Math.abs(c.f)}: ${f4(va)} ${c.f>0?'×':'÷'} ${Math.abs(c.f)} = ${f4(ans)} ${c.to}`};
 }
 
 /* ================= รูปประกอบ SVG (บทที่ 4-5) ================= */
@@ -474,7 +523,8 @@ function p_area(){
   return {sec:'พื้นที่สี่เหลี่ยมด้านขนาน',
     q:`จากรูป สี่เหลี่ยมด้านขนานมีพื้นที่กี่${ua}`,
     svg:svgPara(`${b} ${u}`,`${h} ${u}`,`${s} ${u}`),
-    choices:r.choices,correct:r.correct,sig:`4a|${b}|${h}|${s}|${u}`};
+    choices:r.choices,correct:r.correct,sig:`4a|${b}|${h}|${s}|${u}`,
+    ex:`พื้นที่ = ฐาน × สูง = ${b} × ${h} = ${b*h} (ด้านเอียง ${s} ${u} ไม่ใช้ เพราะไม่ตั้งฉากกับฐาน)`};
 }
 function p_findmiss(){
   let b=ri(4,12),h=ri(3,9); if(b===h)b++;
@@ -483,14 +533,16 @@ function p_findmiss(){
   const r=mcNum(ans*100,2,{extraVals:[known*100,(A-known)*100,ans*200]});
   return {sec:'พื้นที่สี่เหลี่ยมด้านขนาน',
     q:`รูปสี่เหลี่ยมด้านขนานมีพื้นที่ ${A} ตารางเซนติเมตร และ${findBase?'ส่วนสูง':'ฐานยาว'} ${known} เซนติเมตร ${findBase?'ฐานยาวกี่เซนติเมตร':'ส่วนสูงกี่เซนติเมตร'}`,
-    choices:r.choices,correct:r.correct,sig:`4f|${b}|${h}|${findBase}`};
+    choices:r.choices,correct:r.correct,sig:`4f|${b}|${h}|${findBase}`,
+    ex:`หารย้อนกลับ: ${findBase?'ฐาน':'สูง'} = พื้นที่ ÷ ${findBase?'สูง':'ฐาน'} = ${A} ÷ ${known} = ${ans} เซนติเมตร`};
 }
 function p_perim(){
   let a=ri(4,15),b2=ri(3,12); if(a===b2)a++;
   const r=mcNum(2*(a+b2)*100,2,{extraVals:[a*b2*100,(a+b2)*100,(2*a+b2)*100]});
   return {sec:'เส้นรอบรูป',
     q:`รูปสี่เหลี่ยมด้านขนานมีด้านยาว ${a} เซนติเมตร และ ${b2} เซนติเมตร เส้นรอบรูปยาวกี่เซนติเมตร`,
-    choices:r.choices,correct:r.correct,sig:`4p|${a}|${b2}`};
+    choices:r.choices,correct:r.correct,sig:`4p|${a}|${b2}`,
+    ex:`เส้นรอบรูป = ผลบวกของด้านทุกด้าน ด้านตรงข้ามยาวเท่ากัน = (${a} + ${b2}) × 2 = ${2*(a+b2)} เซนติเมตร`};
 }
 const SHAPES=['จัตุรัส','ผืนผ้า','ด้านขนาน','ขนมเปียกปูน','คางหมู','รูปว่าว'];
 const TYPE_BANK=[
@@ -505,24 +557,30 @@ function p_type(){
   const i=ri(0,TYPE_BANK.length-1);
   const [q,ansName]=TYPE_BANK[i];
   const ord=shuffle([ansName,...shuffle(SHAPES.filter(s=>s!==ansName)).slice(0,3)]);
-  return {sec:'ชนิดของรูปสี่เหลี่ยม',q,choices:ord,correct:ord.indexOf(ansName),sig:`4t|${i}`};
+  return {sec:'ชนิดของรูปสี่เหลี่ยม',q,choices:ord,correct:ord.indexOf(ansName),sig:`4t|${i}`,
+    ex:`สมบัติ "${q.replace(' คือรูปใด','')}" เป็นสมบัติเฉพาะของ${ansName}`};
 }
 const CONCEPT4=[
  {q:'สี่เหลี่ยมด้านขนานสองรูปมีฐานยาวเท่ากัน และอยู่ระหว่างเส้นขนานคู่เดียวกัน ข้อใดถูกต้อง',
-  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0},
+  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0,
+  e:'อยู่ระหว่างเส้นขนานคู่เดียวกัน = สูงเท่ากัน เมื่อฐานเท่ากันด้วย พื้นที่ (ฐาน×สูง) จึงเท่ากัน แม้รูปจะเอียงต่างกัน'},
  {q:'ความสูงของรูปสี่เหลี่ยมด้านขนานคือข้อใด',
-  c:['ส่วนของเส้นตรงที่ตั้งฉากกับฐาน ระหว่างฐานกับด้านตรงข้าม','ด้านเอียงของรูป','เส้นทแยงมุมของรูป','ด้านที่ยาวที่สุดของรูป'],a:0},
+  c:['ส่วนของเส้นตรงที่ตั้งฉากกับฐาน ระหว่างฐานกับด้านตรงข้าม','ด้านเอียงของรูป','เส้นทแยงมุมของรูป','ด้านที่ยาวที่สุดของรูป'],a:0,
+  e:'ส่วนสูงต้องตั้งฉากกับฐานเสมอ ด้านเอียงหรือเส้นทแยงมุมไม่ใช่ส่วนสูง'},
  {q:'การหาพื้นที่รูปสี่เหลี่ยมด้านขนาน ต้องใช้ความยาวคู่ใดคูณกัน',
-  c:['ฐานกับส่วนสูงที่ตั้งฉากกับฐาน','ฐานกับด้านเอียง','ด้านเอียงกับเส้นทแยงมุม','ด้านยาวกับด้านสั้น'],a:0},
+  c:['ฐานกับส่วนสูงที่ตั้งฉากกับฐาน','ฐานกับด้านเอียง','ด้านเอียงกับเส้นทแยงมุม','ด้านยาวกับด้านสั้น'],a:0,
+  e:'สูตรพื้นที่ = ฐาน × สูง ใช้ได้เฉพาะคู่ที่ตั้งฉากกัน ถ้าใช้ด้านเอียงจะได้ค่ามากเกินจริง'},
  {q:'เมื่อเปลี่ยนไปใช้ด้านอื่นของรูปสี่เหลี่ยมด้านขนานเป็นฐาน (คู่กับส่วนสูงของฐานนั้น) พื้นที่ที่คำนวณได้จะเป็นอย่างไร',
-  c:['เท่าเดิม','มากขึ้น','น้อยลง','บอกไม่ได้'],a:0},
+  c:['เท่าเดิม','มากขึ้น','น้อยลง','บอกไม่ได้'],a:0,
+  e:'รูปเดิมพื้นที่ย่อมเท่าเดิม ไม่ว่าจะเลือกด้านไหนเป็นฐาน (คู่กับส่วนสูงของด้านนั้น)'},
  {q:'รูปสี่เหลี่ยมด้านขนานหนึ่งรูป สามารถลากส่วนสูงจากฐานเดียวกันได้กี่เส้น',
-  c:['หลายเส้นไม่จำกัด','เพียง 1 เส้น','เพียง 2 เส้น','ลากไม่ได้'],a:0},
+  c:['หลายเส้นไม่จำกัด','เพียง 1 เส้น','เพียง 2 เส้น','ลากไม่ได้'],a:0,
+  e:'ลากจากจุดใดก็ได้บนฐานให้ตั้งฉากไปถึงแนวด้านตรงข้าม ทุกเส้นยาวเท่ากันหมด'},
 ];
 function p_concept(){
   const i=ri(0,CONCEPT4.length-1), k=CONCEPT4[i];
   const ord=shuffle([0,1,2,3]);
-  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`4c|${i}`};
+  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`4c|${i}`,ex:k.e};
 }
 
 /* ================= บทที่ 5 : พื้นที่สามเหลี่ยม ================= */
@@ -534,14 +592,16 @@ function t_area(){
   return {sec:'พื้นที่สามเหลี่ยม',
     q:`จากรูป สามเหลี่ยมมีพื้นที่กี่${ua}${obtuse?' (ส่วนสูงอยู่นอกรูปตามแนวเส้นประ)':''}`,
     svg:svgTri(`${b} ${u}`,`${h} ${u}`,`${s} ${u}`,obtuse),
-    choices:r.choices,correct:r.correct,sig:`5a|${b}|${h}|${s}|${obtuse}`};
+    choices:r.choices,correct:r.correct,sig:`5a|${b}|${h}|${s}|${obtuse}`,
+    ex:`พื้นที่ = ฐาน × สูง ÷ 2 = (${b} × ${h}) ÷ 2 = ${ftr(b*h*50,2)} — อย่าลืม ÷2 และไม่ใช้ด้านเอียง ${s} ${u}`};
 }
 function t_findh(){
   const b=ri(4,12), h=ri(3,9);
   const r=mcNum(h*100,2,{extraVals:[h*50,b*100,h*200]});
   return {sec:'พื้นที่สามเหลี่ยม',
     q:`สามเหลี่ยมมีพื้นที่ ${ftr(b*h*50,2)} ตารางเซนติเมตร ฐานยาว ${b} เซนติเมตร ส่วนสูงยาวกี่เซนติเมตร`,
-    choices:r.choices,correct:r.correct,sig:`5h|${b}|${h}`};
+    choices:r.choices,correct:r.correct,sig:`5h|${b}|${h}`,
+    ex:`ย้อนสูตร: สูง = พื้นที่ × 2 ÷ ฐาน = ${ftr(b*h*50,2)} × 2 ÷ ${b} = ${h} เซนติเมตร`};
 }
 const TRIPLES=[[3,4,5],[6,8,10],[9,12,15],[12,16,20],[15,20,25]];
 function t_right(){
@@ -550,7 +610,8 @@ function t_right(){
   const r=mcNum(ans,2,{extraVals:[p*100,q2*100,p*q2*50]});
   return {sec:'พื้นที่สามเหลี่ยม (ประยุกต์)',
     q:`สามเหลี่ยมมุมฉากมีด้านประกอบมุมฉากยาว ${p} และ ${q2} เซนติเมตร ด้านตรงข้ามมุมฉากยาว ${rr} เซนติเมตร ถ้าใช้ด้านยาว ${rr} เซนติเมตรเป็นฐาน ส่วนสูงของสามเหลี่ยมยาวกี่เซนติเมตร`,
-    choices:r.choices,correct:r.correct,sig:`5r|${p}|${q2}`};
+    choices:r.choices,correct:r.correct,sig:`5r|${p}|${q2}`,
+    ex:`ขั้น 1 หาพื้นที่จากด้านมุมฉาก: (${p} × ${q2}) ÷ 2 = ${ftr(p*q2*50,2)} • ขั้น 2 สูง = พื้นที่ × 2 ÷ ฐาน = ${ftr(p*q2*50,2)} × 2 ÷ ${rr} = ${ftr(ans,2)} เซนติเมตร`};
 }
 function t_poly(){
   const a=ri(4,12), b2=ri(4,12);
@@ -561,7 +622,9 @@ function t_poly(){
     `รูปห้าเหลี่ยมถูกแบ่งเป็นรูปสามเหลี่ยม 3 รูป มีพื้นที่ ${a}, ${b2} และ ${ftr(c,2)} ตารางเซนติเมตร รูปห้าเหลี่ยมนี้มีพื้นที่กี่ตารางเซนติเมตร`:
     `รูปสี่เหลี่ยมใดๆ ถูกแบ่งด้วยเส้นทแยงมุมเป็นสามเหลี่ยม 2 รูป มีพื้นที่ ${a} และ ${ftr(c,2)} ตารางเซนติเมตร รูปสี่เหลี่ยมนี้มีพื้นที่กี่ตารางเซนติเมตร`;
   const r=mcNum(sum,2);
-  return {sec:'พื้นที่รูปหลายเหลี่ยม',q,choices:r.choices,correct:r.correct,sig:`5p|${a}|${b2}|${c}|${three}`};
+  return {sec:'พื้นที่รูปหลายเหลี่ยม',q,choices:r.choices,correct:r.correct,sig:`5p|${a}|${b2}|${c}|${three}`,
+    ex:three?`รวมพื้นที่สามเหลี่ยมทุกรูป: ${a} + ${b2} + ${ftr(c,2)} = ${ftr(sum,2)} ตารางเซนติเมตร`
+      :`รวมพื้นที่สามเหลี่ยมทั้งสองรูป: ${a} + ${ftr(c,2)} = ${ftr(sum,2)} ตารางเซนติเมตร`};
 }
 function t_word(){
   const [pl,un,ua]=pick([['ที่ดินรูปสามเหลี่ยม','เมตร','ตารางเมตร'],['ธงรูปสามเหลี่ยม','เซนติเมตร','ตารางเซนติเมตร'],['สวนหย่อมรูปสามเหลี่ยม','เมตร','ตารางเมตร']]);
@@ -569,24 +632,30 @@ function t_word(){
   const r=mcNum(b*h*50,2,{extraVals:[b*h*100,(b+h)*100]});
   return {sec:'พื้นที่สามเหลี่ยม',
     q:`${pl}แห่งหนึ่ง ฐานยาว ${b} ${un} ส่วนสูง ${h} ${un} มีพื้นที่กี่${ua}`,
-    choices:r.choices,correct:r.correct,sig:`5w|${b}|${h}|${pl}`};
+    choices:r.choices,correct:r.correct,sig:`5w|${b}|${h}|${pl}`,
+    ex:`พื้นที่สามเหลี่ยม = ฐาน × สูง ÷ 2 = (${b} × ${h}) ÷ 2 = ${ftr(b*h*50,2)} ${ua}`};
 }
 const CONCEPT5=[
  {q:'สามเหลี่ยมสองรูปมีฐานยาวเท่ากัน และจุดยอดอยู่บนเส้นขนานเดียวกัน ข้อใดถูกต้อง',
-  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0},
+  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0,
+  e:'ฐานเท่ากันและยอดอยู่บนเส้นขนานเดียวกัน = สูงเท่ากัน พื้นที่ (ฐาน×สูง÷2) จึงเท่ากัน'},
  {q:'สามเหลี่ยมสองรูปมีพื้นที่เท่ากัน ข้อใดถูกต้อง',
-  c:['เส้นรอบรูปอาจไม่เท่ากัน','เส้นรอบรูปต้องเท่ากันเสมอ','รูปร่างต้องเหมือนกันเสมอ','ฐานต้องยาวเท่ากันเสมอ'],a:0},
+  c:['เส้นรอบรูปอาจไม่เท่ากัน','เส้นรอบรูปต้องเท่ากันเสมอ','รูปร่างต้องเหมือนกันเสมอ','ฐานต้องยาวเท่ากันเสมอ'],a:0,
+  e:'พื้นที่เท่ากันไม่ได้แปลว่ารูปร่างเหมือนกัน รูปผอมยาวอาจมีเส้นรอบรูปยาวกว่ารูปป้อมที่พื้นที่เท่ากัน'},
  {q:'สามเหลี่ยมมุมป้าน เมื่อใช้ด้านที่ติดกับมุมป้านเป็นฐาน ส่วนสูงจะอยู่ที่ใด',
-  c:['อยู่นอกรูป ต้องต่อแนวฐานออกไปแล้วลากเส้นตั้งฉาก','อยู่ในรูปเสมอ','ทับกับด้านของรูป','สามเหลี่ยมมุมป้านไม่มีส่วนสูง'],a:0},
+  c:['อยู่นอกรูป ต้องต่อแนวฐานออกไปแล้วลากเส้นตั้งฉาก','อยู่ในรูปเสมอ','ทับกับด้านของรูป','สามเหลี่ยมมุมป้านไม่มีส่วนสูง'],a:0,
+  e:'มุมป้านทำให้จุดยอดเลยแนวฐานออกไป ต้องต่อแนวฐาน (เส้นประ) แล้วลากตั้งฉากขึ้นไปหายอด'},
  {q:'สูตรการหาพื้นที่รูปสามเหลี่ยมคือข้อใด',
-  c:['ฐาน × สูง ÷ 2','ฐาน × สูง','(ฐาน + สูง) ÷ 2','ฐาน × ด้านเอียง ÷ 2'],a:0},
+  c:['ฐาน × สูง ÷ 2','ฐาน × สูง','(ฐาน + สูง) ÷ 2','ฐาน × ด้านเอียง ÷ 2'],a:0,
+  e:'สามเหลี่ยมคือครึ่งหนึ่งของสี่เหลี่ยมด้านขนานที่ฐานและสูงเท่ากัน จึงต้องหาร 2'},
  {q:'เพราะเหตุใดพื้นที่รูปสามเหลี่ยมจึงเท่ากับ ฐาน × สูง ÷ 2',
-  c:['เพราะสามเหลี่ยมเป็นครึ่งหนึ่งของสี่เหลี่ยมด้านขนานที่มีฐานและส่วนสูงเท่ากัน','เพราะสามเหลี่ยมมี 3 ด้าน','เพราะส่วนสูงสั้นกว่าฐานเสมอ','เป็นข้อตกลงที่ไม่มีเหตุผล'],a:0},
+  c:['เพราะสามเหลี่ยมเป็นครึ่งหนึ่งของสี่เหลี่ยมด้านขนานที่มีฐานและส่วนสูงเท่ากัน','เพราะสามเหลี่ยมมี 3 ด้าน','เพราะส่วนสูงสั้นกว่าฐานเสมอ','เป็นข้อตกลงที่ไม่มีเหตุผล'],a:0,
+  e:'เอาสามเหลี่ยม 2 รูปเท่ากันมาประกบกัน จะได้สี่เหลี่ยมด้านขนานพอดี พื้นที่สามเหลี่ยมจึงเป็นครึ่งเดียว'},
 ];
 function t_concept(){
   const i=ri(0,CONCEPT5.length-1), k=CONCEPT5[i];
   const ord=shuffle([0,1,2,3]);
-  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`5c|${i}`};
+  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`5c|${i}`,ex:k.e};
 }
 
 /* ================= บทที่ 6 : การคูณและหารทศนิยม ================= */
@@ -597,14 +666,16 @@ function g6_mul(){
   const r=mcNum(p4,4,{extraVals:[p4*10,Math.round(p4/10),p4*100]});
   return {sec:'การคูณทศนิยม',
     q:`${ftr(a*10**(4-da),4)} × ${ftr(b*10**(4-db),4)} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`6m|${a}|${b}|${p4}`};
+    choices:r.choices,correct:r.correct,sig:`6m|${a}|${b}|${p4}`,
+    ex:`ขั้น 1 คูณแบบไม่มีจุด: ${a} × ${b} = ${a*b} • ขั้น 2 นับตำแหน่งจุดรวม ${da}+${db} = ${da+db} ตำแหน่ง • ขั้น 3 ใส่จุด → ${ftr(p4,4)}`};
 }
 function g6_divint(){
   const r2=genv(1,9,2), d=ri(2,9);
   const r=mcNum(r2*100,4,{extraVals:[r2*1000,r2*10,(r2+d*100)*100]});
   return {sec:'การหารทศนิยม',
     q:`${ftr(r2*d*100,4)} ÷ ${d} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`6di|${r2}|${d}`};
+    choices:r.choices,correct:r.correct,sig:`6di|${r2}|${d}`,
+    ex:`หารยาวปกติ จุดของคำตอบตรงกับตัวตั้ง = ${ftr(r2*100,4)} (เช็ค: ${ftr(r2*100,4)} × ${d} = ${ftr(r2*d*100,4)} ✓)`};
 }
 function g6_divdec(){
   let q10;
@@ -614,7 +685,8 @@ function g6_divdec(){
   const r=mcNum(q10*1000,4,{extraVals:[q10*10000,q10*100,dv*100]});
   return {sec:'การหารทศนิยม',
     q:`${ftr(q10*dv*10,4)} ÷ ${ftr(dv*100,4)} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`6dd|${q10}|${dv}`};
+    choices:r.choices,correct:r.correct,sig:`6dd|${q10}|${dv}`,
+    ex:`เลื่อนจุดทั้งคู่ให้ตัวหารเป็นจำนวนเต็มก่อน แล้วหารปกติ ได้ ${ftr(q10*1000,4)} (เช็ค: ${ftr(q10*1000,4)} × ${ftr(dv*100,4)} = ${ftr(q10*dv*10,4)} ✓)`};
 }
 /* โจทย์ปัญหาคูณ/หารทศนิยม — ทุกค่าอยู่ในสเกล 1/100 */
 function g6_word(){
@@ -625,23 +697,27 @@ function g6_word(){
     ans=p*L;
     q=`น้ำมันราคาลิตรละ ${fmt(p,2)} บาท เติมน้ำมัน ${L} ลิตร ต้องจ่ายเงินกี่บาท`;
     extras=[p+L*100]; sig=`6w|fuel|${ans}|${p}|${L}`;
+    var exw=`ราคาต่อลิตร × จำนวนลิตร = ${fmt(p,2)} × ${L} = ${fmt(ans,2)} บาท`;
   }else if(t===1){ /* ค่าไฟเฉลี่ยต่อหน่วย */
     const r=genv(1,4,2), U=ri(80,250);
     ans=r; q=`เดือนนี้บ้านของฝนใช้ไฟฟ้า ${U} หน่วย เสียค่าไฟฟ้า ${fmt(r*U,2)} บาท เฉลี่ยแล้วเสียค่าไฟฟ้าหน่วยละกี่บาท`;
     extras=[r*10,Math.round(r/10)]; sig=`6w|avg|${ans}|${U}`;
+    var exw=`"เฉลี่ยต่อหน่วย" ใช้การหาร: ${fmt(r*U,2)} ÷ ${U} = ${fmt(r,2)} บาทต่อหน่วย`;
   }else if(t===2){ /* แบ่งใส่ถุง */
     const g=ri(12,45), n=ri(8,25); /* g สเกล 10 (1.2-4.5 กก.) */
     ans=n*100; unit='ถุง';
     q=`มีข้าวสาร ${ftr(g*n*10,2)} กิโลกรัม แบ่งใส่ถุง ถุงละ ${ftr(g*10,2)} กิโลกรัม จะได้ทั้งหมดกี่ถุง`;
     extras=[(n+1)*100,(n-1)*100,n*1000]; sig=`6w|bag|${ans}|${g}|${n}`;
+    var exw=`"แบ่งใส่ถุง" ใช้การหาร: ${ftr(g*n*10,2)} ÷ ${ftr(g*10,2)} = ${n} ถุง (เลื่อนจุดให้ตัวหารเป็นจำนวนเต็มก่อน)`;
   }else{ /* แลกเงินต่างประเทศ */
     const rate=genv(30,39,2), usd=ri(20,60);
     ans=rate*usd; q=`อัตราแลกเปลี่ยน 1 ดอลลาร์ เท่ากับ ${fmt(rate,2)} บาท ถ้าแลกเงิน ${usd} ดอลลาร์ จะได้เงินไทยกี่บาท`;
     extras=[rate+usd*100]; sig=`6w|fx|${ans}|${rate}|${usd}`;
+    var exw=`อัตราต่อดอลลาร์ × จำนวนดอลลาร์ = ${fmt(rate,2)} × ${usd} = ${fmt(ans,2)} บาท`;
   }
   const r=mcNum(ans,2,{extraVals:extras,trim:unit!=='บาท'});
   return {sec:'โจทย์ปัญหาคูณหารทศนิยม',q,
-    choices:r.choices.map(c=>`${c} ${unit}`),correct:r.correct,sig};
+    choices:r.choices.map(c=>`${c} ${unit}`),correct:r.correct,sig,ex:exw};
 }
 
 /* ================= บทที่ 7 : โจทย์ระคนทศนิยม ================= */
@@ -652,7 +728,8 @@ function g7_paren(){
   const r=mcNum(R*10000,4,{extraVals:[(R+1)*10000,(R-1)*10000,(R+2)*10000]});
   return {sec:'ลำดับการคำนวณ',
     q:`(${fmt(a,2)} + ${fmt(b,2)}) ÷ ${ftr(c,2)} มีค่าเท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`7p|${R}|${c}|${a}`};
+    choices:r.choices,correct:r.correct,sig:`7p|${R}|${c}|${a}`,
+    ex:`ทำในวงเล็บก่อน: ${fmt(a,2)} + ${fmt(b,2)} = ${fmt(sum,2)} แล้วค่อยหาร: ${fmt(sum,2)} ÷ ${ftr(c,2)} = ${R}`};
 }
 function g7_diff(){
   const c=ri(9,36)*25, R=ri(3,9);
@@ -663,7 +740,8 @@ function g7_diff(){
   const r=mcNum(gap,2,{extraVals:[D,R*100]});
   return {sec:'ลำดับการคำนวณ',
     q:`(${fmt(a,2)} + ${fmt(b,2)}) ÷ ${ftr(c,2)} มีค่าน้อยกว่า ${fmt(D,2)} อยู่เท่าไร`,
-    choices:r.choices,correct:r.correct,sig:`7f|${gap}|${R}|${c}|${a}|${D}`};
+    choices:r.choices,correct:r.correct,sig:`7f|${gap}|${R}|${c}|${a}|${D}`,
+    ex:`ขั้น 1 วงเล็บ: ${fmt(a,2)} + ${fmt(b,2)} = ${fmt(sum,2)} • ขั้น 2 หาร: ${fmt(sum,2)} ÷ ${ftr(c,2)} = ${R} • ขั้น 3 หาส่วนต่าง: ${fmt(D,2)} − ${R} = ${ftr(gap,2)}`};
 }
 /* โจทย์ปัญหาหลายขั้นตอน — ค่าเงินอยู่ในสเกล 1/100 */
 function w7_change(){
@@ -674,7 +752,8 @@ function w7_change(){
   const r=mcNum(ans,2,{extraVals:[cost],trim:false});
   return {sec:'โจทย์ปัญหาหลายขั้นตอน',
     q:`ซื้อสมุด ${n} เล่ม ราคาเล่มละ ${fmt(p,2)} บาท ให้ธนบัตร ${ftr(M,2)} บาท จะได้รับเงินทอนกี่บาท`,
-    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|change|${ans}|${M}|${p}|${n}`};
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|change|${ans}|${M}|${p}|${n}`,
+    ex:`ขั้น 1 ราคารวม: ${n} × ${fmt(p,2)} = ${fmt(cost,2)} บาท • ขั้น 2 เงินทอน: ${ftr(M,2)} − ${fmt(cost,2)} = ${fmt(ans,2)} บาท`};
 }
 function w7_share(){
   const per=ri(5000,15000)+pick([0,25,50]), k=ri(2,4), L=ri(5000,20000)+pick([0,25,50]);
@@ -682,7 +761,8 @@ function w7_share(){
   const r=mcNum(per,2,{extraVals:[Math.round(M/k),M-L],trim:false});
   return {sec:'โจทย์ปัญหาหลายขั้นตอน',
     q:`แม่มีเงิน ${fmt(M,2)} บาท แบ่งให้ลูก ${k} คน คนละเท่าๆ กัน แล้วแม่ยังเหลือเงิน ${fmt(L,2)} บาท ลูกได้รับเงินคนละกี่บาท`,
-    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|share|${per}|${M}|${k}|${L}`};
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|share|${per}|${M}|${k}|${L}`,
+    ex:`ขั้น 1 เงินที่แบ่งไป: ${fmt(M,2)} − ${fmt(L,2)} = ${fmt(per*k,2)} บาท • ขั้น 2 แบ่ง ${k} คน: ${fmt(per*k,2)} ÷ ${k} = ${fmt(per,2)} บาท`};
 }
 function w7_ticket(){
   let c=ri(3000,12000); if(c%2===1)c++;
@@ -691,7 +771,8 @@ function w7_ticket(){
   const r=mcNum(ans,2,{extraVals:[(x+y)*c,(x+y)*ad],trim:false});
   return {sec:'โจทย์ปัญหาหลายขั้นตอน',
     q:`บัตรเข้าชมสวนสัตว์สำหรับเด็กราคา ${fmt(c,2)} บาท ผู้ใหญ่ราคาเป็น 1.5 เท่าของเด็ก ถ้าไปผู้ใหญ่ ${x} คน และเด็ก ${y} คน ต้องจ่ายค่าบัตรทั้งหมดกี่บาท`,
-    choices:r.choices.map(c2=>`${c2} บาท`),correct:r.correct,sig:`7w|ticket|${ans}|${c}|${x}|${y}`};
+    choices:r.choices.map(c2=>`${c2} บาท`),correct:r.correct,sig:`7w|ticket|${ans}|${c}|${x}|${y}`,
+    ex:`ขั้น 1 บัตรผู้ใหญ่: 1.5 × ${fmt(c,2)} = ${fmt(ad,2)} บาท • ขั้น 2 รวม: (${x} × ${fmt(ad,2)}) + (${y} × ${fmt(c,2)}) = ${fmt(ans,2)} บาท`};
 }
 function w7_pile(){
   const g=ri(2,5), n=ri(10,25), s=ri(2000,5000)+pick([0,25,50,75]);
@@ -699,7 +780,8 @@ function w7_pile(){
   const r=mcNum(ans,2,{extraVals:[s*g,n*100],trim:false});
   return {sec:'โจทย์ปัญหาหลายขั้นตอน',
     q:`มีถั่วลิสง ${g*n} กิโลกรัม แบ่งขายกองละ ${g} กิโลกรัม ราคากองละ ${fmt(s,2)} บาท ถ้าขายหมดจะได้เงินกี่บาท`,
-    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|pile|${ans}|${g}|${n}|${s}`};
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|pile|${ans}|${g}|${n}|${s}`,
+    ex:`ขั้น 1 จำนวนกอง: ${g*n} ÷ ${g} = ${n} กอง • ขั้น 2 รายได้: ${n} × ${fmt(s,2)} = ${fmt(ans,2)} บาท`};
 }
 
 const CH1_MIX=[g_place,g_place,g_place,g_place,g_expand,g_expand,g_expand,
@@ -733,6 +815,178 @@ const CHMETA={
  6:{icon:'📒',cls:'ch6',grad:'linear-gradient(135deg,#0f766e,#2dd4bf)',sub:'ทศนิยม × ทศนิยม • ตำแหน่งจุดทศนิยม • หารด้วยจำนวนเต็ม/ทศนิยม • โจทย์ปัญหา'},
  7:{icon:'📓',cls:'ch7',grad:'linear-gradient(135deg,#c2185b,#f06292)',sub:'ทำในวงเล็บก่อน • บวกลบคูณหารระคน • โจทย์ปัญหาหลายขั้นตอน'},
 };
+
+/* ================= เนื้อหาบทเรียน (โหมดเรียนก่อนทำโจทย์) ================= */
+function svgCutDemo(){
+  return `<svg width="310" height="112" viewBox="0 0 310 112">
+   <polygon points="45,18 135,18 115,88 25,88" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+   <polygon points="45,18 25,88 45,88" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+   <line x1="45" y1="18" x2="45" y2="88" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,4"/>
+   <text x="150" y="61" font-size="22" fill="#39418a">&#10140;</text>
+   <rect x="185" y="18" width="90" height="70" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+   <polygon points="275,18 275,88 255,88" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+  </svg>`;
+}
+function svgHalfRect(){
+  return `<svg width="230" height="112" viewBox="0 0 230 112">
+   <rect x="35" y="15" width="150" height="75" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+   <polygon points="35,90 185,90 185,15" fill="#fef08a" stroke="#d97706" stroke-width="2"/>
+   <text x="110" y="107" text-anchor="middle" font-size="12" fill="#475569">สามเหลี่ยม = ครึ่งหนึ่งของสี่เหลี่ยมพอดี</text>
+  </svg>`;
+}
+const LESSONS={
+1:[
+ {t:'ทศนิยมคืออะไร?',h:`
+  <p>ทศนิยมคือจำนวนที่มี <b>จุด (.)</b> คั่นระหว่างจำนวนเต็มกับส่วนที่เล็กกว่า 1 เช่น เงิน 12.50 บาท หรือส่วนสูง 1.45 เมตร</p>
+  <p>ตัวเลขแต่ละตัวมี "บ้าน" ของตัวเอง เรียกว่า <b>หลัก</b> ลองดูจำนวน <b>12.345</b></p>
+  <table class="pvt"><tr><th>สิบ</th><th>หน่วย</th><th>&bull;</th><th>ส่วนสิบ</th><th>ส่วนร้อย</th><th>ส่วนพัน</th></tr>
+  <tr><td>1</td><td>2</td><td>.</td><td>3</td><td>4</td><td>5</td></tr></table>
+  <div class="tipbox">💡 จำง่ายๆ: หลักที่อยู่หลัง "จุด" ชื่อขึ้นต้นด้วยคำว่า "ส่วน" — ส่วนสิบ ส่วนร้อย ส่วนพัน เรียงไปเรื่อยๆ</div>`},
+ {t:'ค่าของเลขแต่ละหลัก',h:`
+  <p>เลขตัวเดียวกัน ถ้าอยู่คนละหลัก ค่าจะไม่เท่ากัน!</p>
+  <div class="exbox">ตัวอย่าง <b>2.754</b><br>• เลข 7 อยู่หลักส่วนสิบ → มีค่า <b>0.7</b><br>• เลข 5 อยู่หลักส่วนร้อย → มีค่า <b>0.05</b><br>• เลข 4 อยู่หลักส่วนพัน → มีค่า <b>0.004</b></div>
+  <p>ค่าประจำหลัก: หน่วย = 1 • ส่วนสิบ = 1/10 • ส่วนร้อย = 1/100 • ส่วนพัน = 1/1000</p>
+  <div class="tipbox">💡 ยิ่งอยู่ไกลจากจุดไปทางขวา ค่ายิ่งเล็กลงทีละ 10 เท่า</div>`},
+ {t:'การเขียนในรูปกระจาย',h:`
+  <p>การกระจาย คือการแยกจำนวนเป็นค่าของแต่ละหลัก แล้วเอามาบวกกัน</p>
+  <div class="bigf">34.062 = 30 + 4 + 0.06 + 0.002</div>
+  <div class="exbox">คิดทีละหลัก:<br>• 3 อยู่หลักสิบ → 30<br>• 4 อยู่หลักหน่วย → 4<br>• 0 อยู่หลักส่วนสิบ → ข้ามได้!<br>• 6 อยู่หลักส่วนร้อย → 0.06<br>• 2 อยู่หลักส่วนพัน → 0.002</div>
+  <div class="tipbox">💡 หลักไหนเป็น 0 ไม่ต้องเขียนในรูปกระจาย</div>`},
+ {t:'เปรียบเทียบและเรียงลำดับ',h:`
+  <p>เคล็ดลับ: <b>เติม 0 ต่อท้าย</b>ให้จำนวนตำแหน่งทศนิยมเท่ากันก่อน แล้วเทียบทีละหลักจากซ้ายไปขวา</p>
+  <div class="exbox">เทียบ 7.8 กับ 7.28 → เติม 0 เป็น <b>7.80</b> กับ <b>7.28</b><br>หลักหน่วยเท่ากัน (7 = 7) → ดูหลักส่วนสิบ: 8 มากกว่า 2<br>ดังนั้น <b>7.8 &gt; 7.28</b></div>
+  <div class="tipbox">💡 เติม 0 ต่อท้ายทศนิยม ค่าไม่เปลี่ยน: 45.09 = 45.090<br>แต่ 45.09 ไม่เท่ากับ 45.009 นะ!</div>`},
+ {t:'เศษส่วน ↔ ทศนิยม และค่าประมาณ',h:`
+  <div class="exbox"><b>ทศนิยม → เศษส่วน:</b> นับจำนวนตำแหน่ง<br>0.47 (2 ตำแหน่ง) = <b>47/100</b> • 0.009 (3 ตำแหน่ง) = <b>9/1000</b></div>
+  <div class="exbox"><b>เศษส่วน → ทศนิยม:</b> ทำตัวส่วนให้เป็น 10 หรือ 100<br>3/4 = 75/100 = <b>0.75</b> • 9/20 = 45/100 = <b>0.45</b></div>
+  <p><b>ค่าประมาณ (ปัดเศษ):</b> มองเลข "ตัวถัดไป" — ถ้าเป็น 5 ขึ้นไป ปัดขึ้น ถ้าไม่ถึง 5 ปัดทิ้ง</p>
+  <div class="exbox">8.4<b>6</b> ปัดเป็นทศนิยม 1 ตำแหน่ง → 6 ถึง 5 ปัดขึ้น → <b>8.5</b><br>0.73<b>4</b> ปัดเป็น 2 ตำแหน่ง → 4 ไม่ถึง 5 ปัดทิ้ง → <b>0.73</b></div>`},
+],
+2:[
+ {t:'กติกาทองของการบวกลบทศนิยม',h:`
+  <div class="bigf">ตั้งจุดทศนิยมให้ตรงกันเสมอ!</div>
+  <p>เติม 0 ให้จำนวนตำแหน่งเท่ากัน แล้วบวกเหมือนจำนวนเต็มปกติ จุดของคำตอบอยู่ตรงเดิม</p>
+  <div style="text-align:center"><div class="vmath">   12.760
++   4.598
+─────────
+   17.358</div></div>
+  <div class="tipbox">💡 12.76 เติม 0 เป็น 12.760 ก่อน จะได้บวกครบทุกหลักไม่ตกหล่น</div>`},
+ {t:'การลบทศนิยม',h:`
+  <p>ลบก็ใช้กติกาเดียวกัน: ตั้งจุดตรงกัน เติม 0 แล้วยืมเหมือนจำนวนเต็ม</p>
+  <div style="text-align:center"><div class="vmath">    7.820
+−   4.936
+─────────
+    2.884</div></div>
+  <p>จำนวนเต็มก็ลบทศนิยมได้ แค่เติมจุดกับ 0: 310 − 45.68</p>
+  <div style="text-align:center"><div class="vmath">  310.00
+−  45.68
+────────
+  264.32</div></div>`},
+ {t:'โจทย์ปัญหา: บวกหรือลบดี?',h:`
+  <table class="pvt"><tr><th>เจอคำว่า...</th><th>ใช้</th></tr>
+  <tr><td style="font-size:15px">รวม / ทั้งหมด / เพิ่มอีก</td><td>บวก ➕</td></tr>
+  <tr><td style="font-size:15px">เหลือ / ใช้ไป / ตัดออก</td><td>ลบ ➖</td></tr>
+  <tr><td style="font-size:15px">ต่างกัน / มากกว่ากัน / เร็วกว่ากัน</td><td>ลบ ➖</td></tr></table>
+  <div class="exbox">ดาวมีเงิน 250 บาท ซื้อดินสอ 8.50 บาท และสมุด 15.75 บาท เหลือเงินเท่าไร?<br><b>ขั้น 1</b> รวมของที่ซื้อ: 8.50 + 15.75 = 24.25<br><b>ขั้น 2</b> หาเงินที่เหลือ: 250 − 24.25 = <b>225.75 บาท</b></div>
+  <div class="tipbox">💡 โจทย์บางข้อต้องคิด 2 ขั้น อ่านช้าๆ วางแผนก่อน แล้วค่อยคิดเลข</div>`},
+],
+3:[
+ {t:'คูณ 10, 100, 1000 = จุดเลื่อนขวา',h:`
+  <div class="bigf">× 10 เลื่อนขวา 1 ตำแหน่ง<br>× 100 เลื่อนขวา 2 ตำแหน่ง<br>× 1000 เลื่อนขวา 3 ตำแหน่ง</div>
+  <div class="exbox">1.435 × 10 = <b>14.35</b><br>1.435 × 100 = <b>143.5</b><br>1.435 × 1000 = <b>1435</b></div>
+  <div class="tipbox">💡 นับจำนวนเลข 0 ของตัวคูณ = จำนวนตำแหน่งที่จุดเลื่อน<br>ถ้าตัวเลขหมดก่อน ให้เติม 0: 23.47 × 1000 = 234<b>70</b></div>`},
+ {t:'หารด้วย 10, 100, 1000 = จุดเลื่อนซ้าย',h:`
+  <div class="bigf">÷ 10 เลื่อนซ้าย 1 • ÷ 100 เลื่อนซ้าย 2 • ÷ 1000 เลื่อนซ้าย 3</div>
+  <div class="exbox">63.2 ÷ 10 = <b>6.32</b><br>63.2 ÷ 100 = <b>0.632</b><br>63.2 ÷ 1000 = <b>0.0632</b></div>
+  <div class="tipbox">💡 "1 ใน 10 ของ..." ความหมายเดียวกับ ÷10 เลย<br>เลื่อนแล้วไม่มีตัวเลขเหลือ ให้เติม 0 ข้างหน้า เช่น 0.0632</div>`},
+ {t:'บันไดหน่วยความยาว',h:`
+  <div class="bigf">1 กม. = 1,000 ม. • 1 ม. = 100 ซม. • 1 ซม. = 10 มม.</div>
+  <p>เปลี่ยนหน่วย<b>ใหญ่ → เล็ก</b> ให้ <b>คูณ</b> / หน่วย<b>เล็ก → ใหญ่</b> ให้ <b>หาร</b></p>
+  <div class="exbox">3.5 ม. = 3.5 × 100 = <b>350 ซม.</b><br>1435 มม. = 1435 ÷ 1000 = <b>1.435 ม.</b></div>
+  <div class="tipbox">💡 ตัวเลขเท่ากันแต่หน่วยต่างกัน ขนาดต่างกันมหาศาล!<br>1435 <b>ม.</b> = ความสูงของภูเขา แต่ 1435 <b>มม.</b> = ความกว้างรางรถไฟ</div>`},
+],
+4:[
+ {t:'รู้จัก "ฐาน" และ "ส่วนสูง"',h:`
+  <p>สี่เหลี่ยมด้านขนาน มีด้านตรงข้ามขนานกัน 2 คู่ ด้านที่วางเป็นพื้นเรียกว่า <b>ฐาน</b> ส่วนเส้นที่วัดจากฐานไปถึงด้านตรงข้ามแบบ<b>ตั้งฉาก</b> เรียกว่า <b>ส่วนสูง</b></p>
+  <div style="text-align:center">${svgPara('ฐาน','ส่วนสูง','ด้านเอียง')}</div>
+  <div class="tipbox">💡 สังเกตมุมฉากเล็กๆ ที่เส้นประสีแดง — ส่วนสูงต้องตั้งฉากกับฐานเสมอ <b>ด้านเอียงไม่ใช่ส่วนสูง!</b></div>`},
+ {t:'ทำไมพื้นที่ = ฐาน × สูง?',h:`
+  <p>ลองตัดสามเหลี่ยมด้านซ้ายออก แล้วย้ายไปต่อด้านขวา... กลายเป็นสี่เหลี่ยมผืนผ้าพอดีเป๊ะ!</p>
+  <div style="text-align:center">${svgCutDemo()}</div>
+  <div class="bigf">พื้นที่สี่เหลี่ยมด้านขนาน = ฐาน × สูง</div>
+  <div class="tipbox">💡 พื้นที่ไม่หายไปไหน แค่เปลี่ยนรูปร่าง เหมือนตัดกระดาษมาต่อใหม่</div>`},
+ {t:'ลองคำนวณกัน',h:`
+  <div style="text-align:center">${svgPara('6 ซม.','3 ซม.','4 ซม.')}</div>
+  <div class="exbox">พื้นที่ = ฐาน × สูง = 6 × 3 = <b>18 ตารางเซนติเมตร</b></div>
+  <div class="tipbox">⚠️ ระวังกับดัก! ด้านเอียง 4 ซม. <b>ไม่เอามาคูณ</b> — ใช้เฉพาะคู่ที่ตั้งฉากกันเท่านั้น (ข้อสอบชอบหลอกตรงนี้ที่สุด)</div>`},
+ {t:'โจทย์ย้อนกลับ: รู้พื้นที่ หาฐานหรือสูง',h:`
+  <p>ถ้าโจทย์บอกพื้นที่มาแล้ว ให้<b>หารย้อนกลับ</b></p>
+  <div class="exbox">พื้นที่ 36 ตร.ซม. ส่วนสูง 9 ซม. ฐานยาวเท่าไร?<br>36 = ฐาน × 9 → ฐาน = 36 ÷ 9 = <b>4 ซม.</b></div>
+  <div class="bigf">ฐาน = พื้นที่ ÷ สูง<br>สูง = พื้นที่ ÷ ฐาน</div>`},
+ {t:'เกร็ดต้องรู้',h:`
+  <div class="exbox"><b>ชนิดของรูปสี่เหลี่ยม:</b><br>• <b>จัตุรัส</b> — 4 ด้านเท่ากัน มุมฉากทุกมุม<br>• <b>ผืนผ้า</b> — ด้านตรงข้ามเท่ากัน มุมฉากทุกมุม<br>• <b>ด้านขนาน</b> — ด้านตรงข้ามขนาน 2 คู่ มุมไม่ฉาก<br>• <b>ขนมเปียกปูน</b> — 4 ด้านเท่ากัน มุมไม่ฉาก<br>• <b>คางหมู</b> — ด้านขนานแค่คู่เดียว<br>• <b>รูปว่าว</b> — ด้านติดกันเท่ากัน 2 คู่</div>
+  <div class="tipbox">💡 รูปสองรูปที่ฐานเท่ากัน และอยู่ระหว่างเส้นขนานคู่เดียวกัน จะสูงเท่ากันเสมอ → <b>พื้นที่เท่ากัน</b> แม้เอียงไม่เหมือนกัน</div>`},
+],
+5:[
+ {t:'สามเหลี่ยม = ครึ่งหนึ่งของสี่เหลี่ยม',h:`
+  <p>ลากเส้นทแยงมุมในสี่เหลี่ยม จะได้สามเหลี่ยม 2 รูปที่เท่ากันพอดี ดังนั้น...</p>
+  <div style="text-align:center">${svgHalfRect()}</div>
+  <div class="bigf">พื้นที่สามเหลี่ยม = ฐาน × สูง ÷ 2</div>
+  <div class="tipbox">💡 สูตรเหมือนสี่เหลี่ยม แต่<b>หารสอง</b> เพราะเป็นครึ่งเดียวของสี่เหลี่ยม</div>`},
+ {t:'ลองคำนวณกัน',h:`
+  <div style="text-align:center">${svgTri('8 ซม.','3 ซม.','',false)}</div>
+  <div class="exbox">พื้นที่ = (8 × 3) ÷ 2 = 24 ÷ 2 = <b>12 ตารางเซนติเมตร</b></div>
+  <div class="tipbox">⚠️ <b>อย่าลืม ÷2!</b> ถ้าคำตอบออกมา 24 แสดงว่าลืมหารสอง — ข้อสอบดักตรงนี้บ่อยที่สุด</div>`},
+ {t:'เลือกคู่ให้ถูก + ส่วนสูงนอกรูป',h:`
+  <p>ถ้าโจทย์ให้ตัวเลขหลายตัว เลือกเฉพาะ<b>คู่ที่ตั้งฉากกัน</b><br>เช่น มีด้าน 13, ฐาน 7 และสูง 6 → ใช้ (7 × 6) ÷ 2 = <b>21</b> ห้ามหยิบ 13 มาคูณ!</p>
+  <div style="text-align:center">${svgTri('ฐาน','ส่วนสูง','',true)}</div>
+  <div class="tipbox">💡 สามเหลี่ยมมุมป้าน ส่วนสูงอาจอยู่<b>นอกรูป</b> — ต่อแนวฐานออกไป (เส้นประ) แล้วลากเส้นตั้งฉาก ใช้สูตรเดิมได้เลย</div>`},
+ {t:'โจทย์ย้อนกลับ + รูปหลายเหลี่ยม',h:`
+  <div class="exbox">สามเหลี่ยมพื้นที่ 24 ตร.ซม. ฐานยาว 10 ซม. สูงเท่าไร?<br><b>ขั้น 1</b> พื้นที่ × 2 = 24 × 2 = 48<br><b>ขั้น 2</b> 48 ÷ ฐาน = 48 ÷ 10 = <b>4.8 ซม.</b></div>
+  <div class="bigf">สูง = พื้นที่ × 2 ÷ ฐาน</div>
+  <div class="tipbox">💡 รูปหลายเหลี่ยมใหญ่ๆ ก็ไม่ยาก: แบ่งเป็นสามเหลี่ยมหลายรูป หาพื้นที่ทีละรูป แล้วบวกรวมกัน</div>`},
+],
+6:[
+ {t:'คูณทศนิยม 3 ขั้นตอน',h:`
+  <div class="exbox"><b>ขั้น 1</b> คูณแบบไม่สนใจจุดก่อน: 23 × 18 = 414<br><b>ขั้น 2</b> นับตำแหน่งทศนิยมรวมกัน: 2.3 มี 1 + 1.8 มี 1 = <b>2 ตำแหน่ง</b><br><b>ขั้น 3</b> ใส่จุดให้ครบ 2 ตำแหน่ง → <b>4.14</b></div>
+  <div class="bigf">2.3 × 1.8 = 4.14</div>
+  <div class="tipbox">⚠️ ตัวเลือกหลอกจะเป็น 414, 41.4, 0.414 — นับตำแหน่งจุดดีๆ ก่อนตอบ!</div>`},
+ {t:'ตัวอย่างที่ใหญ่ขึ้น',h:`
+  <div style="text-align:center"><div class="vmath">    4.32  (2 ตำแหน่ง)
+×   3.78  (2 ตำแหน่ง)
+─────────
+  163296  คูณแบบไม่มีจุด
+= 16.3296 ใส่จุด 2+2 = 4 ตำแหน่ง</div></div>
+  <div class="tipbox">💡 ตำแหน่งทศนิยมของคำตอบ = ตำแหน่งของตัวตั้ง + ตัวคูณ เสมอ</div>`},
+ {t:'หารทศนิยมด้วยจำนวนเต็ม',h:`
+  <p>ตั้งหารยาวเหมือนจำนวนเต็ม แล้ว<b>จุดของคำตอบอยู่ตรงกับจุดของตัวตั้ง</b></p>
+  <div class="bigf">27.78 ÷ 6 = 4.63</div>
+  <div class="exbox">เช็คย้อนกลับ: 4.63 × 6 = 27.78 ✓ ถูกต้อง!</div>
+  <div class="tipbox">💡 เช็คคำตอบด้วยการคูณย้อนกลับทุกครั้ง จะไม่พลาดเลย</div>`},
+ {t:'ทศนิยมหารทศนิยม',h:`
+  <p>เคล็ดลับ: ทำ<b>ตัวหาร</b>ให้เป็นจำนวนเต็มก่อน โดยเลื่อนจุดของ<b>ทั้งคู่</b>เท่าๆ กัน</p>
+  <div class="exbox">3.36 ÷ 0.3 → เลื่อนจุดขวา 1 ตำแหน่งทั้งคู่ → 33.6 ÷ 3 = <b>11.2</b><br>10.032 ÷ 1.2 → 100.32 ÷ 12 = <b>8.36</b></div>
+  <div class="tipbox">💡 เลื่อนจุดพร้อมกันทั้งตัวตั้งและตัวหาร คำตอบไม่เปลี่ยน (เหมือนคูณ 10 ทั้งเศษและส่วน)</div>`},
+],
+7:[
+ {t:'ลำดับการคำนวณ (สำคัญมาก!)',h:`
+  <div class="bigf">① วงเล็บ ( ) → ② คูณ × หาร ÷ → ③ บวก + ลบ −</div>
+  <p>ถ้าอยู่ขั้นเดียวกัน ทำจาก<b>ซ้ายไปขวา</b></p>
+  <div class="exbox">(16.50 + 14.75) ÷ 6.25<br><b>ขั้น 1</b> ทำในวงเล็บก่อน: 16.50 + 14.75 = 31.25<br><b>ขั้น 2</b> 31.25 ÷ 6.25 = <b>5</b></div>
+  <div class="tipbox">⚠️ ถ้าไม่ทำวงเล็บก่อน คำตอบผิดทันที!</div>`},
+ {t:'โจทย์สองชั้น ทำทีละขั้น',h:`
+  <div class="exbox">"(46.308 ÷ 3.4) + 15.29 มีค่าน้อยกว่า 52.71 อยู่เท่าไร"<br><b>ขั้น 1</b> ในวงเล็บ: 46.308 ÷ 3.4 = 13.62<br><b>ขั้น 2</b> บวกต่อ: 13.62 + 15.29 = 28.91<br><b>ขั้น 3</b> หาส่วนต่าง: 52.71 − 28.91 = <b>23.8</b></div>
+  <div class="tipbox">💡 โจทย์ยาวไม่ต้องกลัว หั่นเป็นขั้นเล็กๆ แล้วทำทีละขั้นเท่านั้นเอง</div>`},
+ {t:'โจทย์ปัญหาหลายขั้นตอน',h:`
+  <p>สูตรอ่านโจทย์ 3 ข้อ: <b>① โจทย์ถามอะไร ② มีข้อมูลอะไรบ้าง ③ วางแผนทีละขั้น</b></p>
+  <div class="exbox">ซื้อสบู่ 2 โหลครึ่ง ก้อนละ 12.75 บาท ให้เงิน 1,000 บาท ได้เงินทอนเท่าไร?<br><b>ขั้น 1</b> 2 โหลครึ่ง = 2.5 × 12 = <b>30 ก้อน</b><br><b>ขั้น 2</b> ราคารวม: 30 × 12.75 = 382.50 บาท<br><b>ขั้น 3</b> เงินทอน: 1000 − 382.50 = <b>617.50 บาท</b></div>
+  <div class="tipbox">💡 ระวังหน่วยแปลกๆ เช่น "โหล" = 12 ชิ้น "ครึ่งโหล" = 6 ชิ้น</div>`},
+ {t:'ฝึกวางแผน + เช็คคำตอบ',h:`
+  <div class="exbox">แม่มีเงิน 500 บาท แบ่งให้ลูก 3 คนเท่าๆ กัน แล้วยังเหลือ 132.50 บาท ลูกได้คนละเท่าไร?<br><b>ขั้น 1</b> เงินที่แบ่งไป: 500 − 132.50 = 367.50 บาท<br><b>ขั้น 2</b> แบ่ง 3 คน: 367.50 ÷ 3 = <b>122.50 บาท</b></div>
+  <div class="tipbox">💡 เช็คคำตอบ: 122.50 × 3 + 132.50 = 500 ✓ พอดีเป๊ะ!<br>ตรวจแบบนี้ทุกครั้ง จะมั่นใจว่าไม่พลาด</div>`},
+],
+};
+
 
 /* ================= server API ================= */
 const ROOT='https://ycstpsjkpsqoukpvfcxz.supabase.co/functions/v1/quiz';
@@ -820,6 +1074,7 @@ function renderQ(){
     ${cur.svg?`<div style="text-align:center;margin:4px 0 10px">${cur.svg}</div>`:''}
     ${cur.choices.map((c,j)=>`<button class="choice" id="ch${j}" onclick="answer(${j})"><span class="kbd">${LET[j]}</span>${esc(c)}</button>`).join('')}
     <div class="fb" id="fb"></div>
+    <div class="whybox" id="why">💡 <b>วิธีคิด:</b> ${esc(cur.ex||'')}</div>
     <button class="nextbtn" id="nx" onclick="next()">${G.i===QN-1?'ดูผลคะแนน 🏁':'ข้อถัดไป ▶'}</button>
   </div>`;
   window.scrollTo(0,0);
@@ -838,6 +1093,8 @@ function answer(j){
     document.getElementById('ch'+j).classList.add('wrong');
     fb.className='fb no';fb.textContent=`✗ ยังไม่ถูก คำตอบที่ถูกคือ ${LET[cur.correct]}. ${cur.choices[cur.correct]}`;
   }
+  const wy=document.getElementById('why');
+  if(wy&&cur.ex)wy.style.display='block';
   document.getElementById('nx').style.display='block';
 }
 function next(){
@@ -850,7 +1107,7 @@ function exitQuiz(){
 async function finish(){
   const secs=Math.round((Date.now()-G.t0)/1000);
   const rec={chapter:G.ch,score:G.score,total:QN,secs,
-    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,choices:q.choices,correct:q.correct,user:G.answers[j]})),
+    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,ex:q.ex,choices:q.choices,correct:q.correct,user:G.answers[j]})),
     sigs:G.qs.map(q=>q.sig)};
   showLoading('กำลังบันทึกคะแนน...');
   try{
@@ -901,8 +1158,32 @@ function review(k){
           else if(j===it.user){cls+=' w';mark=' ✗ (ที่ตอบ)';}
           return `<div class="${cls}">${LET[j]}. ${esc(c)}${mark}</div>`;
         }).join('')}
+        ${it.ex?`<div class="whybox" style="display:block">💡 <b>วิธีคิด:</b> ${esc(it.ex)}</div>`:''}
       </div>`).join('')}
     <button class="nextbtn" style="display:block" onclick="${backFn}">🏠 กลับ</button>
+  </div>`;
+  window.scrollTo(0,0);
+}
+let L=null;
+function startLesson(ch){L={ch:+ch,i:0};renderLesson();}
+function renderLesson(){
+  const slides=LESSONS[L.ch], s=slides[L.i], n=slides.length;
+  document.getElementById('app').innerHTML=`
+  <div class="topbar">
+    <span class="pill">${CHNAME[L.ch]}</span>
+    <span class="pill">📖 ${L.i+1}/${n}</span>
+    <button class="exit" onclick="home()">ออก</button>
+  </div>
+  <div class="bar"><div style="width:${(L.i+1)/n*100}%"></div></div>
+  <div class="card">
+    <span class="qsec">📖 บทเรียน</span>
+    <div class="qtext">${s.t}</div>
+    <div class="lesson">${s.h}</div>
+    <div class="btnrow">
+      ${L.i>0?`<button class="nextbtn ghost" style="display:block" onclick="L.i--;renderLesson()">◀ ก่อนหน้า</button>`:''}
+      ${L.i<n-1?`<button class="nextbtn" style="display:block" onclick="L.i++;renderLesson()">ถัดไป ▶</button>`
+        :`<button class="nextbtn alt" style="display:block" onclick="startQuiz(${L.ch})">✏️ ไปทำโจทย์เลย!</button>`}
+    </div>
   </div>`;
   window.scrollTo(0,0);
 }
@@ -929,11 +1210,15 @@ function home(){
   document.getElementById('app').innerHTML=`
   <h1>🧮 เกมคณิตคิดสนุก ป.5 🎯</h1>
   <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ — โจทย์สุ่มใหม่ทุกครั้ง ไม่ซ้ำของเดิม</div>
-  ${Object.keys(CHNAME).map(ch=>`<button class="chapbtn ${CHMETA[ch].cls}" onclick="startQuiz(${ch})">
+  ${Object.keys(CHNAME).map(ch=>`<div class="chapbtn ${CHMETA[ch].cls}">
     ${CHMETA[ch].icon} ${CHNAME[ch]}
     <small>${CHMETA[ch].sub}</small>
     <span class="stat">${chStat(+ch)}</span>
-  </button>`).join('')}
+    <div class="btnpair">
+      <button onclick="startLesson(${ch})">📖 เรียนบทนี้</button>
+      <button onclick="startQuiz(${ch})">✏️ ทำโจทย์ 20 ข้อ</button>
+    </div>
+  </div>`).join('')}
   ${HIST.length?`
   <div class="card">
     <div class="sec-title">🗂️ ประวัติการเล่น</div>
