@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>เกมทศนิยม ป.5 🎯</title>
+<title>เกมคณิตคิดสนุก ป.5 🎯</title>
 <link rel="icon" href="data:,">
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -27,12 +27,19 @@
   .chapbtn small{display:block;font-weight:400;font-size:13px;opacity:.92;margin-top:4px}
   .ch1{background:linear-gradient(135deg,#2f80ed,#56ccf2)}
   .ch2{background:linear-gradient(135deg,#11998e,#38ef7d)}
+  .ch3{background:linear-gradient(135deg,#e67e22,#f5af19)}
+  .ch4{background:linear-gradient(135deg,#8e2de2,#c471ed)}
+  .ch5{background:linear-gradient(135deg,#eb3349,#f45c43)}
+  .ch6{background:linear-gradient(135deg,#0f766e,#2dd4bf)}
+  .ch7{background:linear-gradient(135deg,#c2185b,#f06292)}
   .stat{font-size:13px;margin-top:8px;background:rgba(255,255,255,.22);border-radius:10px;padding:6px 10px;display:inline-block}
   .sec-title{font-size:17px;font-weight:700;margin-bottom:10px;color:#39418a}
   .hrow{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #eef0f8;font-size:14px;flex-wrap:wrap}
   .hrow:last-child{border-bottom:none}
   .tag{padding:2px 10px;border-radius:20px;color:#fff;font-size:12px;white-space:nowrap}
   .tag.t1{background:#2f80ed}.tag.t2{background:#11998e}
+  .tag.t3{background:#e67e22}.tag.t4{background:#8e2de2}.tag.t5{background:#eb3349}
+  .tag.t6{background:#0f766e}.tag.t7{background:#c2185b}
   .scorebadge{font-weight:700;margin-left:auto;white-space:nowrap}
   .good{color:#27ae60}.mid{color:#e67e22}.bad{color:#e74c3c}
   .linkbtn{border:none;background:#eef2ff;color:#3b5bdb;border-radius:10px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px}
@@ -112,8 +119,9 @@ function fmt(v,d){v=Math.round(v);const neg=v<0;v=Math.abs(v);const s=String(v).
   const o=d? s.slice(0,-d)+'.'+s.slice(-d) : s; return (neg?'−':'')+o;}
 function ftr(v,d){let s=fmt(v,d);if(s.includes('.'))s=s.replace(/0+$/,'').replace(/\.$/,'');return s;}
 function genv(i1,i2,d){const ip=ri(i1,i2);let f;do{f=ri(1,10**d-1);}while(f%10===0);return ip*10**d+f;}
-function gen3(i1,i2,dp){return genv(i1,i2,dp)*10**(3-dp);}
+function gen3(i1,i2,dp){return genv(i1,i2,dp)*10**(3-dp);} /* คืนค่าในสเกล 1/1000 */
 
+/* สร้างตัวเลือกปรนัย 4 ข้อจากคำตอบที่ถูก (cv สเกล 10^d) */
 function mcNum(cv,d,opt={}){
   const trim=opt.trim!==false;
   const F=v=>trim?ftr(v,d):fmt(v,d);
@@ -371,11 +379,360 @@ function w_sumdiff(){
 }
 const WORDS=[w_money,w_rope,w_weight,w_race,w_tank,w_fruit,w_height,w_dist,w_tax,w_sumdiff];
 
+/* ================= บทที่ 3 : คูณ หาร ด้วย 10 100 1000 ================= */
+/* ค่าทั้งหมดในบทนี้ใช้สเกล 1/10000 (รองรับผลลัพธ์ลึกสุด 4 ตำแหน่ง เช่น 0.0632) */
+const f4=v=>ftr(v,4);
+function d3_mul(){
+  const dp=pick([2,3]);
+  const a=genv(1,dp===2?99:9,dp), va=a*10**(4-dp);
+  const f=pick([10,100,1000]);
+  const ans=va*f;
+  const r=mcNum(ans,4,{extraVals:[ans*10,ans/10,va]});
+  const q=ri(0,1)===0?`${f4(va)} × ${f} มีค่าเท่าไร`:`${f} เท่าของ ${f4(va)} มีค่าเท่าไร`;
+  return {sec:'คูณด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3m|${va}|${f}`};
+}
+function d3_div(){
+  const f=pick([10,100,1000]);
+  /* จำกัดตำแหน่งทศนิยมของตัวตั้ง ให้ผลหารไม่เกิน 4 ตำแหน่ง */
+  const adp=f===1000?1:f===100?ri(1,2):ri(1,3);
+  const a2=genv(1,99,adp), va=a2*10**(4-adp);
+  const ans=va/f;
+  const r=mcNum(ans,4,{extraVals:[va*f,ans*10,va]});
+  const q=ri(0,1)===0?`${f4(va)} ÷ ${f} มีค่าเท่าไร`:`1 ใน ${f} ของ ${f4(va)} มีค่าเท่าไร`;
+  return {sec:'หารด้วย 10 100 1000',q,choices:r.choices,correct:r.correct,sig:`3d|${va}|${f}`};
+}
+function d3_fillmul(){
+  const dp=pick([1,2]);
+  const a=genv(1,99,dp), va=a*10**(4-dp);
+  const f=pick([10,100,1000]);
+  const opts=['10','100','1000','10000'];
+  return {sec:'คูณด้วย 10 100 1000',
+    q:`□ เท่าของ ${f4(va)} เท่ากับ ${f4(va*f)} จำนวนใน □ คือข้อใด`,
+    choices:opts,correct:opts.indexOf(String(f)),sig:`3fm|${va}|${f}`};
+}
+function d3_filldiv(){
+  const f=pick([10,100,1000]);
+  const adp=f===1000?1:f===100?ri(1,2):ri(1,3);
+  const a=genv(1,99,adp), va=a*10**(4-adp);
+  const opts=['1/10','1/100','1/1000','1/10000'];
+  const key={'10':'1/10','100':'1/100','1000':'1/1000'}[String(f)];
+  return {sec:'หารด้วย 10 100 1000',
+    q:`□ ของ ${f4(va)} เท่ากับ ${f4(va/f)} จำนวนใน □ คือข้อใด`,
+    choices:opts,correct:opts.indexOf(key),sig:`3fd|${va}|${f}`};
+}
+const UCONV=[
+  {from:'เมตร',to:'เซนติเมตร',f:100,mk:()=>{const dp=pick([1,2]);return genv(1,20,dp)*10**(4-dp);}},
+  {from:'กิโลเมตร',to:'เมตร',f:1000,mk:()=>genv(1,9,1)*1000},
+  {from:'เซนติเมตร',to:'มิลลิเมตร',f:10,mk:()=>{const dp=pick([1,2]);return genv(1,99,dp)*10**(4-dp);}},
+  {from:'มิลลิเมตร',to:'เมตร',f:-1000,mk:()=>{let a=ri(1001,9999);if(a%10===0)a+=3;return a*10000;}},
+  {from:'เซนติเมตร',to:'เมตร',f:-100,mk:()=>{let a=ri(101,999);if(a%10===0)a+=7;return a*10000;}},
+  {from:'เมตร',to:'กิโลเมตร',f:-1000,mk:()=>{let a=ri(1001,9999);if(a%10===0)a+=1;return a*10000;}},
+];
+function d3_unit(){
+  const c=pick(UCONV), va=c.mk();
+  const ans=c.f>0? va*c.f : va/(-c.f);
+  const wrongDir=c.f>0? va/c.f : va*(-c.f);
+  const r=mcNum(ans,4,{extraVals:[wrongDir,ans*10,ans/10]});
+  return {sec:'หน่วยความยาว',
+    q:`${f4(va)} ${c.from} เท่ากับกี่${c.to}`,
+    choices:r.choices,correct:r.correct,sig:`3u|${c.from}|${c.to}|${va}`};
+}
+
+/* ================= รูปประกอบ SVG (บทที่ 4-5) ================= */
+function svgPara(bL,hL,sL){
+  const x0=28,y0=14,bw=140,hh=66,off=38,yb=y0+hh;
+  return `<svg width="250" height="112" viewBox="0 0 250 112">`
+   +`<polygon points="${x0+off},${y0} ${x0+off+bw},${y0} ${x0+bw},${yb} ${x0},${yb}" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>`
+   +`<line x1="${x0+off}" y1="${y0}" x2="${x0+off}" y2="${yb}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,4"/>`
+   +`<path d="M ${x0+off} ${yb-9} h 9 v 9" fill="none" stroke="#dc2626" stroke-width="1.5"/>`
+   +`<text x="${x0+bw/2+30}" y="${yb+14}" text-anchor="middle" font-size="13" fill="#1e40af">${bL}</text>`
+   +`<text x="${x0+off+8}" y="${y0+hh/2+4}" font-size="13" fill="#dc2626">${hL}</text>`
+   +`<text x="${x0+off/2-22}" y="${y0+hh/2+4}" font-size="13" fill="#475569">${sL}</text>`
+   +`</svg>`;
+}
+function svgTri(bL,hL,sL,obtuse){
+  const x0=30,yb=92,bw=140,y0=14;
+  const ax=obtuse? x0+bw+42 : x0+92;
+  const ext=obtuse?`<line x1="${x0+bw}" y1="${yb}" x2="${ax}" y2="${yb}" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>`:'';
+  return `<svg width="260" height="112" viewBox="0 0 260 112">`
+   +ext
+   +`<polygon points="${x0},${yb} ${x0+bw},${yb} ${ax},${y0}" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>`
+   +`<line x1="${ax}" y1="${y0}" x2="${ax}" y2="${yb}" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,4"/>`
+   +`<path d="M ${ax-9} ${yb} v -9 h 9" fill="none" stroke="#dc2626" stroke-width="1.5"/>`
+   +`<text x="${x0+bw/2}" y="${yb+14}" text-anchor="middle" font-size="13" fill="#92400e">${bL}</text>`
+   +`<text x="${ax+6}" y="${(y0+yb)/2+4}" font-size="13" fill="#dc2626">${hL}</text>`
+   +`<text x="${(x0+ax)/2-30}" y="${(y0+yb)/2-6}" font-size="13" fill="#475569">${sL}</text>`
+   +`</svg>`;
+}
+
+/* ================= บทที่ 4 : พื้นที่สี่เหลี่ยมด้านขนาน ================= */
+const UNITS=[['ซม.','ตารางเซนติเมตร'],['ม.','ตารางเมตร'],['นิ้ว','ตารางนิ้ว']];
+function p_area(){
+  const h=ri(3,9), s=h+ri(1,4), b=ri(4,12);
+  const [u,ua]=pick(UNITS);
+  const r=mcNum(b*h*100,2,{extraVals:[b*s*100,b*h*50,2*(b+s)*100]});
+  return {sec:'พื้นที่สี่เหลี่ยมด้านขนาน',
+    q:`จากรูป สี่เหลี่ยมด้านขนานมีพื้นที่กี่${ua}`,
+    svg:svgPara(`${b} ${u}`,`${h} ${u}`,`${s} ${u}`),
+    choices:r.choices,correct:r.correct,sig:`4a|${b}|${h}|${s}|${u}`};
+}
+function p_findmiss(){
+  let b=ri(4,12),h=ri(3,9); if(b===h)b++;
+  const A=b*h, findBase=ri(0,1)===0;
+  const known=findBase?h:b, ans=findBase?b:h;
+  const r=mcNum(ans*100,2,{extraVals:[known*100,(A-known)*100,ans*200]});
+  return {sec:'พื้นที่สี่เหลี่ยมด้านขนาน',
+    q:`รูปสี่เหลี่ยมด้านขนานมีพื้นที่ ${A} ตารางเซนติเมตร และ${findBase?'ส่วนสูง':'ฐานยาว'} ${known} เซนติเมตร ${findBase?'ฐานยาวกี่เซนติเมตร':'ส่วนสูงกี่เซนติเมตร'}`,
+    choices:r.choices,correct:r.correct,sig:`4f|${b}|${h}|${findBase}`};
+}
+function p_perim(){
+  let a=ri(4,15),b2=ri(3,12); if(a===b2)a++;
+  const r=mcNum(2*(a+b2)*100,2,{extraVals:[a*b2*100,(a+b2)*100,(2*a+b2)*100]});
+  return {sec:'เส้นรอบรูป',
+    q:`รูปสี่เหลี่ยมด้านขนานมีด้านยาว ${a} เซนติเมตร และ ${b2} เซนติเมตร เส้นรอบรูปยาวกี่เซนติเมตร`,
+    choices:r.choices,correct:r.correct,sig:`4p|${a}|${b2}`};
+}
+const SHAPES=['จัตุรัส','ผืนผ้า','ด้านขนาน','ขนมเปียกปูน','คางหมู','รูปว่าว'];
+const TYPE_BANK=[
+ ['รูปสี่เหลี่ยมที่มีด้านตรงข้ามขนานกันเพียงหนึ่งคู่ คือรูปใด','คางหมู'],
+ ['รูปสี่เหลี่ยมที่มีด้านเท่ากันทั้งสี่ด้าน และมุมทุกมุมเป็นมุมฉาก คือรูปใด','จัตุรัส'],
+ ['รูปสี่เหลี่ยมที่มีด้านตรงข้ามยาวเท่ากันสองคู่ และมุมทุกมุมเป็นมุมฉาก คือรูปใด','ผืนผ้า'],
+ ['รูปสี่เหลี่ยมที่มีด้านเท่ากันทั้งสี่ด้าน แต่มุมทุกมุมไม่เป็นมุมฉาก คือรูปใด','ขนมเปียกปูน'],
+ ['รูปสี่เหลี่ยมที่มีด้านตรงข้ามขนานกันสองคู่ ด้านติดกันยาวไม่เท่ากัน และมุมไม่เป็นมุมฉาก คือรูปใด','ด้านขนาน'],
+ ['รูปสี่เหลี่ยมที่มีด้านติดกันยาวเท่ากันสองคู่ คือรูปใด','รูปว่าว'],
+];
+function p_type(){
+  const i=ri(0,TYPE_BANK.length-1);
+  const [q,ansName]=TYPE_BANK[i];
+  const ord=shuffle([ansName,...shuffle(SHAPES.filter(s=>s!==ansName)).slice(0,3)]);
+  return {sec:'ชนิดของรูปสี่เหลี่ยม',q,choices:ord,correct:ord.indexOf(ansName),sig:`4t|${i}`};
+}
+const CONCEPT4=[
+ {q:'สี่เหลี่ยมด้านขนานสองรูปมีฐานยาวเท่ากัน และอยู่ระหว่างเส้นขนานคู่เดียวกัน ข้อใดถูกต้อง',
+  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0},
+ {q:'ความสูงของรูปสี่เหลี่ยมด้านขนานคือข้อใด',
+  c:['ส่วนของเส้นตรงที่ตั้งฉากกับฐาน ระหว่างฐานกับด้านตรงข้าม','ด้านเอียงของรูป','เส้นทแยงมุมของรูป','ด้านที่ยาวที่สุดของรูป'],a:0},
+ {q:'การหาพื้นที่รูปสี่เหลี่ยมด้านขนาน ต้องใช้ความยาวคู่ใดคูณกัน',
+  c:['ฐานกับส่วนสูงที่ตั้งฉากกับฐาน','ฐานกับด้านเอียง','ด้านเอียงกับเส้นทแยงมุม','ด้านยาวกับด้านสั้น'],a:0},
+ {q:'เมื่อเปลี่ยนไปใช้ด้านอื่นของรูปสี่เหลี่ยมด้านขนานเป็นฐาน (คู่กับส่วนสูงของฐานนั้น) พื้นที่ที่คำนวณได้จะเป็นอย่างไร',
+  c:['เท่าเดิม','มากขึ้น','น้อยลง','บอกไม่ได้'],a:0},
+ {q:'รูปสี่เหลี่ยมด้านขนานหนึ่งรูป สามารถลากส่วนสูงจากฐานเดียวกันได้กี่เส้น',
+  c:['หลายเส้นไม่จำกัด','เพียง 1 เส้น','เพียง 2 เส้น','ลากไม่ได้'],a:0},
+];
+function p_concept(){
+  const i=ri(0,CONCEPT4.length-1), k=CONCEPT4[i];
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`4c|${i}`};
+}
+
+/* ================= บทที่ 5 : พื้นที่สามเหลี่ยม ================= */
+function t_area(){
+  const h=ri(3,9), s=h+ri(1,4), b=ri(4,12);
+  const obtuse=ri(0,3)===0;
+  const [u,ua]=pick(UNITS);
+  const r=mcNum(b*h*50,2,{extraVals:[b*h*100,b*s*50,(b+h)*100]});
+  return {sec:'พื้นที่สามเหลี่ยม',
+    q:`จากรูป สามเหลี่ยมมีพื้นที่กี่${ua}${obtuse?' (ส่วนสูงอยู่นอกรูปตามแนวเส้นประ)':''}`,
+    svg:svgTri(`${b} ${u}`,`${h} ${u}`,`${s} ${u}`,obtuse),
+    choices:r.choices,correct:r.correct,sig:`5a|${b}|${h}|${s}|${obtuse}`};
+}
+function t_findh(){
+  const b=ri(4,12), h=ri(3,9);
+  const r=mcNum(h*100,2,{extraVals:[h*50,b*100,h*200]});
+  return {sec:'พื้นที่สามเหลี่ยม',
+    q:`สามเหลี่ยมมีพื้นที่ ${ftr(b*h*50,2)} ตารางเซนติเมตร ฐานยาว ${b} เซนติเมตร ส่วนสูงยาวกี่เซนติเมตร`,
+    choices:r.choices,correct:r.correct,sig:`5h|${b}|${h}`};
+}
+const TRIPLES=[[3,4,5],[6,8,10],[9,12,15],[12,16,20],[15,20,25]];
+function t_right(){
+  const [p,q2,rr]=pick(TRIPLES);
+  const ans=p*q2*100/rr;
+  const r=mcNum(ans,2,{extraVals:[p*100,q2*100,p*q2*50]});
+  return {sec:'พื้นที่สามเหลี่ยม (ประยุกต์)',
+    q:`สามเหลี่ยมมุมฉากมีด้านประกอบมุมฉากยาว ${p} และ ${q2} เซนติเมตร ด้านตรงข้ามมุมฉากยาว ${rr} เซนติเมตร ถ้าใช้ด้านยาว ${rr} เซนติเมตรเป็นฐาน ส่วนสูงของสามเหลี่ยมยาวกี่เซนติเมตร`,
+    choices:r.choices,correct:r.correct,sig:`5r|${p}|${q2}`};
+}
+function t_poly(){
+  const a=ri(4,12), b2=ri(4,12);
+  const c=ri(3,9)*100+pick([0,50]);
+  const three=ri(0,1)===0;
+  const sum=three? a*100+b2*100+c : a*100+c;
+  const q=three?
+    `รูปห้าเหลี่ยมถูกแบ่งเป็นรูปสามเหลี่ยม 3 รูป มีพื้นที่ ${a}, ${b2} และ ${ftr(c,2)} ตารางเซนติเมตร รูปห้าเหลี่ยมนี้มีพื้นที่กี่ตารางเซนติเมตร`:
+    `รูปสี่เหลี่ยมใดๆ ถูกแบ่งด้วยเส้นทแยงมุมเป็นสามเหลี่ยม 2 รูป มีพื้นที่ ${a} และ ${ftr(c,2)} ตารางเซนติเมตร รูปสี่เหลี่ยมนี้มีพื้นที่กี่ตารางเซนติเมตร`;
+  const r=mcNum(sum,2);
+  return {sec:'พื้นที่รูปหลายเหลี่ยม',q,choices:r.choices,correct:r.correct,sig:`5p|${a}|${b2}|${c}|${three}`};
+}
+function t_word(){
+  const [pl,un,ua]=pick([['ที่ดินรูปสามเหลี่ยม','เมตร','ตารางเมตร'],['ธงรูปสามเหลี่ยม','เซนติเมตร','ตารางเซนติเมตร'],['สวนหย่อมรูปสามเหลี่ยม','เมตร','ตารางเมตร']]);
+  const b=ri(6,20), h=ri(4,12);
+  const r=mcNum(b*h*50,2,{extraVals:[b*h*100,(b+h)*100]});
+  return {sec:'พื้นที่สามเหลี่ยม',
+    q:`${pl}แห่งหนึ่ง ฐานยาว ${b} ${un} ส่วนสูง ${h} ${un} มีพื้นที่กี่${ua}`,
+    choices:r.choices,correct:r.correct,sig:`5w|${b}|${h}|${pl}`};
+}
+const CONCEPT5=[
+ {q:'สามเหลี่ยมสองรูปมีฐานยาวเท่ากัน และจุดยอดอยู่บนเส้นขนานเดียวกัน ข้อใดถูกต้อง',
+  c:['พื้นที่เท่ากัน','เส้นรอบรูปเท่ากันเสมอ','รูปที่เอียงมากกว่ามีพื้นที่มากกว่า','เปรียบเทียบกันไม่ได้'],a:0},
+ {q:'สามเหลี่ยมสองรูปมีพื้นที่เท่ากัน ข้อใดถูกต้อง',
+  c:['เส้นรอบรูปอาจไม่เท่ากัน','เส้นรอบรูปต้องเท่ากันเสมอ','รูปร่างต้องเหมือนกันเสมอ','ฐานต้องยาวเท่ากันเสมอ'],a:0},
+ {q:'สามเหลี่ยมมุมป้าน เมื่อใช้ด้านที่ติดกับมุมป้านเป็นฐาน ส่วนสูงจะอยู่ที่ใด',
+  c:['อยู่นอกรูป ต้องต่อแนวฐานออกไปแล้วลากเส้นตั้งฉาก','อยู่ในรูปเสมอ','ทับกับด้านของรูป','สามเหลี่ยมมุมป้านไม่มีส่วนสูง'],a:0},
+ {q:'สูตรการหาพื้นที่รูปสามเหลี่ยมคือข้อใด',
+  c:['ฐาน × สูง ÷ 2','ฐาน × สูง','(ฐาน + สูง) ÷ 2','ฐาน × ด้านเอียง ÷ 2'],a:0},
+ {q:'เพราะเหตุใดพื้นที่รูปสามเหลี่ยมจึงเท่ากับ ฐาน × สูง ÷ 2',
+  c:['เพราะสามเหลี่ยมเป็นครึ่งหนึ่งของสี่เหลี่ยมด้านขนานที่มีฐานและส่วนสูงเท่ากัน','เพราะสามเหลี่ยมมี 3 ด้าน','เพราะส่วนสูงสั้นกว่าฐานเสมอ','เป็นข้อตกลงที่ไม่มีเหตุผล'],a:0},
+];
+function t_concept(){
+  const i=ri(0,CONCEPT5.length-1), k=CONCEPT5[i];
+  const ord=shuffle([0,1,2,3]);
+  return {sec:'แนวคิดฐานและส่วนสูง',q:k.q,choices:ord.map(j=>k.c[j]),correct:ord.indexOf(k.a),sig:`5c|${i}`};
+}
+
+/* ================= บทที่ 6 : การคูณและหารทศนิยม ================= */
+function g6_mul(){
+  const da=pick([1,2]), db=pick([1,2]);
+  const a=genv(1,9,da), b=genv(1,9,db);
+  const p4=a*b*10**(4-da-db);
+  const r=mcNum(p4,4,{extraVals:[p4*10,Math.round(p4/10),p4*100]});
+  return {sec:'การคูณทศนิยม',
+    q:`${ftr(a*10**(4-da),4)} × ${ftr(b*10**(4-db),4)} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`6m|${a}|${b}|${p4}`};
+}
+function g6_divint(){
+  const r2=genv(1,9,2), d=ri(2,9);
+  const r=mcNum(r2*100,4,{extraVals:[r2*1000,r2*10,(r2+d*100)*100]});
+  return {sec:'การหารทศนิยม',
+    q:`${ftr(r2*d*100,4)} ÷ ${d} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`6di|${r2}|${d}`};
+}
+function g6_divdec(){
+  let q10;
+  if(ri(0,1)===0)q10=ri(2,20)*10;               /* ผลหารจำนวนเต็ม */
+  else{do{q10=ri(15,95);}while(q10%10===0);}     /* ผลหารทศนิยม 1 ตำแหน่ง */
+  const dv=genv(0,2,2);                          /* ตัวหารทศนิยม 2 ตำแหน่ง เช่น 0.25, 1.2 */
+  const r=mcNum(q10*1000,4,{extraVals:[q10*10000,q10*100,dv*100]});
+  return {sec:'การหารทศนิยม',
+    q:`${ftr(q10*dv*10,4)} ÷ ${ftr(dv*100,4)} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`6dd|${q10}|${dv}`};
+}
+/* โจทย์ปัญหาคูณ/หารทศนิยม — ทุกค่าอยู่ในสเกล 1/100 */
+function g6_word(){
+  const t=ri(0,3);
+  let q,ans,extras,sig,unit='บาท';
+  if(t===0){ /* น้ำมัน: ราคา/ลิตร × จำนวนลิตร (p สเกล 100) */
+    const p=ri(3000,4800)+pick([0,5,25,50,75]), L=ri(10,40);
+    ans=p*L;
+    q=`น้ำมันราคาลิตรละ ${fmt(p,2)} บาท เติมน้ำมัน ${L} ลิตร ต้องจ่ายเงินกี่บาท`;
+    extras=[p+L*100]; sig=`6w|fuel|${ans}|${p}|${L}`;
+  }else if(t===1){ /* ค่าไฟเฉลี่ยต่อหน่วย */
+    const r=genv(1,4,2), U=ri(80,250);
+    ans=r; q=`เดือนนี้บ้านของฝนใช้ไฟฟ้า ${U} หน่วย เสียค่าไฟฟ้า ${fmt(r*U,2)} บาท เฉลี่ยแล้วเสียค่าไฟฟ้าหน่วยละกี่บาท`;
+    extras=[r*10,Math.round(r/10)]; sig=`6w|avg|${ans}|${U}`;
+  }else if(t===2){ /* แบ่งใส่ถุง */
+    const g=ri(12,45), n=ri(8,25); /* g สเกล 10 (1.2-4.5 กก.) */
+    ans=n*100; unit='ถุง';
+    q=`มีข้าวสาร ${ftr(g*n*10,2)} กิโลกรัม แบ่งใส่ถุง ถุงละ ${ftr(g*10,2)} กิโลกรัม จะได้ทั้งหมดกี่ถุง`;
+    extras=[(n+1)*100,(n-1)*100,n*1000]; sig=`6w|bag|${ans}|${g}|${n}`;
+  }else{ /* แลกเงินต่างประเทศ */
+    const rate=genv(30,39,2), usd=ri(20,60);
+    ans=rate*usd; q=`อัตราแลกเปลี่ยน 1 ดอลลาร์ เท่ากับ ${fmt(rate,2)} บาท ถ้าแลกเงิน ${usd} ดอลลาร์ จะได้เงินไทยกี่บาท`;
+    extras=[rate+usd*100]; sig=`6w|fx|${ans}|${rate}|${usd}`;
+  }
+  const r=mcNum(ans,2,{extraVals:extras,trim:unit!=='บาท'});
+  return {sec:'โจทย์ปัญหาคูณหารทศนิยม',q,
+    choices:r.choices.map(c=>`${c} ${unit}`),correct:r.correct,sig};
+}
+
+/* ================= บทที่ 7 : โจทย์ระคนทศนิยม ================= */
+function g7_paren(){
+  const c=ri(9,36)*25, R=ri(3,9);           /* c สเกล 100 (2.25-9.00), ผลหารจำนวนเต็ม R */
+  const sum=R*c;
+  const a=ri(Math.floor(sum*0.3),Math.floor(sum*0.7)), b=sum-a;
+  const r=mcNum(R*10000,4,{extraVals:[(R+1)*10000,(R-1)*10000,(R+2)*10000]});
+  return {sec:'ลำดับการคำนวณ',
+    q:`(${fmt(a,2)} + ${fmt(b,2)}) ÷ ${ftr(c,2)} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`7p|${R}|${c}|${a}`};
+}
+function g7_diff(){
+  const c=ri(9,36)*25, R=ri(3,9);
+  const sum=R*c;
+  const a=ri(Math.floor(sum*0.3),Math.floor(sum*0.7)), b=sum-a;
+  const gap=ri(500,2000)+pick([0,25,50,75]);           /* สเกล 100 */
+  const D=R*100+gap;
+  const r=mcNum(gap,2,{extraVals:[D,R*100]});
+  return {sec:'ลำดับการคำนวณ',
+    q:`(${fmt(a,2)} + ${fmt(b,2)}) ÷ ${ftr(c,2)} มีค่าน้อยกว่า ${fmt(D,2)} อยู่เท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`7f|${gap}|${R}|${c}|${a}|${D}`};
+}
+/* โจทย์ปัญหาหลายขั้นตอน — ค่าเงินอยู่ในสเกล 1/100 */
+function w7_change(){
+  const M=pick([50000,100000]);
+  const p=ri(20,80)*25;
+  const n=ri(6,Math.min(30,Math.floor(M*0.8/p)));
+  const cost=n*p, ans=M-cost;
+  const r=mcNum(ans,2,{extraVals:[cost],trim:false});
+  return {sec:'โจทย์ปัญหาหลายขั้นตอน',
+    q:`ซื้อสมุด ${n} เล่ม ราคาเล่มละ ${fmt(p,2)} บาท ให้ธนบัตร ${ftr(M,2)} บาท จะได้รับเงินทอนกี่บาท`,
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|change|${ans}|${M}|${p}|${n}`};
+}
+function w7_share(){
+  const per=ri(5000,15000)+pick([0,25,50]), k=ri(2,4), L=ri(5000,20000)+pick([0,25,50]);
+  const M=per*k+L;
+  const r=mcNum(per,2,{extraVals:[Math.round(M/k),M-L],trim:false});
+  return {sec:'โจทย์ปัญหาหลายขั้นตอน',
+    q:`แม่มีเงิน ${fmt(M,2)} บาท แบ่งให้ลูก ${k} คน คนละเท่าๆ กัน แล้วแม่ยังเหลือเงิน ${fmt(L,2)} บาท ลูกได้รับเงินคนละกี่บาท`,
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|share|${per}|${M}|${k}|${L}`};
+}
+function w7_ticket(){
+  let c=ri(3000,12000); if(c%2===1)c++;
+  const ad=c*3/2, x=ri(1,3), y=ri(2,4);
+  const ans=x*ad+y*c;
+  const r=mcNum(ans,2,{extraVals:[(x+y)*c,(x+y)*ad],trim:false});
+  return {sec:'โจทย์ปัญหาหลายขั้นตอน',
+    q:`บัตรเข้าชมสวนสัตว์สำหรับเด็กราคา ${fmt(c,2)} บาท ผู้ใหญ่ราคาเป็น 1.5 เท่าของเด็ก ถ้าไปผู้ใหญ่ ${x} คน และเด็ก ${y} คน ต้องจ่ายค่าบัตรทั้งหมดกี่บาท`,
+    choices:r.choices.map(c2=>`${c2} บาท`),correct:r.correct,sig:`7w|ticket|${ans}|${c}|${x}|${y}`};
+}
+function w7_pile(){
+  const g=ri(2,5), n=ri(10,25), s=ri(2000,5000)+pick([0,25,50,75]);
+  const ans=n*s;
+  const r=mcNum(ans,2,{extraVals:[s*g,n*100],trim:false});
+  return {sec:'โจทย์ปัญหาหลายขั้นตอน',
+    q:`มีถั่วลิสง ${g*n} กิโลกรัม แบ่งขายกองละ ${g} กิโลกรัม ราคากองละ ${fmt(s,2)} บาท ถ้าขายหมดจะได้เงินกี่บาท`,
+    choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`7w|pile|${ans}|${g}|${n}|${s}`};
+}
+
 const CH1_MIX=[g_place,g_place,g_place,g_place,g_expand,g_expand,g_expand,
   g_compare,g_compare,g_compare,g_order,g_order,g_order,
   g_frac,g_frac,g_frac,g_frac,g_round,g_round,g_round];
 const CH2_BASE=[g_add,g_add,g_add,g_add,g_sub,g_sub,g_sub,g_sub,
   g_miss,g_miss,g_miss,g_cmp2,g_cmp2];
+const CH3_MIX=[d3_mul,d3_mul,d3_mul,d3_mul,d3_mul,d3_div,d3_div,d3_div,d3_div,d3_div,
+  d3_fillmul,d3_fillmul,d3_filldiv,d3_filldiv,
+  d3_unit,d3_unit,d3_unit,d3_unit,d3_unit,d3_unit];
+const CH4_MIX=[p_area,p_area,p_area,p_area,p_area,p_area,p_area,
+  p_findmiss,p_findmiss,p_findmiss,p_findmiss,
+  p_perim,p_perim,p_perim,p_type,p_type,p_type,p_concept,p_concept,p_concept];
+const CH5_MIX=[t_area,t_area,t_area,t_area,t_area,t_area,t_area,
+  t_findh,t_findh,t_findh,t_findh,t_right,t_right,
+  t_poly,t_poly,t_word,t_word,t_concept,t_concept,t_concept];
+const CH6_MIX=[g6_mul,g6_mul,g6_mul,g6_mul,g6_mul,g6_mul,
+  g6_divint,g6_divint,g6_divint,g6_divint,
+  g6_divdec,g6_divdec,g6_divdec,g6_divdec,
+  g6_word,g6_word,g6_word,g6_word,g6_word,g6_word];
+const CH7_MIX=[g7_paren,g7_paren,g7_paren,g7_paren,g7_paren,
+  g7_diff,g7_diff,g7_diff,
+  w7_change,w7_change,w7_change,w7_share,w7_share,w7_share,
+  w7_ticket,w7_ticket,w7_ticket,w7_pile,w7_pile,w7_pile];
+const CHMETA={
+ 1:{icon:'📘',cls:'ch1',grad:'linear-gradient(135deg,#2f80ed,#56ccf2)',sub:'ค่าประจำหลัก • การกระจาย • เปรียบเทียบ • เรียงลำดับ • เศษส่วน • ค่าประมาณ'},
+ 2:{icon:'📗',cls:'ch2',grad:'linear-gradient(135deg,#11998e,#38ef7d)',sub:'การบวก • การลบ • หาจำนวนที่หายไป • เปรียบเทียบผลลัพธ์ • โจทย์ปัญหา'},
+ 3:{icon:'📙',cls:'ch3',grad:'linear-gradient(135deg,#e67e22,#f5af19)',sub:'×10 ×100 ×1000 • ÷10 ÷100 ÷1000 • หน่วยความยาว'},
+ 4:{icon:'📕',cls:'ch4',grad:'linear-gradient(135deg,#8e2de2,#c471ed)',sub:'ฐานและส่วนสูง • พื้นที่ = ฐาน×สูง • เส้นรอบรูป • ชนิดสี่เหลี่ยม'},
+ 5:{icon:'📔',cls:'ch5',grad:'linear-gradient(135deg,#eb3349,#f45c43)',sub:'พื้นที่ = ฐาน×สูง÷2 • หาส่วนสูง • มุมฉาก/มุมป้าน • รูปหลายเหลี่ยม'},
+ 6:{icon:'📒',cls:'ch6',grad:'linear-gradient(135deg,#0f766e,#2dd4bf)',sub:'ทศนิยม × ทศนิยม • ตำแหน่งจุดทศนิยม • หารด้วยจำนวนเต็ม/ทศนิยม • โจทย์ปัญหา'},
+ 7:{icon:'📓',cls:'ch7',grad:'linear-gradient(135deg,#c2185b,#f06292)',sub:'ทำในวงเล็บก่อน • บวกลบคูณหารระคน • โจทย์ปัญหาหลายขั้นตอน'},
+};
 
 /* ================= server API ================= */
 const ROOT='https://ycstpsjkpsqoukpvfcxz.supabase.co/functions/v1/quiz';
@@ -424,12 +781,15 @@ async function boot(){
 
 /* ================= quiz engine ================= */
 const QN=20;
-const CHNAME={1:'บทที่ 1 ทศนิยมเบื้องต้น',2:'บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา'};
+const CHNAME={1:'บทที่ 1 ทศนิยมเบื้องต้น',2:'บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา',
+  3:'บทที่ 3 คูณ หาร ด้วย 10 100 1000',4:'บทที่ 4 พื้นที่สี่เหลี่ยมด้านขนาน',5:'บทที่ 5 พื้นที่สามเหลี่ยม',
+  6:'บทที่ 6 การคูณและหารทศนิยม',7:'บทที่ 7 โจทย์ระคนทศนิยม'};
 const LET=['ก','ข','ค','ง'];
 let G=null;
 
 function buildQuiz(ch){
-  let gens=ch===1?CH1_MIX.slice():CH2_BASE.slice().concat(shuffle(WORDS.slice()).slice(0,7));
+  let gens=ch===2?CH2_BASE.slice().concat(shuffle(WORDS.slice()).slice(0,7))
+    :({1:CH1_MIX,3:CH3_MIX,4:CH4_MIX,5:CH5_MIX,6:CH6_MIX,7:CH7_MIX})[ch].slice();
   shuffle(gens);
   const qs=[];const round=new Set();
   for(const g of gens){
@@ -457,6 +817,7 @@ function renderQ(){
   <div class="card">
     <span class="qsec">${esc(cur.sec)}</span>
     <div class="qtext">${esc(cur.q)}</div>
+    ${cur.svg?`<div style="text-align:center;margin:4px 0 10px">${cur.svg}</div>`:''}
     ${cur.choices.map((c,j)=>`<button class="choice" id="ch${j}" onclick="answer(${j})"><span class="kbd">${LET[j]}</span>${esc(c)}</button>`).join('')}
     <div class="fb" id="fb"></div>
     <button class="nextbtn" id="nx" onclick="next()">${G.i===QN-1?'ดูผลคะแนน 🏁':'ข้อถัดไป ▶'}</button>
@@ -489,7 +850,7 @@ function exitQuiz(){
 async function finish(){
   const secs=Math.round((Date.now()-G.t0)/1000);
   const rec={chapter:G.ch,score:G.score,total:QN,secs,
-    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,choices:q.choices,correct:q.correct,user:G.answers[j]})),
+    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,choices:q.choices,correct:q.correct,user:G.answers[j]})),
     sigs:G.qs.map(q=>q.sig)};
   showLoading('กำลังบันทึกคะแนน...');
   try{
@@ -533,6 +894,7 @@ function review(k){
     ${r.items.map((it,n)=>`
       <div class="ritem">
         <div class="qtext"><span class="rnum">${n+1}</span>${esc(it.q)}</div>
+        ${it.svg?`<div style="text-align:center;margin:4px 0 8px">${it.svg}</div>`:''}
         ${it.choices.map((c,j)=>{
           let cls='rch';let mark='';
           if(j===it.correct){cls+=' c';mark=' ✓';}
@@ -565,18 +927,13 @@ function histRows(limit){
 function home(){
   G=null;
   document.getElementById('app').innerHTML=`
-  <h1>🧮 เกมทศนิยม ป.5 🎯</h1>
+  <h1>🧮 เกมคณิตคิดสนุก ป.5 🎯</h1>
   <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ — โจทย์สุ่มใหม่ทุกครั้ง ไม่ซ้ำของเดิม</div>
-  <button class="chapbtn ch1" onclick="startQuiz(1)">
-    📘 บทที่ 1 ทศนิยมเบื้องต้น
-    <small>ค่าประจำหลัก • การกระจาย • เปรียบเทียบ • เรียงลำดับ • เศษส่วน • ค่าประมาณ</small>
-    <span class="stat">${chStat(1)}</span>
-  </button>
-  <button class="chapbtn ch2" onclick="startQuiz(2)">
-    📗 บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา
-    <small>การบวก • การลบ • หาจำนวนที่หายไป • เปรียบเทียบผลลัพธ์ • โจทย์ปัญหา</small>
-    <span class="stat">${chStat(2)}</span>
-  </button>
+  ${Object.keys(CHNAME).map(ch=>`<button class="chapbtn ${CHMETA[ch].cls}" onclick="startQuiz(${ch})">
+    ${CHMETA[ch].icon} ${CHNAME[ch]}
+    <small>${CHMETA[ch].sub}</small>
+    <span class="stat">${chStat(+ch)}</span>
+  </button>`).join('')}
   ${HIST.length?`
   <div class="card">
     <div class="sec-title">🗂️ ประวัติการเล่น</div>
@@ -590,13 +947,14 @@ function home(){
 function pctColor(p){return p>=80?'#27ae60':p>=50?'#e67e22':'#e74c3c';}
 function parentHome(){
   G=null;
-  const cards=[1,2].map(ch=>{
+  const cards=Object.keys(CHNAME).map(ch=>{
+    ch=+ch;
     const rs=HIST.filter(r=>r.ch===ch);
     const n=rs.length;
     const best=n?Math.max(...rs.map(r=>r.score)):0;
     const avg=n?(rs.reduce((a,r)=>a+r.score,0)/n).toFixed(1):'-';
-    const bg=ch===1?'linear-gradient(135deg,#2f80ed,#56ccf2)':'linear-gradient(135deg,#11998e,#38ef7d)';
-    return `<div class="pcard" style="background:${bg}">
+    const bg=CHMETA[ch].grad;
+    return `<div class="pcard" style="background:${bg};min-width:210px">
       <div class="lbl">${CHNAME[ch]}</div>
       <div class="big">${n? avg+' / '+QN : '—'}</div>
       <div class="lbl">คะแนนเฉลี่ย • ทำ ${n} ครั้ง • ดีที่สุด ${n?best:'-'}/${QN}</div>
