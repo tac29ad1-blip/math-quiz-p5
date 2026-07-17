@@ -122,7 +122,12 @@
   .topicrow .tname{width:135px;flex-shrink:0}
   .tbar{flex:1;height:14px;background:#eef0f8;border-radius:8px;overflow:hidden}
   .tbar>div{height:100%;border-radius:8px}
-  .tpct{width:82px;text-align:right;font-weight:700;font-size:13px}
+  .tpct{width:96px;text-align:right;font-weight:700;font-size:13px}
+  .tchap{font-weight:800;font-size:14px;color:#39418a;background:#eef0f8;border-radius:8px;padding:5px 10px;margin:14px 0 4px}
+  .tchap:first-child{margin-top:2px}
+  .topicrow.tnone .tname{color:#a3a8c3}
+  .topicrow.tnone .tbar{background:repeating-linear-gradient(45deg,#f1f2f8,#f1f2f8 6px,#e7e9f4 6px,#e7e9f4 12px)}
+  .topicrow.tnone .tpct{color:#a3a8c3;font-weight:600}
 </style>
 </head>
 <body>
@@ -1402,6 +1407,16 @@ function home(){
 
 /* ================= parent dashboard ================= */
 function pctColor(p){return p>=80?'#27ae60':p>=50?'#e67e22':'#e74c3c';}
+/* หัวข้อทั้งหมดของแต่ละบท — ใช้เช็คว่าส่วนไหนยังไม่ได้ทำ */
+const TOPICS={
+ 1:['ค่าประจำหลัก','การกระจาย','การเปรียบเทียบ','การเรียงลำดับ','ทศนิยมกับเศษส่วน','ค่าประมาณ'],
+ 2:['การบวกทศนิยม','การลบทศนิยม','หาจำนวนที่หายไป','เปรียบเทียบผลลัพธ์','โจทย์ปัญหา'],
+ 3:['คูณด้วย 10 100 1000','หารด้วย 10 100 1000','หน่วยความยาว'],
+ 4:['พื้นที่สี่เหลี่ยมด้านขนาน','แนวคิดฐานและส่วนสูง','เส้นรอบรูป','ชนิดของรูปสี่เหลี่ยม'],
+ 5:['พื้นที่สามเหลี่ยม','พื้นที่สามเหลี่ยม (ประยุกต์)','พื้นที่รูปหลายเหลี่ยม','แนวคิดฐานและส่วนสูง'],
+ 6:['การคูณทศนิยม','การหารทศนิยม','โจทย์ปัญหาคูณหารทศนิยม'],
+ 7:['ลำดับการคำนวณ','โจทย์ปัญหาหลายขั้นตอน'],
+};
 function parentHome(){
   G=null;
   const cards=Object.keys(CHNAME).map(ch=>{
@@ -1417,30 +1432,43 @@ function parentHome(){
       <div class="lbl">คะแนนเฉลี่ย • ทำ ${n} ครั้ง • ดีที่สุด ${n?best:'-'}/${QN}</div>
     </div>`;
   }).join('');
-  /* สรุปความแม่นยำรายหัวข้อ จากทุกครั้งที่โหลดมา */
-  const topics={};
+  /* สรุปความแม่นยำรายหัวข้อ — โชว์ครบทุกหัวข้อของทุกบท หัวข้อที่ยังไม่เคยทำติดป้ายไว้ */
+  const tstat={};
   HIST.forEach(r=>r.items.forEach(it=>{
-    if(!topics[it.sec])topics[it.sec]={n:0,c:0};
-    topics[it.sec].n++;
-    if(it.user===it.correct)topics[it.sec].c++;
+    const k=r.ch+'|'+it.sec;
+    if(!tstat[k])tstat[k]={n:0,c:0};
+    tstat[k].n++;
+    if(it.user===it.correct)tstat[k].c++;
   }));
-  const topicRows=Object.entries(topics)
-    .sort((a,b)=>(a[1].c/a[1].n)-(b[1].c/b[1].n))
-    .map(([sec,t])=>{
-      const p=Math.round(t.c/t.n*100);
-      return `<div class="topicrow">
-        <span class="tname">${esc(sec)}</span>
-        <div class="tbar"><div style="width:${p}%;background:${pctColor(p)}"></div></div>
-        <span class="tpct">${p}% (${t.c}/${t.n})</span>
-      </div>`;
-    }).join('');
+  let doneT=0,allT=0;
+  const topicRows=Object.keys(TOPICS).map(ch=>{
+    const rows=TOPICS[ch].map(sec=>{
+      allT++;
+      const t=tstat[ch+'|'+sec];
+      if(t)doneT++;
+      return {sec,t,p:t?Math.round(t.c/t.n*100):-1};
+    }).sort((a,b)=>a.p-b.p)
+    .map(o=>o.t?`<div class="topicrow">
+        <span class="tname">${esc(o.sec)}</span>
+        <div class="tbar"><div style="width:${o.p}%;background:${pctColor(o.p)}"></div></div>
+        <span class="tpct">${o.p}% (${o.t.c}/${o.t.n})</span>
+      </div>`
+      :`<div class="topicrow tnone">
+        <span class="tname">${esc(o.sec)}</span>
+        <div class="tbar"></div>
+        <span class="tpct">ยังไม่ได้ทำ</span>
+      </div>`).join('');
+    return `<div class="tchap">${CHNAME[ch]}</div>`+rows;
+  }).join('');
+  const topicSub=`<div style="font-size:13.5px;color:#8a90ad;margin:-4px 0 6px">ทำแล้ว ${doneT} จาก ${allT} หัวข้อ • ในแต่ละบทเรียงจากจุดที่ควรฝึกเพิ่ม (แถบลายทาง = ยังไม่เคยทำ)</div>`;
   document.getElementById('app').innerHTML=`
   <h1>👨‍👩‍👧 หน้าสรุปสำหรับผู้ปกครอง</h1>
   <div class="sub">เกมทศนิยม ป.5 — รวมผลทุกครั้งที่ลูกทำ</div>
   <div class="pgrid">${cards}</div>
   <div class="card" style="margin-top:16px">
-    <div class="sec-title">🎯 ความแม่นยำรายหัวข้อ (เรียงจากจุดที่ควรฝึกเพิ่ม)</div>
-    ${topicRows||'<div style="font-size:14px;color:#8a90ad">ยังไม่มีข้อมูล</div>'}
+    <div class="sec-title">🎯 ความแม่นยำรายหัวข้อ ครบทุกบท</div>
+    ${topicSub}
+    ${topicRows}
   </div>
   <div class="card">
     <div class="sec-title">🗂️ ประวัติการทำทั้งหมด</div>
