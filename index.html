@@ -78,6 +78,10 @@
   .lvcell small{display:block;color:#8a90ad;font-size:11.5px}
   .lvcell.none{color:#c3c7da;text-align:center}
   #updbar{position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#fff;font-weight:800;text-align:center;padding:11px;z-index:99;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .scorebadge.pend{background:#f59e0b}
+  .pendnote{font-size:12.5px;color:#b45309;font-weight:700}
+  .notdone{display:inline-block;background:#fff7ed;border:1.5px dashed #f59e0b;color:#b45309;font-weight:700;font-size:13px;border-radius:8px;padding:3px 10px;margin:2px 0 6px}
+  .resumebtn{display:block;width:100%;margin-top:8px;border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.92);color:#b45309}
   /* quiz */
   .topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#fff;font-weight:700}
   .pill{background:rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:14px}
@@ -150,7 +154,7 @@
 <script>
 'use strict';
 /* ================= version check (กันหน้าเก่าค้างในเครื่อง) ================= */
-const VERSION='20260817a';
+const VERSION='20260817b';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
@@ -1300,8 +1304,14 @@ async function apiSubmit(rec){
   if(!r.ok)throw new Error('submit '+r.status);
   return r.json();
 }
+async function apiSave(rec){
+  const r=await fetch(ROOT+'/api/save',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});
+  if(!r.ok)throw new Error('save '+r.status);
+  return r.json();
+}
 function mapRow(r){
-  return {ts:Date.parse(r.created_at),ch:r.chapter,score:r.score,total:r.total,
+  return {id:r.id,status:r.status||'done',ts:Date.parse(r.created_at),ch:r.chapter,score:r.score,total:r.total,
     secs:r.secs,items:r.items};
 }
 function showLoading(msg){
@@ -1357,7 +1367,7 @@ function buildQuiz(ch,lv){
 }
 function startQuiz(ch,lv){
   lv=lv||2;
-  G={ch,lv,qs:buildQuiz(ch,lv),i:0,score:0,answers:[],t0:Date.now()};
+  G={ch,lv,qs:buildQuiz(ch,lv),i:0,score:0,answers:[],t0:Date.now(),secsBase:0,pendingId:null,saveQ:Promise.resolve()};
   renderQ();
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -1400,29 +1410,68 @@ function answer(j){
   const wy=document.getElementById('why');
   if(wy&&cur.ex)wy.style.display='block';
   document.getElementById('nx').style.display='block';
+  saveProgress(); /* บันทึกทุกข้อที่ตอบ กันหลุดกลางคัน */
 }
 function next(){
   G.i++;
   if(G.i<QN)renderQ();else finish();
 }
+function quizRec(status){
+  return {chapter:G.ch,score:G.score,total:QN,status,
+    secs:Math.round((Date.now()-G.t0)/1000)+(G.secsBase||0),
+    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,ex:q.ex,exsvg:q.exsvg,lv:q.lv,choices:q.choices,correct:q.correct,user:G.answers[j]})),
+    sigs:G.qs.map(q=>q.sig).filter(Boolean)};
+}
+function saveProgress(){
+  const rec=quizRec('pending');const g=G;
+  g.saveQ=(g.saveQ||Promise.resolve()).then(async()=>{
+    try{
+      const res=await apiSave(g.pendingId?Object.assign({},rec,{id:g.pendingId}):rec);
+      if(res&&res.id)g.pendingId=res.id;
+    }catch(e){/* เน็ตสะดุดชั่วคราว รอบถัดไปจะส่งซ้ำทั้งก้อน */}
+  });
+}
+function resumeQuiz(id){
+  const r=HIST.find(h=>h.id===id&&h.status==='pending');
+  if(!r)return home();
+  const lv=r.items&&r.items[0]&&r.items[0].lv?r.items[0].lv:2;
+  const answers=r.items.map(it=>(it.user===null||it.user===undefined)?undefined:it.user);
+  const qs=r.items.map(it=>({sec:it.sec,q:it.q,svg:it.svg,ex:it.ex,exsvg:it.exsvg,lv:it.lv||lv,choices:it.choices,correct:it.correct}));
+  let i=0;while(i<qs.length&&answers[i]!==undefined)i++;
+  const score=answers.reduce((a,u,j)=>a+(u===qs[j].correct?1:0),0);
+  G={ch:r.ch,lv,qs,i,score,answers,t0:Date.now(),secsBase:r.secs||0,pendingId:id,saveQ:Promise.resolve()};
+  if(i>=qs.length)return finish();
+  renderQ();
+}
 function exitQuiz(){
-  if(confirm('ออกจากเกม? รอบนี้จะไม่ถูกบันทึก'))home();
+  const n=G.answers.filter(a=>a!==undefined).length;
+  if(n===0){
+    if(confirm('ออกจากเกม? ยังไม่ได้ตอบสักข้อ รอบนี้จะไม่ถูกบันทึก'))home();
+    return;
+  }
+  if(confirm(`พักไว้ก่อน? ตอบไปแล้ว ${n}/${QN} ข้อ ระบบบันทึกค้างไว้ให้ กลับมาทำต่อได้จากหน้าหลัก`)){
+    const g=G;
+    showLoading('กำลังบันทึกรอบที่ค้างไว้...');
+    (g.saveQ||Promise.resolve()).then(()=>boot());
+  }
 }
 async function finish(){
-  const secs=Math.round((Date.now()-G.t0)/1000);
-  const rec={chapter:G.ch,score:G.score,total:QN,secs,
-    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,ex:q.ex,exsvg:q.exsvg,lv:q.lv,choices:q.choices,correct:q.correct,user:G.answers[j]})),
-    sigs:G.qs.map(q=>q.sig)};
+  const rec=quizRec('done');
+  const secs=rec.secs;
   showLoading('กำลังบันทึกคะแนน...');
+  let res=null;
   try{
-    await apiSubmit(rec);
+    await (G.saveQ||Promise.resolve()); /* รอ autosave ที่ค้างอยู่ก่อน กันสถานะเด้งกลับเป็น pending */
+    if(G.pendingId)rec.id=G.pendingId;
+    res=await apiSubmit(rec);
   }catch(e){
     const saved=G; /* เก็บสถานะไว้ให้กดบันทึกซ้ำ */
     showError('บันทึกคะแนนไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วกดลองใหม่ (คะแนน '+G.score+'/'+QN+' ยังอยู่ครบ)',
       ()=>{G=saved;finish();});
     return;
   }
-  HIST.unshift({ts:Date.now(),ch:G.ch,score:G.score,total:QN,secs,items:rec.items});
+  if(rec.id)HIST=HIST.filter(h=>h.id!==rec.id);
+  HIST.unshift({id:(res&&res.id)||rec.id||null,status:'done',ts:Date.now(),ch:G.ch,score:G.score,total:QN,secs,items:rec.items});
   rec.sigs.forEach(s=>SIGS.add(s));
   const pct=G.score/QN*100;
   const emo=pct>=90?'🏆':pct>=70?'🌟':pct>=50?'💪':'📚';
@@ -1452,10 +1501,11 @@ function review(k){
   document.getElementById('app').innerHTML=`
   <div class="card">
     <div class="sec-title">📋 เฉลย — ${esc(CHNAME[r.ch])}</div>
-    <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${d}${r.items&&r.items[0]&&r.items[0].lv?` • ระดับ ${LVNAME[r.items[0].lv]}`:''} • ได้ ${r.score}/${r.total} คะแนน</div>
+    <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${d}${r.items&&r.items[0]&&r.items[0].lv?` • ระดับ ${LVNAME[r.items[0].lv]}`:''} • ${r.status==='pending'?`⏳ ทำยังไม่เรียบร้อย (ตอบแล้ว ${r.items.filter(it=>it.user!==undefined&&it.user!==null).length}/${r.total} ข้อ)`:`ได้ ${r.score}/${r.total} คะแนน`}</div>
     ${r.items.map((it,n)=>`
       <div class="ritem">
         <div class="qtext"><span class="rnum">${n+1}</span>${esc(it.q)}</div>
+        ${(it.user===undefined||it.user===null)?'<div class="notdone">⏳ ข้อนี้ยังไม่ได้ทำ</div>':''}
         ${it.svg?`<div style="text-align:center;margin:4px 0 8px">${it.svg}</div>`:''}
         ${it.choices.map((c,j)=>{
           let cls='rch';let mark='';
@@ -1493,7 +1543,7 @@ function renderLesson(){
   window.scrollTo(0,0);
 }
 function chStat(ch){
-  const rs=HIST.filter(r=>r.ch===ch);
+  const rs=HIST.filter(r=>r.ch===ch&&r.status!=='pending');
   if(!rs.length)return 'ยังไม่เคยทำ';
   const best=Math.max(...rs.map(r=>r.score));
   return `ทำแล้ว ${rs.length} ครั้ง • ดีที่สุด ${best}/${QN} • ล่าสุด ${rs[0].score}/${QN}`;
@@ -1502,17 +1552,25 @@ function scoreCls(r){const p=r.score/r.total;return p>=0.8?'good':p>=0.5?'mid':'
 function histRows(limit){
   return HIST.slice(0,limit).map((r,k)=>{
     const d=new Date(r.ts).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const pd=r.status==='pending';
+    const nAns=pd?r.items.filter(it=>it.user!==undefined&&it.user!==null).length:0;
     return `<div class="hrow">
       <span class="tag t${r.ch}">บทที่ ${r.ch}</span>
       <span>${d}</span>
-      <span class="scorebadge ${scoreCls(r)}">${r.score}/${r.total}</span>
+      ${pd?`<span class="scorebadge pend">⏳ ${nAns}/${r.total} ข้อ</span>`:`<span class="scorebadge ${scoreCls(r)}">${r.score}/${r.total}</span>`}
       ${r.items&&r.items[0]&&r.items[0].lv?`<span class="lvtag l${r.items[0].lv}">${['','Basic','Normal','Adv.'][r.items[0].lv]}</span>`:''}
-      <button class="linkbtn" onclick="review(${k})">ดูเฉลย</button>
+      ${pd?(IS_PARENT?`<span class="pendnote">ทำยังไม่เรียบร้อย</span><button class="linkbtn" onclick="review(${k})">ดูที่ทำแล้ว</button>`:`<button class="linkbtn" onclick="resumeQuiz(${r.id})">▶ ทำต่อ</button>`):`<button class="linkbtn" onclick="review(${k})">ดูเฉลย</button>`}
     </div>`;
   }).join('');
 }
 function home(){
   G=null;
+  const PEND={};
+  HIST.filter(r=>r.status==='pending').forEach(r=>{
+    const n=r.items.filter(it=>it.user!==undefined&&it.user!==null).length;
+    const plv=r.items&&r.items[0]&&r.items[0].lv?r.items[0].lv:2;
+    (PEND[r.ch]=PEND[r.ch]||[]).push({id:r.id,n,lv:plv});
+  });
   document.getElementById('app').innerHTML=`
   <h1>🧮 เกมคณิตคิดสนุก ป.5 🎯</h1>
   <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ — เลือกระดับ 🟢 Basic → 🟡 Normal → 🔴 Advance • โจทย์สุ่มใหม่ทุกครั้ง ไม่ซ้ำของเดิม</div>
@@ -1528,6 +1586,7 @@ function home(){
       <button onclick="startQuiz(${ch},2)">🟡 Normal</button>
       <button onclick="startQuiz(${ch},3)">🔴 Advance</button>
     </div>
+    ${(PEND[ch]||[]).map(p=>`<button class="resumebtn" onclick="resumeQuiz(${p.id})">⏳ ทำต่อรอบที่ค้างไว้ — ทำแล้ว ${p.n}/${QN} ข้อ (${LVNAME[p.lv]})</button>`).join('')}
   </div>`).join('')}
   ${HIST.length?`
   <div class="card">
@@ -1554,7 +1613,7 @@ function parentHome(){
   G=null;
   const cards=Object.keys(CHNAME).map(ch=>{
     ch=+ch;
-    const rs=HIST.filter(r=>r.ch===ch);
+    const rs=HIST.filter(r=>r.ch===ch&&r.status!=='pending');
     const n=rs.length;
     const best=n?Math.max(...rs.map(r=>r.score)):0;
     const avg=n?(rs.reduce((a,r)=>a+r.score,0)/n).toFixed(1):'-';
@@ -1570,7 +1629,7 @@ function parentHome(){
   const lvRows=Object.keys(CHNAME).map(ch=>{
     ch=+ch;
     const pc=[1,2,3].map(lv=>{
-      const rs=HIST.filter(r=>r.ch===ch&&rlv(r)===lv);
+      const rs=HIST.filter(r=>r.ch===ch&&r.status!=='pending'&&rlv(r)===lv);
       return rs.length?{n:rs.length,p:Math.round(rs.reduce((a,r)=>a+r.score/r.total,0)/rs.length*100)}:null;
     });
     let rec='ยังไม่เริ่ม — ชวนเริ่มที่ Basic';
@@ -1582,9 +1641,18 @@ function parentHome(){
       :'<div class="lvcell none">—</div>').join('');
     return `<div class="lvrowp"><div class="lvchapc"><b>บทที่ ${ch}</b><small>${rec}</small></div>${cells}</div>`;
   }).join('');
+  /* รอบที่ค้างอยู่ (ทำยังไม่เรียบร้อย) */
+  const pendRows=HIST.map((r,k)=>({r,k})).filter(x=>x.r.status==='pending').map(x=>{
+    const n=x.r.items.filter(it=>it.user!==undefined&&it.user!==null).length;
+    const c=x.r.items.filter(it=>it.user!==undefined&&it.user!==null&&it.user===it.correct).length;
+    const d=new Date(x.r.ts).toLocaleString('th-TH',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const plv=x.r.items&&x.r.items[0]&&x.r.items[0].lv?x.r.items[0].lv:2;
+    return `<div class="hrow"><span class="tag t${x.r.ch}">บทที่ ${x.r.ch}</span><span>${d}</span><span class="scorebadge pend">⏳ ${n}/${x.r.total} ข้อ</span><span class="lvtag l${plv}">${['','Basic','Normal','Adv.'][plv]}</span><span style="font-size:13px">ถูกแล้ว ${c} ข้อ</span><button class="linkbtn" onclick="review(${x.k})">ดูที่ทำแล้ว</button></div>`;
+  }).join('');
   /* สรุปความแม่นยำรายหัวข้อ — โชว์ครบทุกหัวข้อของทุกบท หัวข้อที่ยังไม่เคยทำติดป้ายไว้ */
   const tstat={};
   HIST.forEach(r=>r.items.forEach(it=>{
+    if(it.user===undefined||it.user===null)return; /* ข้อที่ยังไม่ได้ทำ ไม่นับสถิติ */
     const k=r.ch+'|'+it.sec;
     if(!tstat[k])tstat[k]={n:0,c:0};
     tstat[k].n++;
@@ -1615,6 +1683,11 @@ function parentHome(){
   <h1>👨‍👩‍👧 หน้าสรุปสำหรับผู้ปกครอง</h1>
   <div class="sub">เกมทศนิยม ป.5 — รวมผลทุกครั้งที่ลูกทำ</div>
   <div class="pgrid">${cards}</div>
+  ${pendRows?`<div class="card" style="margin-top:16px">
+    <div class="sec-title">⏳ รอบที่ทำยังไม่เรียบร้อย — ให้ลูกกลับมาทำต่อได้</div>
+    <div style="font-size:13.5px;color:#8a90ad;margin:-4px 0 6px">เก็บโจทย์ทั้งชุดและคำตอบที่ทำไปแล้วไว้ครบ สถานะจะเปลี่ยนเป็นเสร็จเมื่อทำครบ 20 ข้อ</div>
+    ${pendRows}
+  </div>`:''}
   <div class="card" style="margin-top:16px">
     <div class="sec-title">📶 ระดับความเข้าใจ (Basic → Normal → Advance)</div>
     <div style="font-size:13.5px;color:#8a90ad;margin:-4px 0 8px">คะแนนเฉลี่ยของแต่ละระดับ — ได้ 70% ขึ้นไปถือว่าผ่าน พร้อมขยับระดับถัดไป</div>
