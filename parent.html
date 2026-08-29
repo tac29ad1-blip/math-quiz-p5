@@ -32,6 +32,7 @@
   .ch5{background:linear-gradient(135deg,#eb3349,#f45c43)}
   .ch6{background:linear-gradient(135deg,#0f766e,#2dd4bf)}
   .ch7{background:linear-gradient(135deg,#c2185b,#f06292)}
+  .ch8{background:linear-gradient(135deg,#334155,#64748b)}
   .stat{font-size:13px;margin-top:8px;background:rgba(255,255,255,.22);border-radius:10px;padding:6px 10px;display:inline-block}
   .sec-title{font-size:17px;font-weight:700;margin-bottom:10px;color:#39418a}
   .hrow{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #eef0f8;font-size:14px;flex-wrap:wrap}
@@ -39,7 +40,7 @@
   .tag{padding:2px 10px;border-radius:20px;color:#fff;font-size:12px;white-space:nowrap}
   .tag.t1{background:#2f80ed}.tag.t2{background:#11998e}
   .tag.t3{background:#e67e22}.tag.t4{background:#8e2de2}.tag.t5{background:#eb3349}
-  .tag.t6{background:#0f766e}.tag.t7{background:#c2185b}
+  .tag.t6{background:#0f766e}.tag.t7{background:#c2185b}.tag.t8{background:#334155}
   .scorebadge{font-weight:700;margin-left:auto;white-space:nowrap}
   .good{color:#27ae60}.mid{color:#e67e22}.bad{color:#e74c3c}
   .linkbtn{border:none;background:#eef2ff;color:#3b5bdb;border-radius:10px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px}
@@ -156,7 +157,7 @@
 <script>
 'use strict';
 /* ================= version check (กันหน้าเก่าค้างในเครื่อง) ================= */
-const VERSION='20260817c';
+const VERSION='20260817d';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
@@ -851,6 +852,60 @@ function w7_pile(){
     ex:`ขั้น 1 จำนวนกอง: ${g*n} ÷ ${g} = ${n} กอง • ขั้น 2 รายได้: ${n} × ${fmt(s,2)} = ${fmt(ans,2)} บาท`};
 }
 
+/* ================= บทที่ 8 : ทบทวนคูณหารจำนวนเต็ม (ฐานของคูณหารทศนิยม) ================= */
+function i8_mul(lv){
+  let a,b;
+  if(lv===1){a=ri(12,99);b=ri(2,9);}
+  else if(lv===3){a=ri(112,999);b=ri(11,99);}
+  else{if(ri(0,1)===0){a=ri(112,999);b=ri(2,9);}else{a=ri(12,99);b=ri(11,99);}}
+  const ans=a*b;
+  const r=mcNum(ans,0,{trim:false,extraVals:[(a+1)*b,a*(b+1),(a-1)*b]});
+  return {sec:'คูณจำนวนเต็ม',q:`${a} × ${b} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`8m|${a}|${b}`,
+    ex:`ตั้งคูณทีละหลักจากขวาไปซ้าย (อย่าลืมทด)${b>9?`: แยกคิด ${a} × ${b%10} กับ ${a} × ${Math.floor(b/10)}0 แล้วนำมาบวกกัน`:''} = ${ans}`};
+}
+function i8_div(lv){
+  let d,q2;
+  if(lv===1){d=ri(2,9);q2=ri(12,99);}
+  else if(lv===3){d=ri(11,25);q2=ri(21,99);}
+  else{if(ri(0,1)===0){d=ri(2,9);q2=ri(112,999);}else{d=ri(11,19);q2=ri(12,60);}}
+  const dividend=d*q2;
+  const r=mcNum(q2,0,{trim:false,extraVals:[q2+d,q2-d>0?q2-d:q2+2*d,q2+1]});
+  return {sec:'หารจำนวนเต็ม',q:`${dividend} ÷ ${d} มีค่าเท่าไร`,
+    choices:r.choices,correct:r.correct,sig:`8d|${dividend}|${d}`,
+    ex:`ตั้งหารยาว: ${dividend} ÷ ${d} = ${q2} (เช็คย้อนกลับ: ${q2} × ${d} = ${dividend} ✓)`};
+}
+function i8_rem(lv){
+  const d=lv===3?ri(11,19):ri(3,9);
+  const q2=lv===1?ri(5,20):lv===3?ri(21,80):ri(12,60);
+  const rm=ri(1,d-1);
+  const dividend=d*q2+rm;
+  const mk=(qq,rr)=>`ได้ ${qq} เศษ ${rr}`;
+  const set=new Set([mk(q2,rm)]);const opts=[mk(q2,rm)];
+  const cands=[[q2,rm+1<d?rm+1:rm-1],[q2+1,rm],[q2-1,rm],[q2,d-rm]];
+  for(const c of cands){const s=mk(c[0],c[1]);
+    if(opts.length<4&&c[1]>0&&c[1]<d&&c[0]>0&&!set.has(s)){set.add(s);opts.push(s);}}
+  let x=2;while(opts.length<4){const s=mk(q2+x,rm);if(!set.has(s)){set.add(s);opts.push(s);}x++;}
+  const ord=shuffle(opts.map((_,i2)=>i2));
+  return {sec:'หารจำนวนเต็ม',q:`${dividend} ÷ ${d} ได้ผลหารและเศษเท่าไร`,
+    choices:ord.map(i2=>opts[i2]),correct:ord.indexOf(0),sig:`8r|${dividend}|${d}`,
+    ex:`หารยาว: ${d} × ${q2} = ${d*q2} เหลือเศษ ${dividend} − ${d*q2} = ${rm} → ได้ ${q2} เศษ ${rm} (เช็ค: ${d} × ${q2} + ${rm} = ${dividend} ✓)`};
+}
+function i8_word(lv){
+  if(ri(0,1)===0){
+    const p=lv===3?ri(25,99):ri(12,89), n=lv===3?ri(12,36):ri(6,24);
+    const r=mcNum(p*n,0,{trim:false,extraVals:[p*(n+1),(p+1)*n,p*n+10]});
+    return {sec:'โจทย์ปัญหาคูณหาร',q:`ดินสอกล่องละ ${p} บาท ซื้อ ${n} กล่อง ต้องจ่ายเงินทั้งหมดกี่บาท`,
+      choices:r.choices.map(c=>`${c} บาท`),correct:r.correct,sig:`8w|m|${p}|${n}`,
+      ex:`ราคาต่อกล่อง × จำนวนกล่อง = ${p} × ${n} = ${p*n} บาท`};
+  }
+  const n=lv===3?ri(12,36):ri(6,24), per=lv===3?ri(25,99):ri(12,45);
+  const r=mcNum(per,0,{trim:false,extraVals:[per+n,per+1,per-1]});
+  return {sec:'โจทย์ปัญหาคูณหาร',q:`มีลูกอม ${per*n} เม็ด แบ่งใส่ถุง ${n} ถุง ถุงละเท่าๆ กัน จะได้ถุงละกี่เม็ด`,
+    choices:r.choices.map(c=>`${c} เม็ด`),correct:r.correct,sig:`8w|d|${per*n}|${n}`,
+    ex:`"แบ่งเท่าๆ กัน" ใช้การหาร: ${per*n} ÷ ${n} = ${per} เม็ด`};
+}
+
 const CH1_MIX=[g_place,g_place,g_place,g_place,g_expand,g_expand,g_expand,
   g_compare,g_compare,g_compare,g_order,g_order,g_order,
   g_frac,g_frac,g_frac,g_frac,g_round,g_round,g_round];
@@ -873,6 +928,9 @@ const CH7_MIX=[g7_paren,g7_paren,g7_paren,g7_paren,g7_paren,
   g7_diff,g7_diff,g7_diff,
   w7_change,w7_change,w7_change,w7_share,w7_share,w7_share,
   w7_ticket,w7_ticket,w7_ticket,w7_pile,w7_pile,w7_pile];
+const CH8_MIX=[i8_mul,i8_mul,i8_mul,i8_mul,i8_div,i8_div,i8_div,i8_div,
+  i8_rem,i8_rem,i8_rem,i8_word,i8_word,
+  d3_mul,d3_mul,d3_mul,d3_div,d3_div,d3_fillmul,d3_filldiv];
 /* ---- ระดับความยาก: 1=Basic 2=Normal 3=Advance ---- */
 const rep=(g,n)=>Array(n).fill(g);
 const WORDS_EASY=[w_rope,w_weight,w_race,w_fruit,w_height,w_dist,w_tax];
@@ -896,6 +954,9 @@ const LVPOOL={
  7:{1:[...rep(g7_basic,10),...rep(w7_change,6),...rep(g7_paren,4)],
     2:CH7_MIX,
     3:[...rep(g7_diff,6),...rep(w7_share,5),...rep(w7_ticket,5),...rep(w7_pile,4)]},
+ 8:{1:[...rep(i8_mul,6),...rep(i8_div,6),...rep(d3_mul,4),...rep(d3_div,4)],
+    2:CH8_MIX,
+    3:[...rep(i8_mul,5),...rep(i8_rem,5),...rep(i8_word,4),...rep(d3_fillmul,3),...rep(d3_filldiv,3)]},
 };
 const LVNAME={1:'🟢 Basic',2:'🟡 Normal',3:'🔴 Advance'};
 const LVTIME={1:1200,2:1800,3:2400}; /* เวลาสอบ (วินาที): Basic 20 / Normal 30 / Advance 40 นาที */
@@ -907,6 +968,7 @@ const CHMETA={
  5:{icon:'📔',cls:'ch5',grad:'linear-gradient(135deg,#eb3349,#f45c43)',sub:'พื้นที่ = ฐาน×สูง÷2 • หาส่วนสูง • มุมฉาก/มุมป้าน • รูปหลายเหลี่ยม'},
  6:{icon:'📒',cls:'ch6',grad:'linear-gradient(135deg,#0f766e,#2dd4bf)',sub:'ทศนิยม × ทศนิยม • ตำแหน่งจุดทศนิยม • หารด้วยจำนวนเต็ม/ทศนิยม • โจทย์ปัญหา'},
  7:{icon:'📓',cls:'ch7',grad:'linear-gradient(135deg,#c2185b,#f06292)',sub:'ทำในวงเล็บก่อน • บวกลบคูณหารระคน • โจทย์ปัญหาหลายขั้นตอน'},
+ 8:{icon:'📝',cls:'ch8',grad:'linear-gradient(135deg,#334155,#64748b)',sub:'ตั้งคูณ • หารยาว • หารมีเศษ • ทวน ×10 ×100 ×1000 — พื้นฐานก่อนลุยคูณหารทศนิยม'},
 };
 
 /* ================= เนื้อหาบทเรียน (โหมดเรียนก่อนทำโจทย์) ================= */
@@ -1288,6 +1350,61 @@ const LESSONS={
   <div class="trybox"><b>ข้อ 3)</b> ดินสอแท่งละ 6.75 บาท ซื้อ 4 แท่ง จ่ายแบงก์ 100 ได้เงินทอนเท่าไร?
    <details><summary>👀 กดดูเฉลย</summary><div class="tans">ขั้น 1 ราคารวม: 6.75 × 4 = 27 บาท • ขั้น 2 เงินทอน: 100 − 27 = <b>73 บาท</b></div></details></div>`},
 ],
+8:[
+ {t:'ทำไมต้องทบทวนบทนี้?',h:`
+  <p>ก่อนเรียน<b>คูณหารทศนิยม</b> คุณครูให้เตรียม 2 เรื่องให้แม่น:</p>
+  <div class="exbox">① <b>คูณหารจำนวนเต็ม</b> — เพราะขั้นแรกของการคูณทศนิยมคือ "คูณแบบไม่มีจุด" ถ้าตั้งคูณ/หารยาวคล่อง ทศนิยมก็ง่ายทันที<br>② <b>× และ ÷ ด้วย 10, 100, 1000</b> — หัวใจของการเลื่อนจุดทศนิยม</div>
+  <div class="tipbox">💡 บทนี้คือ "สนามซ้อม" — แม่นบทนี้เมื่อไร บทที่ 6 (คูณหารทศนิยม) จะกลายเป็นเรื่องหมูๆ</div>`},
+ {t:'ตั้งคูณทีละขั้น (มีทด)',h:`
+  <p>คูณจาก<b>ขวาไปซ้าย</b> ทีละหลัก เกิน 9 ให้ทดไปหลักถัดไป</p>
+  <div style="text-align:center"><div class="vmath">  ⁴
+  47
+×  6
+────
+ 282</div></div>
+  <div class="exbox"><b>หลักหน่วย:</b> 7 × 6 = 42 → เขียน 2 ทด 4<br><b>หลักสิบ:</b> 4 × 6 = 24 บวกทด 4 = 28 → เขียน 28<br>คำตอบคือ <b>282</b></div>
+  <div class="tipbox">⚠️ จุดพลาดบ่อยสุด: ลืมบวกเลขทด! เขียนตัวทดเล็กๆ ไว้ข้างบนเสมอ</div>`},
+ {t:'คูณ 2 หลัก × 2 หลัก',h:`
+  <p>แยกตัวคูณเป็น <b>หลักหน่วย</b> กับ <b>หลักสิบ</b> คูณทีละส่วน แล้วบวกกัน</p>
+  <div style="text-align:center"><div class="vmath">   36
+×  24
+─────
+  144  ← 36 × 4
+  720  ← 36 × 20
+─────
+  864</div></div>
+  <div class="tipbox">💡 บรรทัดที่สองคือคูณด้วย "หลักสิบ" อย่าลืมเติม 0 ท้าย (36 × 2<b>0</b> = 72<b>0</b>) — ลืมเติม 0 คือกับดักอันดับหนึ่งของข้อสอบ!</div>`},
+ {t:'หารยาวทีละขั้น',h:`
+  <p>หารจาก<b>ซ้ายไปขวา</b> ทีละหลัก เศษเอาไปต่อหน้าเลขตัวถัดไป</p>
+  <div style="text-align:center"><div class="vmath">852 ÷ 4
+8 ÷ 4 = 2 พอดี   → เขียน 2
+5 ÷ 4 = 1 เศษ 1  → เขียน 1
+12 ÷ 4 = 3 พอดี  → เขียน 3
+(เศษ 1 ต่อกับ 2 เป็น 12)
+
+852 ÷ 4 = 213</div></div>
+  <div class="exbox">เช็คย้อนกลับทุกครั้ง: 213 × 4 = 852 ✓ ถูกเป๊ะ</div>`},
+ {t:'หารมีเศษ',h:`
+  <p>บางทีหารแล้วไม่ลงตัว จะเหลือ<b>เศษ</b> — เศษต้อง<b>น้อยกว่าตัวหาร</b>เสมอ</p>
+  <div class="exbox">75 ÷ 6 = ?<br>6 × 12 = 72 ใกล้ 75 ที่สุด (ถ้า 6 × 13 = 78 จะเกิน)<br>เศษ = 75 − 72 = 3 → ตอบ <b>ได้ 12 เศษ 3</b></div>
+  <div class="bigf">ตัวหาร × ผลหาร + เศษ = ตัวตั้ง<br>6 × 12 + 3 = 75 ✓</div>
+  <div class="tipbox">💡 ใช้สูตรนี้เช็คคำตอบได้ทุกข้อ และถ้าเศษออกมามากกว่าหรือเท่ากับตัวหาร แปลว่าหารยังไม่สุด!</div>`},
+ {t:'ทวนเร็ว: × ÷ 10 100 1000',h:`
+  <p>จำนวนเต็มก็ใช้กติกาเดียวกับทศนิยม: <b>คูณ = จุดเลื่อนขวา (เติม 0), หาร = จุดเลื่อนซ้าย</b></p>
+  <div class="exbox"><b>คูณ = เติม 0 ตามจำนวนศูนย์:</b><br>45 × 10 = <b>450</b> • 45 × 100 = <b>4,500</b> • 27 × 1000 = <b>27,000</b></div>
+  <div class="exbox"><b>หาร = จุดเลื่อนซ้าย:</b><br>3,200 ÷ 100 = <b>32</b> • 460 ÷ 100 = <b>4.6</b> • 4,500 ÷ 1000 = <b>4.5</b></div>
+  <div class="tipbox">💡 สังเกต: หารแล้วไม่ลงตัวจะกลายเป็นทศนิยม (460 ÷ 100 = 4.6) — นี่แหละสะพานเชื่อมไปบทคูณหารทศนิยม!</div>`},
+ {t:'ลองทำดูเอง! ✏️',h:`
+  <p>ซ้อมมือก่อนลงสนาม คิดในกระดาษแล้วค่อยกดดูเฉลยนะ</p>
+  <div class="trybox"><b>ข้อ 1)</b> 58 × 7 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">8×7 = 56 เขียน 6 ทด 5 • 5×7 = 35 บวกทด 5 = 40 → <b>406</b></div></details></div>
+  <div class="trybox"><b>ข้อ 2)</b> 936 ÷ 4 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">9÷4 = 2 เศษ 1 • 13÷4 = 3 เศษ 1 • 16÷4 = 4 → <b>234</b> (เช็ค: 234 × 4 = 936 ✓)</div></details></div>
+  <div class="trybox"><b>ข้อ 3)</b> 83 ÷ 5 ได้ผลหารและเศษเท่าไร?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">5 × 16 = 80 → <b>ได้ 16 เศษ 3</b> (เช็ค: 5 × 16 + 3 = 83 ✓)</div></details></div>
+  <div class="trybox"><b>ข้อ 4)</b> 27 × 1000 = ? และ 460 ÷ 100 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">27 × 1000 = <b>27,000</b> (เติม 0 สามตัว) • 460 ÷ 100 = <b>4.6</b> (จุดเลื่อนซ้าย 2)</div></details></div>`},
+],
 };
 
 
@@ -1346,7 +1463,8 @@ async function boot(){
 const QN=20;
 const CHNAME={1:'บทที่ 1 ทศนิยมเบื้องต้น',2:'บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา',
   3:'บทที่ 3 คูณ หาร ด้วย 10 100 1000',4:'บทที่ 4 พื้นที่สี่เหลี่ยมด้านขนาน',5:'บทที่ 5 พื้นที่สามเหลี่ยม',
-  6:'บทที่ 6 การคูณและหารทศนิยม',7:'บทที่ 7 โจทย์ระคนทศนิยม'};
+  6:'บทที่ 6 การคูณและหารทศนิยม',7:'บทที่ 7 โจทย์ระคนทศนิยม',
+  8:'บทที่ 8 ทบทวนคูณหารจำนวนเต็ม (เตรียมสอบ)'};
 const LET=['ก','ข','ค','ง'];
 let G=null;
 
@@ -1642,6 +1760,7 @@ const TOPICS={
  5:['พื้นที่สามเหลี่ยม','พื้นที่สามเหลี่ยม (ประยุกต์)','พื้นที่รูปหลายเหลี่ยม','แนวคิดฐานและส่วนสูง'],
  6:['การคูณทศนิยม','การหารทศนิยม','โจทย์ปัญหาคูณหารทศนิยม'],
  7:['ลำดับการคำนวณ','โจทย์ปัญหาหลายขั้นตอน'],
+ 8:['คูณจำนวนเต็ม','หารจำนวนเต็ม','โจทย์ปัญหาคูณหาร','คูณด้วย 10 100 1000','หารด้วย 10 100 1000'],
 };
 function parentHome(){
   G=null;
