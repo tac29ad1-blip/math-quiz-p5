@@ -82,6 +82,8 @@
   .pendnote{font-size:12.5px;color:#b45309;font-weight:700}
   .notdone{display:inline-block;background:#fff7ed;border:1.5px dashed #f59e0b;color:#b45309;font-weight:700;font-size:13px;border-radius:8px;padding:3px 10px;margin:2px 0 6px}
   .resumebtn{display:block;width:100%;margin-top:8px;border:none;border-radius:10px;padding:10px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.92);color:#b45309}
+  .pill.tlow{background:#dc2626;color:#fff}
+  .scorebadge.tmo{background:#7c3aed}
   /* quiz */
   .topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#fff;font-weight:700}
   .pill{background:rgba(255,255,255,.25);border-radius:20px;padding:5px 14px;font-size:14px}
@@ -154,7 +156,7 @@
 <script>
 'use strict';
 /* ================= version check (กันหน้าเก่าค้างในเครื่อง) ================= */
-const VERSION='20260817b';
+const VERSION='20260817c';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
@@ -896,6 +898,7 @@ const LVPOOL={
     3:[...rep(g7_diff,6),...rep(w7_share,5),...rep(w7_ticket,5),...rep(w7_pile,4)]},
 };
 const LVNAME={1:'🟢 Basic',2:'🟡 Normal',3:'🔴 Advance'};
+const LVTIME={1:1200,2:1800,3:2400}; /* เวลาสอบ (วินาที): Basic 20 / Normal 30 / Advance 40 นาที */
 const CHMETA={
  1:{icon:'📘',cls:'ch1',grad:'linear-gradient(135deg,#2f80ed,#56ccf2)',sub:'ค่าประจำหลัก • การกระจาย • เปรียบเทียบ • เรียงลำดับ • เศษส่วน • ค่าประมาณ'},
  2:{icon:'📗',cls:'ch2',grad:'linear-gradient(135deg,#11998e,#38ef7d)',sub:'การบวก • การลบ • หาจำนวนที่หายไป • เปรียบเทียบผลลัพธ์ • โจทย์ปัญหา'},
@@ -1311,7 +1314,7 @@ async function apiSave(rec){
   return r.json();
 }
 function mapRow(r){
-  return {id:r.id,status:r.status||'done',ts:Date.parse(r.created_at),ch:r.chapter,score:r.score,total:r.total,
+  return {id:r.id,status:r.status||'done',timedOut:r.timed_out===true,ts:Date.parse(r.created_at),ch:r.chapter,score:r.score,total:r.total,
     secs:r.secs,items:r.items};
 }
 function showLoading(msg){
@@ -1368,7 +1371,30 @@ function buildQuiz(ch,lv){
 function startQuiz(ch,lv){
   lv=lv||2;
   G={ch,lv,qs:buildQuiz(ch,lv),i:0,score:0,answers:[],t0:Date.now(),secsBase:0,pendingId:null,saveQ:Promise.resolve()};
+  startTicker();
   renderQ();
+}
+/* ---------- จับเวลาเหมือนสอบจริง (เวลาสะสม พักแล้วกลับมานับต่อ) ---------- */
+function elapsedSecs(){return Math.round((Date.now()-G.t0)/1000)+(G.secsBase||0);}
+function remainSecs(){return (LVTIME[G.lv]||1800)-elapsedSecs();}
+function fmtTime(s){s=Math.max(0,s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function stopTicker(){if(window._qtick){clearInterval(window._qtick);window._qtick=null;}}
+function startTicker(){
+  stopTicker();
+  window._qtick=setInterval(()=>{
+    if(!G||!G.qs||G.finished){stopTicker();return;}
+    const rm=remainSecs();
+    const tp=document.getElementById('tmr');
+    if(tp){tp.textContent='⏱ '+fmtTime(rm);if(rm<=120)tp.classList.add('tlow');}
+    if(rm<=0){stopTicker();timeUp();}
+  },1000);
+}
+function timeUp(){
+  if(!G||G.finished)return;
+  stopTicker();
+  G.timedOut=true;
+  alert('⏰ หมดเวลาแล้ว! รอบนี้ยังไม่ผ่าน เพราะต้องทำครบ '+QN+' ข้อภายใน '+Math.round((LVTIME[G.lv]||1800)/60)+' นาที ไปดูผลกันเลย');
+  finish();
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderQ(){
@@ -1377,6 +1403,7 @@ function renderQ(){
   <div class="topbar">
     <span class="pill">${CHNAME[G.ch]}</span>
     <span class="pill">${LVNAME[G.lv]}</span>
+    <span class="pill ${remainSecs()<=120?'tlow':''}" id="tmr">⏱ ${fmtTime(remainSecs())}</span>
     <span class="pill">ข้อ ${G.i+1}/${QN}</span>
     <span class="pill">⭐ ${G.score}</span>
     <button class="exit" onclick="exitQuiz()">ออก</button>
@@ -1441,22 +1468,28 @@ function resumeQuiz(id){
   const score=answers.reduce((a,u,j)=>a+(u===qs[j].correct?1:0),0);
   G={ch:r.ch,lv,qs,i,score,answers,t0:Date.now(),secsBase:r.secs||0,pendingId:id,saveQ:Promise.resolve()};
   if(i>=qs.length)return finish();
+  if(remainSecs()<=0)return timeUp(); /* เวลาสะสมเกินกำหนดแล้ว */
+  startTicker();
   renderQ();
 }
 function exitQuiz(){
   const n=G.answers.filter(a=>a!==undefined).length;
   if(n===0){
-    if(confirm('ออกจากเกม? ยังไม่ได้ตอบสักข้อ รอบนี้จะไม่ถูกบันทึก'))home();
+    if(confirm('ออกจากเกม? ยังไม่ได้ตอบสักข้อ รอบนี้จะไม่ถูกบันทึก')){stopTicker();home();}
     return;
   }
-  if(confirm(`พักไว้ก่อน? ตอบไปแล้ว ${n}/${QN} ข้อ ระบบบันทึกค้างไว้ให้ กลับมาทำต่อได้จากหน้าหลัก`)){
+  if(confirm(`พักไว้ก่อน? ตอบไปแล้ว ${n}/${QN} ข้อ ระบบบันทึกค้างไว้ให้ (นาฬิกาหยุดเดิน กลับมานับต่อ) กลับมาทำต่อได้จากหน้าหลัก`)){
+    stopTicker();
     const g=G;
     showLoading('กำลังบันทึกรอบที่ค้างไว้...');
     (g.saveQ||Promise.resolve()).then(()=>boot());
   }
 }
 async function finish(){
+  stopTicker();
+  G.finished=true;
   const rec=quizRec('done');
+  rec.timedOut=!!G.timedOut;
   const secs=rec.secs;
   showLoading('กำลังบันทึกคะแนน...');
   let res=null;
@@ -1471,11 +1504,12 @@ async function finish(){
     return;
   }
   if(rec.id)HIST=HIST.filter(h=>h.id!==rec.id);
-  HIST.unshift({id:(res&&res.id)||rec.id||null,status:'done',ts:Date.now(),ch:G.ch,score:G.score,total:QN,secs,items:rec.items});
+  HIST.unshift({id:(res&&res.id)||rec.id||null,status:'done',timedOut:rec.timedOut,ts:Date.now(),ch:G.ch,score:G.score,total:QN,secs,items:rec.items});
   rec.sigs.forEach(s=>SIGS.add(s));
   const pct=G.score/QN*100;
-  const emo=pct>=90?'🏆':pct>=70?'🌟':pct>=50?'💪':'📚';
-  const msg=pct>=90?'สุดยอดไปเลย! เก่งมากๆ':pct>=70?'เก่งมาก! อีกนิดเดียวเต็มแล้ว':pct>=50?'ดีมาก! ฝึกอีกหน่อยนะ':'ไม่เป็นไร ลองใหม่อีกครั้งนะ สู้ๆ';
+  const nAns=G.answers.filter(a=>a!==undefined).length;
+  const emo=G.timedOut?'⏰':pct>=90?'🏆':pct>=70?'🌟':pct>=50?'💪':'📚';
+  const msg=G.timedOut?`หมดเวลา! ตอบทัน ${nAns}/${QN} ข้อ รอบนี้ยังไม่ผ่าน — ต้องทำครบทุกข้อและทันเวลา ลองใหม่นะ สู้ๆ`:pct>=90?'สุดยอดไปเลย! เก่งมากๆ':pct>=70?'เก่งมาก! อีกนิดเดียวเต็มแล้ว':pct>=50?'ดีมาก! ฝึกอีกหน่อยนะ':'ไม่เป็นไร ลองใหม่อีกครั้งนะ สู้ๆ';
   const mm=Math.floor(secs/60),ss=secs%60;
   const lastCh=G.ch;
   document.getElementById('app').innerHTML=`
@@ -1483,9 +1517,9 @@ async function finish(){
     <div class="bigemoji">${emo}</div>
     <div class="resscore">${G.score} / ${QN}</div>
     <div class="resmsg">${msg}</div>
-    <div class="restime">${esc(CHNAME[lastCh])} • ระดับ ${LVNAME[G.lv]} • ใช้เวลา ${mm} นาที ${ss} วินาที • บันทึกขึ้นระบบแล้ว ✓</div>
+    <div class="restime">${esc(CHNAME[lastCh])} • ระดับ ${LVNAME[G.lv]} • ใช้เวลา ${mm} นาที ${ss} วินาที ${G.timedOut?`— เกินกำหนด ${Math.round((LVTIME[G.lv]||1800)/60)} นาที ⏰ ไม่ผ่าน`:`— ทันเวลา ✓ (กำหนด ${Math.round((LVTIME[G.lv]||1800)/60)} นาที)`} • บันทึกขึ้นระบบแล้ว ✓</div>
     <div class="btnrow">
-      ${G.score>=17&&G.lv<3?`<button class="nextbtn" onclick="startQuiz(${lastCh},${G.lv+1})">⬆️ เก่งมาก! ขยับไประดับ ${LVNAME[G.lv+1]}</button>`:''}
+      ${!G.timedOut&&G.score>=17&&G.lv<3?`<button class="nextbtn" onclick="startQuiz(${lastCh},${G.lv+1})">⬆️ เก่งมาก! ขยับไประดับ ${LVNAME[G.lv+1]}</button>`:''}
       <button class="nextbtn" onclick="startQuiz(${lastCh},${G.lv})">🔄 ทำชุดใหม่ระดับเดิม (โจทย์ไม่ซ้ำ)</button>
       <button class="nextbtn alt" onclick="review(0)">📋 ดูเฉลยชุดนี้</button>
       <button class="nextbtn ghost" onclick="home()">🏠 หน้าหลัก</button>
@@ -1501,7 +1535,7 @@ function review(k){
   document.getElementById('app').innerHTML=`
   <div class="card">
     <div class="sec-title">📋 เฉลย — ${esc(CHNAME[r.ch])}</div>
-    <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${d}${r.items&&r.items[0]&&r.items[0].lv?` • ระดับ ${LVNAME[r.items[0].lv]}`:''} • ${r.status==='pending'?`⏳ ทำยังไม่เรียบร้อย (ตอบแล้ว ${r.items.filter(it=>it.user!==undefined&&it.user!==null).length}/${r.total} ข้อ)`:`ได้ ${r.score}/${r.total} คะแนน`}</div>
+    <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${d}${r.items&&r.items[0]&&r.items[0].lv?` • ระดับ ${LVNAME[r.items[0].lv]}`:''} • ${r.status==='pending'?`⏳ ทำยังไม่เรียบร้อย (ตอบแล้ว ${r.items.filter(it=>it.user!==undefined&&it.user!==null).length}/${r.total} ข้อ)`:`ได้ ${r.score}/${r.total} คะแนน${r.timedOut?' • ⏰ หมดเวลา — รอบนี้ไม่ผ่าน':''}`}</div>
     ${r.items.map((it,n)=>`
       <div class="ritem">
         <div class="qtext"><span class="rnum">${n+1}</span>${esc(it.q)}</div>
@@ -1557,7 +1591,7 @@ function histRows(limit){
     return `<div class="hrow">
       <span class="tag t${r.ch}">บทที่ ${r.ch}</span>
       <span>${d}</span>
-      ${pd?`<span class="scorebadge pend">⏳ ${nAns}/${r.total} ข้อ</span>`:`<span class="scorebadge ${scoreCls(r)}">${r.score}/${r.total}</span>`}
+      ${pd?`<span class="scorebadge pend">⏳ ${nAns}/${r.total} ข้อ</span>`:`<span class="scorebadge ${r.timedOut?'tmo':scoreCls(r)}">${r.timedOut?'⏰ ':''}${r.score}/${r.total}</span>`}
       ${r.items&&r.items[0]&&r.items[0].lv?`<span class="lvtag l${r.items[0].lv}">${['','Basic','Normal','Adv.'][r.items[0].lv]}</span>`:''}
       ${pd?(IS_PARENT?`<span class="pendnote">ทำยังไม่เรียบร้อย</span><button class="linkbtn" onclick="review(${k})">ดูที่ทำแล้ว</button>`:`<button class="linkbtn" onclick="resumeQuiz(${r.id})">▶ ทำต่อ</button>`):`<button class="linkbtn" onclick="review(${k})">ดูเฉลย</button>`}
     </div>`;
@@ -1569,11 +1603,11 @@ function home(){
   HIST.filter(r=>r.status==='pending').forEach(r=>{
     const n=r.items.filter(it=>it.user!==undefined&&it.user!==null).length;
     const plv=r.items&&r.items[0]&&r.items[0].lv?r.items[0].lv:2;
-    (PEND[r.ch]=PEND[r.ch]||[]).push({id:r.id,n,lv:plv});
+    (PEND[r.ch]=PEND[r.ch]||[]).push({id:r.id,n,lv:plv,rm:(LVTIME[plv]||1800)-(r.secs||0)});
   });
   document.getElementById('app').innerHTML=`
   <h1>🧮 เกมคณิตคิดสนุก ป.5 🎯</h1>
-  <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ — เลือกระดับ 🟢 Basic → 🟡 Normal → 🔴 Advance • โจทย์สุ่มใหม่ทุกครั้ง ไม่ซ้ำของเดิม</div>
+  <div class="sub">ตะลุยโจทย์ครั้งละ ${QN} ข้อ จับเวลาเหมือนสอบจริง — 🟢 Basic 20 นาที • 🟡 Normal 30 นาที • 🔴 Advance 40 นาที • ต้องทำครบและทันเวลาจึงจะผ่าน</div>
   ${Object.keys(CHNAME).map(ch=>`<div class="chapbtn ${CHMETA[ch].cls}">
     ${CHMETA[ch].icon} ${CHNAME[ch]}
     <small>${CHMETA[ch].sub}</small>
@@ -1586,7 +1620,7 @@ function home(){
       <button onclick="startQuiz(${ch},2)">🟡 Normal</button>
       <button onclick="startQuiz(${ch},3)">🔴 Advance</button>
     </div>
-    ${(PEND[ch]||[]).map(p=>`<button class="resumebtn" onclick="resumeQuiz(${p.id})">⏳ ทำต่อรอบที่ค้างไว้ — ทำแล้ว ${p.n}/${QN} ข้อ (${LVNAME[p.lv]})</button>`).join('')}
+    ${(PEND[ch]||[]).map(p=>`<button class="resumebtn" onclick="resumeQuiz(${p.id})">⏳ ทำต่อรอบที่ค้างไว้ — ${p.n}/${QN} ข้อ (${LVNAME[p.lv]}${p.rm>0?` • เหลือเวลา ${Math.max(1,Math.ceil(p.rm/60))} นาที`:' • ⏰ หมดเวลาแล้ว'})</button>`).join('')}
   </div>`).join('')}
   ${HIST.length?`
   <div class="card">
@@ -1630,14 +1664,14 @@ function parentHome(){
     ch=+ch;
     const pc=[1,2,3].map(lv=>{
       const rs=HIST.filter(r=>r.ch===ch&&r.status!=='pending'&&rlv(r)===lv);
-      return rs.length?{n:rs.length,p:Math.round(rs.reduce((a,r)=>a+r.score/r.total,0)/rs.length*100)}:null;
+      return rs.length?{n:rs.length,to:rs.filter(r=>r.timedOut).length,p:Math.round(rs.reduce((a,r)=>a+r.score/r.total,0)/rs.length*100)}:null;
     });
     let rec='ยังไม่เริ่ม — ชวนเริ่มที่ Basic';
     if(pc[2]&&pc[2].p>=70)rec='ผ่าน Advance แล้ว 🏆';
     else if(pc[1]&&pc[1].p>=70)rec='พร้อมลุย Advance';
     else if(pc[0]&&pc[0].p>=70)rec='พร้อมขยับไป Normal';
     else if(pc[0]||pc[1]||pc[2])rec='ควรฝึก Basic เพิ่ม';
-    const cells=pc.map(x=>x?`<div class="lvcell"><b style="color:${pctColor(x.p)}">${x.p}%</b><small>${x.n} รอบ</small></div>`
+    const cells=pc.map(x=>x?`<div class="lvcell"><b style="color:${pctColor(x.p)}">${x.p}%</b><small>${x.n} รอบ${x.to?` • ⏰ ${x.to}`:''}</small></div>`
       :'<div class="lvcell none">—</div>').join('');
     return `<div class="lvrowp"><div class="lvchapc"><b>บทที่ ${ch}</b><small>${rec}</small></div>${cells}</div>`;
   }).join('');
