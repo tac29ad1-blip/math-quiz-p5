@@ -33,6 +33,12 @@
   .ch6{background:linear-gradient(135deg,#0f766e,#2dd4bf)}
   .ch7{background:linear-gradient(135deg,#c2185b,#f06292)}
   .ch8{background:linear-gradient(135deg,#334155,#64748b)}
+  .ch9{background:linear-gradient(135deg,#c2410c,#facc15)}
+  /* เศษส่วนซ้อนบน-ล่าง (บทที่ 9) */
+  .frw{white-space:nowrap}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;font-size:.86em;margin:0 .1em}
+  .fr>.fn,.fr>.fd{display:block;padding:0 .2em;text-align:center}
+  .fr>.fd{border-top:1.6px solid currentColor}
   .stat{font-size:13px;margin-top:8px;background:rgba(255,255,255,.22);border-radius:10px;padding:6px 10px;display:inline-block}
   .sec-title{font-size:17px;font-weight:700;margin-bottom:10px;color:#39418a}
   .hrow{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #eef0f8;font-size:14px;flex-wrap:wrap}
@@ -40,7 +46,7 @@
   .tag{padding:2px 10px;border-radius:20px;color:#fff;font-size:12px;white-space:nowrap}
   .tag.t1{background:#2f80ed}.tag.t2{background:#11998e}
   .tag.t3{background:#e67e22}.tag.t4{background:#8e2de2}.tag.t5{background:#eb3349}
-  .tag.t6{background:#0f766e}.tag.t7{background:#c2185b}.tag.t8{background:#334155}
+  .tag.t6{background:#0f766e}.tag.t7{background:#c2185b}.tag.t8{background:#334155}.tag.t9{background:#c2410c}
   .scorebadge{font-weight:700;margin-left:auto;white-space:nowrap}
   .good{color:#27ae60}.mid{color:#e67e22}.bad{color:#e74c3c}
   .linkbtn{border:none;background:#eef2ff;color:#3b5bdb;border-radius:10px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px}
@@ -159,7 +165,7 @@
 <script>
 'use strict';
 /* ================= version check (กันหน้าเก่าค้างในเครื่อง) ================= */
-const VERSION='20260914a';
+const VERSION='20261031a';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
@@ -908,6 +914,279 @@ function i8_word(lv){
     ex:`"แบ่งเท่าๆ กัน" ใช้การหาร: ${per*n} ÷ ${n} = ${per} เม็ด`};
 }
 
+/* ================= บทที่ 9 : บวกลบเศษส่วน (แนว Suken ระดับ 7) ================= */
+/* เศษส่วนเก็บเป็นจำนวนเต็ม [ตัวเศษ, ตัวส่วน] คำนวณด้วย ห.ร.ม./ค.ร.น. ล้วน ไม่ใช้ทศนิยม
+   รูปแบบข้อความ: เศษส่วน "3/8" • จำนวนคละ "2 3/8" (เว้นวรรค 1 ช่อง) — ตัวแสดงผลจะแปลงเป็นเศษส่วนซ้อนเฉพาะข้อที่มี fr:true
+   ระวัง: ห้ามเขียน "ตัวเลข เว้นวรรค เศษส่วน" ในข้อความ ถ้าไม่ได้ตั้งใจให้เป็นจำนวนคละ
+   lures = ชนิดของแต่ละตัวเลือก (ANS=คำตอบ, L1–L7=จุดพลาดตามแผน, N=ค่าใกล้เคียง, อื่นๆ=ตัวลวงเสริม) ใช้ใน test เท่านั้น ไม่ถูกบันทึกลงประวัติ */
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a;}
+function lcm(a,b){return a/gcd(a,b)*b;}
+function frR(n,d){const g=gcd(n,d);return [n/g,d/g];}                 /* ทอนเป็นอย่างต่ำ */
+function frS(n,d){                                                    /* แสดงตามค่าที่ให้ (ไม่ทอน) เกิน 1 เป็นจำนวนคละ */
+  if(n%d===0)return String(n/d);
+  return n>d?`${Math.floor(n/d)} ${n%d}/${d}`:`${n}/${d}`;
+}
+function frA(n,d){const r=frR(n,d);return frS(r[0],r[1]);}            /* รูปคำตอบมาตรฐาน: อย่างต่ำ + จำนวนคละ */
+function frI(n,d){return `${n}/${d}`;}                                /* เขียนเป็นเศษเกิน/ไม่ทอน */
+function tS(t){return t.w?`${t.w} ${t.n}/${t.d}`:`${t.n}/${t.d}`;}   /* พจน์ {w,n,d} → ข้อความ */
+function rProper(d){let n;do{n=ri(1,d-1);}while(gcd(n,d)!==1);return n;}
+function tm(w,d){return {w,n:rProper(d),d};}                          /* สุ่มพจน์ที่เศษส่วนเป็นอย่างต่ำ */
+const LCAP={1:36,2:60,3:90};                                          /* ค.ร.น. สูงสุดต่อระดับ */
+
+/* สร้างตัวเลือก 4 ข้อ: ans=[n,d] อย่างต่ำ • cands=[{v:[n,d],t:'L1',s?:ข้อความ}] เรียงตามลำดับความสำคัญ
+   - ค่าทุกตัวเลือกต้องไม่ซ้ำกัน และไม่เท่าคำตอบ ยกเว้น L7 (ค่าเท่าคำตอบแต่ไม่อย่างต่ำ — ใช้เฉพาะ Advance)
+   - ไม่ใช้ค่าที่เป็นจำนวนเต็มพอดีหรือไม่เป็นบวก • คืน null ถ้าไม่มีตัวลวง L1–L6 เหลือ (ให้สุ่มโจทย์ใหม่) */
+function mcFrac(ans,cands,o={}){
+  const fmtv=o.fmt||frA, key=v=>{const r=frR(v[0],v[1]);return r[0]+'/'+r[1];};
+  const aK=key(ans);
+  const opts=[{s:o.ansS||frS(ans[0],ans[1]),t:'ANS'}];
+  const seenS=new Set([opts[0].s]),seenV=new Set([aK]);
+  const tryAdd=c=>{
+    if(!c||opts.length>=4)return;
+    const v=c.v;
+    if(!(v[0]>0&&v[1]>0)||v[0]%v[1]===0)return;
+    if(o.proper&&v[0]>v[1])return;                   /* โจทย์ทอนอย่างต่ำ: ตัวเลือกเป็นเศษส่วนแท้ทั้งหมด */
+    const s=c.s||fmtv(v[0],v[1]),k=key(v);
+    if(seenS.has(s))return;
+    if(c.t==='L7'){if(k!==aK||opts.some(x=>x.t==='L7'))return;}
+    else if(seenV.has(k))return;
+    seenS.add(s);seenV.add(k);opts.push({s,t:c.t});
+  };
+  cands.forEach(tryAdd);
+  if(!opts.some(x=>/^L[1-6]$/.test(x.t)))return null;
+  for(let k=1;opts.length<4&&k<60;k++)for(const sg of shuffle([1,-1]))tryAdd({v:[ans[0]+sg*k,ans[1]],t:'N'});
+  if(opts.length<4)return null;
+  const ord=shuffle([0,1,2,3]),u=o.unit?' '+o.unit:'';
+  return {choices:ord.map(i=>opts[i].s+u),correct:ord.indexOf(0),lures:ord.map(i=>opts[i].t)};
+}
+
+/* ตัวลวงจากจุดพลาดจริงของโจทย์บวก/ลบ (T=พจน์, sg=เครื่องหมายของแต่ละพจน์, L=ค.ร.น.) */
+function frLures(T,ops,sg,ans,L){
+  const W=T.reduce((a,t,i)=>a+sg[i]*t.w,0);
+  const Lc=[],oc=[];
+  if(ops.every(x=>x==='+')){                       /* L1 บวกเศษบวกส่วนตรงๆ */
+    const SN=T.reduce((a,t)=>a+t.n,0),SD=T.reduce((a,t)=>a+t.d,0);
+    Lc.push({v:[W*SD+SN,SD],t:'L1'});
+  }else if(T.length===2&&T[0].n>T[1].n&&T[0].d-T[1].d>=2){   /* L1 ลบเศษลบส่วนตรงๆ */
+    const D=T[0].d-T[1].d;Lc.push({v:[W*D+T[0].n-T[1].n,D],t:'L1'});
+  }
+  const N2=T.reduce((a,t,i)=>a+sg[i]*t.n,0);       /* L2 ทำส่วนเท่าแล้วแต่ไม่ขยายตัวเศษ */
+  if(W*L+N2>0)Lc.push({v:[W*L+N2,L],t:'L2'});
+  const F=T.reduce((a,t,i)=>a+sg[i]*t.n*(L/t.d),0); /* ผลรวมเฉพาะส่วนเศษส่วน (สเกล L) — ติดลบ = ต้องยืม */
+  if(ops.includes('-')&&T[0].w>0&&F<0){
+    if(T.length===2)Lc.push({v:[W*L-F,L],t:'L3'});  /* L3 ไม่ยืม เอาตัวมากลบตัวน้อย */
+    Lc.push({v:[ans[0]+ans[1],ans[1]],t:'L4'});      /* L4 ยืมแล้วไม่ลดจำนวนเต็ม */
+  }
+  if(T.some(t=>t.w>0)&&ans[0]>ans[1])Lc.push({v:[ans[0]%ans[1],ans[1]],t:'L4'}); /* L4 ลืมจำนวนเต็ม */
+  if(T.length===3){
+    const two=T.slice(0,2).reduce((a,t,i)=>a+sg[i]*(t.w*t.d+t.n)*(L/t.d),0);
+    oc.push({v:[two,L],t:'P'});                      /* ลืมพจน์ที่สาม */
+    if(ops[1]==='-')oc.push({v:[two+(T[2].w*T[2].d+T[2].n)*(L/T[2].d),L],t:'S'}); /* ลบแล้วกลายเป็นบวก */
+  }
+  return {Lc,oc};
+}
+/* ตัวลวง L7 (ค่าเท่าคำตอบแต่ไม่ใช่รูปอย่างต่ำ/ไม่เป็นจำนวนคละ) */
+function frL7(ans,L){
+  const k=L>ans[1]?L/ans[1]:2;
+  const unred={v:ans,t:'L7',s:frS(ans[0]*k,ans[1]*k)};
+  if(ans[0]>ans[1]&&ri(0,1))return {v:ans,t:'L7',s:frI(ans[0],ans[1])};
+  return unred;
+}
+/* คำอธิบายทีละขั้น */
+function frEx(T,ops,sg,L,ans){
+  const st=[];let k=1;
+  const ds=[...new Set(T.map(t=>t.d))];
+  if(ds.length>1)st.push(`ขั้น ${k++} หา ค.ร.น. ของตัวส่วน ${ds.join(' กับ ')} = ${L}`);
+  const im=T.map(t=>(t.w*t.d+t.n)*(L/t.d));
+  const conv=T.map((t,i)=>{
+    if(!t.w&&t.d===L)return null;
+    return tS(t)+(t.w?` = ${t.w*t.d+t.n}/${t.d}`:'')+(t.d!==L?` = ${im[i]}/${L}`:'');
+  }).filter(Boolean);
+  const hasMix=T.some(t=>t.w>0);
+  if(conv.length)st.push(`ขั้น ${k++} ${hasMix?'แปลงจำนวนคละเป็นเศษเกิน และ':''}ทำตัวส่วนให้เป็น ${L}: ${conv.join(' , ')}`);
+  const N=im.reduce((a,v,i)=>a+sg[i]*v,0);
+  const word=ops.every(x=>x==='+')?'บวก':ops.every(x=>x==='-')?'ลบ':'บวกลบ';
+  st.push(`ขั้น ${k++} ${word}ตัวเศษ (ตัวส่วนคงเดิม): ${im.map((v,i)=>(i?(sg[i]>0?' + ':' − '):'')+v).join('')} = ${N} → ได้ ${N}/${L}`);
+  const g=gcd(N,L);
+  if(g>1)st.push(`ขั้น ${k++} ทอนเป็นอย่างต่ำ (หารด้วย ห.ร.ม. ${g}): ${N}/${L} = ${N/g}/${L/g}`);
+  if(ans[0]>ans[1])st.push(`ขั้น ${k++} เกินหนึ่งจึงเขียนเป็นจำนวนคละ: ${ans[0]}/${ans[1]} = ${frS(ans[0],ans[1])}`);
+  /* วิธียืม (ลบสองพจน์ที่ส่วนเศษส่วนไม่พอลบ) */
+  if(T.length===2&&ops[0]==='-'&&T[0].w>0){
+    const a1=T[0].n*(L/T[0].d),b1=T[1].n*(L/T[1].d);
+    if(a1<b1){
+      const w=T[0].w-1-T[1].w,fr=`${a1+L-b1}/${L}`;
+      const left=T[1].w?`(${T[0].w-1} − ${T[1].w}) + (${a1+L}/${L} − ${b1}/${L})`
+        :T[0].w>1?`${T[0].w-1} + ${a1+L}/${L} − ${b1}/${L}`:`${a1+L}/${L} − ${b1}/${L}`;
+      const mid=w?`${w} + ${fr}`:fr,fin=frA(ans[0],ans[1]);
+      st.push(`หรือคิดแบบยืม: ${a1}/${L} น้อยกว่า ${b1}/${L} จึงยืมหนึ่งจาก ${T[0].w} มาเป็น ${L}/${L} → ${left} = ${mid}${mid===fin?"":" = "+fin}`);
+    }
+  }
+  return st.join(' • ');
+}
+/* ประกอบโจทย์บวก/ลบหลายพจน์ — คืน null ถ้าตัวเลขไม่เข้ากติกา (ให้สุ่มใหม่) */
+function frBuild(T,ops,lv,sec,o={}){
+  if(T.some(t=>t.d<2||t.d>24))return null;
+  const L=T.reduce((a,t)=>lcm(a,t.d),1);
+  if(L>LCAP[lv])return null;
+  const sg=[1,...ops.map(x=>x==='+'?1:-1)];
+  let run=0;
+  for(let i=0;i<T.length;i++){run+=sg[i]*(T[i].w*T[i].d+T[i].n)*(L/T[i].d);if(run<=0)return null;} /* ทุกขั้นต้องเป็นบวก */
+  if(run%L===0)return null;                                 /* ผลต้องไม่เป็นจำนวนเต็มพอดี */
+  const ans=frR(run,L);
+  const {Lc,oc}=frLures(T,ops,sg,ans,L);
+  const Ls=shuffle(Lc);
+  const cands=lv===3?[Ls[0],frL7(ans,L),...Ls.slice(1),...shuffle(oc)]:[...Ls,...shuffle(oc)];
+  const r=mcFrac(ans,cands,{unit:o.unit});
+  if(!r)return null;
+  const note=lv===3?(ans[0]>ans[1]?' (ตอบเป็นเศษส่วนอย่างต่ำ ถ้าเกินหนึ่งให้ตอบเป็นจำนวนคละ)':' (ตอบเป็นเศษส่วนอย่างต่ำ)'):'';
+  const expr=T.map((t,i)=>(i?(sg[i]>0?' + ':' − '):'')+tS(t)).join('');
+  const ex=frEx(T,ops,sg,L,ans);
+  return {sec,q:(o.q||`${expr} มีค่าเท่าไร`)+note,fr:true,
+    choices:r.choices,correct:r.correct,lures:r.lures,
+    sig:`9${o.k}|${o.kind?o.kind+'|':''}${ops.join('')}|${T.map(t=>t.w+'.'+t.n+'.'+t.d).join('|')}`,
+    ex:(o.cue?o.cue+' • ':'')+ex+(o.unit?` • ตอบ ${frS(ans[0],ans[1])} ${o.unit}`:'')};
+}
+/* สุ่มตัวส่วนสองตัวตามระดับ: 1=ตัวหนึ่งเป็นพหุคูณของอีกตัว 2=ไม่มีตัวประกอบร่วม 3=ค.ร.น. ใหญ่ (37–90) */
+function frPair(lv){
+  for(;;){
+    let d1,d2;
+    if(lv===1){d1=ri(2,8);d2=d1*ri(2,3);if(d2>24)continue;if(ri(0,1))[d1,d2]=[d2,d1];return [d1,d2];}
+    if(lv===2){d1=ri(2,12);d2=ri(2,12);if(d1!==d2&&gcd(d1,d2)===1&&d1*d2<=60)return [d1,d2];continue;}
+    d1=ri(4,24);d2=ri(4,24);const L=lcm(d1,d2);
+    if(gcd(d1,d2)>1&&d1%d2!==0&&d2%d1!==0&&L>36&&L<=90)return [d1,d2];
+  }
+}
+
+function f9_simp(lv){
+  for(;;){
+    const b=ri(2,lv===1?10:12),kmin=lv===1?2:3,kmax=Math.floor(24/b);
+    if(kmax<kmin)continue;
+    const a=rProper(b),k=ri(kmin,kmax);
+    const n=a*k,d=b*k;
+    /* L6 ทอนผิด: หารตัวเศษกับตัวส่วนด้วยคนละจำนวน */
+    const divs=x=>{const r=[];for(let i=2;i<x;i++)if(x%i===0&&i!==k)r.push(i);return r;};
+    const hd=divs(d),hn=divs(n),cands=[];
+    if(hd.length){const h=pick(hd);cands.push({v:[a,d/h],t:'L6'});}
+    if(hn.length){const h=pick(hn);cands.push({v:[n/h,b],t:'L6'});}
+    const r=mcFrac([a,b],shuffle(cands),{proper:true});
+    if(!r)continue;
+    return {sec:'ทำเป็นอย่างต่ำ',q:`ทำ ${n}/${d} ให้เป็นเศษส่วนอย่างต่ำ ได้เท่าไร`,fr:true,
+      choices:r.choices,correct:r.correct,lures:r.lures,sig:`9s|${n}|${d}`,
+      ex:`ขั้น 1 หา ห.ร.ม. ของ ${n} กับ ${d} ได้ ${k} • ขั้น 2 หารทั้งตัวเศษและตัวส่วนด้วย ${k}: ${n} ÷ ${k} = ${a} , ${d} ÷ ${k} = ${b} → ได้ ${a}/${b} • ทอนต่อไม่ได้แล้ว จึงเป็นอย่างต่ำ (ต้องหารบนและล่างด้วยจำนวนเดียวกันเสมอ)`};
+  }
+}
+function f9_mixed(){
+  for(;;){
+    const d=ri(3,12),n=rProper(d),w=ri(1,5),N=w*d+n;
+    if(ri(0,1)===0){        /* จำนวนคละ → เศษเกิน (ข้อนี้ถามเศษเกิน จึงตอบเป็นเศษเกิน) */
+      const fi=(x,y)=>{const r=frR(x,y);return frI(r[0],r[1]);};
+      const r=mcFrac([N,d],shuffle([{v:[w+n,d],t:'L4'},{v:[w*n+d,d],t:'L4'},{v:[w*d-n,d],t:'L4'}]),{fmt:fi,ansS:frI(N,d)});
+      if(!r)continue;
+      return {sec:'จำนวนคละ ↔ เศษเกิน',q:`เขียน ${w} ${n}/${d} เป็นเศษเกิน ได้เท่าไร`,fr:true,
+        choices:r.choices,correct:r.correct,lures:r.lures,sig:`9m|0|${w}|${n}|${d}`,
+        ex:`จำนวนเต็ม × ตัวส่วน + ตัวเศษ: ${w} × ${d} + ${n} = ${N} → ได้ ${N}/${d} (ตัวส่วนเท่าเดิม)`};
+    }
+    /* เศษเกิน → จำนวนคละ */
+    const c=[{v:[n,d],t:'L4'},{v:[(w+1)*d+n,d],t:'L4'}];
+    if(w>=2)c.push({v:[(w-1)*d+n,d],t:'L4'});
+    if(w<d&&n!==w)c.push({v:[n*d+w,d],t:'L4'});      /* สลับผลหารกับเศษ */
+    const r=mcFrac([N,d],shuffle(c));
+    if(!r)continue;
+    return {sec:'จำนวนคละ ↔ เศษเกิน',q:`เขียน ${N}/${d} เป็นจำนวนคละ ได้เท่าไร`,fr:true,
+      choices:r.choices,correct:r.correct,lures:r.lures,sig:`9m|1|${N}|${d}`,
+      ex:`${N} ÷ ${d} = ${w} เศษ ${n} → ผลหารเป็นจำนวนเต็ม เศษเป็นตัวเศษ ตัวส่วนเท่าเดิม: ${N}/${d} = ${w} ${n}/${d}`};
+  }
+}
+function f9_lcd(lv){
+  for(;;){
+    const d1=ri(2,18),d2=ri(d1+1,24);
+    if(gcd(d1,d2)===1||d2%d1===0)continue;
+    const L=lcm(d1,d2);if(L>LCAP[lv])continue;
+    const n1=rProper(d1),n2=rProper(d2);
+    const vals=[L],tags=['ANS'];
+    const add=(v,t)=>{if(v>1&&!vals.includes(v)){vals.push(v);tags.push(t);}};
+    add(d1*d2,'L5');                                 /* L5 ใช้ผลคูณแทน ค.ร.น. */
+    for(const [v,t] of shuffle([[L*2,'M'],[gcd(d1,d2),'G'],[d1+d2,'S']]))if(vals.length<4)add(v,t);
+    for(let m=3;vals.length<4;m++)add(L*m,'M');
+    const ord=shuffle([0,1,2,3]);
+    const mult=[];for(let x=d2;x<=L;x+=d2)mult.push(x);
+    return {sec:'ส่วนร่วมน้อยที่สุด',
+      q:`จะหาผลบวก ${n1}/${d1} + ${n2}/${d2} ต้องทำตัวส่วนให้เท่ากันก่อน ตัวส่วนที่น้อยที่สุดที่ใช้ได้ (ค.ร.น. ของ ${d1} กับ ${d2}) คือเท่าไร`,fr:true,
+      choices:ord.map(i=>String(vals[i])),correct:ord.indexOf(0),lures:ord.map(i=>tags[i]),sig:`9l|${d1}|${d2}|${n1}|${n2}`,
+      ex:`ไล่พหุคูณของ ${d2}: ${mult.join(', ')} → ตัวแรกที่ ${d1} หารลงตัวคือ ${L} • ใช้ ${d1} × ${d2} = ${d1*d2} ก็ทำส่วนให้เท่ากันได้ แต่ไม่ใช่ตัวที่น้อยที่สุด ตัวเลขจะใหญ่และต้องทอนทีหลัง`};
+  }
+}
+function f9_add2(lv){
+  for(;;){
+    const [d1,d2]=frPair(lv);
+    const r=frBuild([tm(0,d1),tm(0,d2)],['+'],lv,'บวกเศษส่วนต่างส่วน',{k:'a'});
+    if(r)return r;
+  }
+}
+function f9_sub2(lv){
+  for(;;){
+    let T;
+    if(lv===1){                                      /* ไม่ต้องยืม */
+      const [d1,d2]=frPair(1);
+      T=[tm(ri(0,1)?ri(1,3):0,d1),tm(0,d2)];
+      if(T[0].n*T[1].d<=T[1].n*T[0].d)continue;
+    }else{                                           /* จำนวนคละ มีการยืม */
+      const top=lv===3?24:12,d1=ri(2,top),d2=ri(2,top);
+      if(d1===d2||(lv===3&&lcm(d1,d2)<12))continue;
+      const w1=lv===3?ri(2,5):ri(1,4),w2=lv===3&&ri(0,1)?ri(1,w1-1):0;
+      T=[tm(w1,d1),tm(w2,d2)];
+      if(T[0].n*T[1].d>=T[1].n*T[0].d)continue;
+    }
+    const r=frBuild(T,['-'],lv,'ลบเศษส่วน / จำนวนคละ',{k:'b'});
+    if(r)return r;
+  }
+}
+function f9_three(lv){
+  const D=lv===3?[2,3,4,5,6,8,9,10,12,15,18,20,24]:[2,3,4,5,6,8,10,12,15,20];
+  for(;;){
+    const ds=shuffle(D.slice()).slice(0,3);
+    const L=ds.reduce((a,x)=>lcm(a,x),1);
+    if(L>LCAP[lv]||(lv===3&&L<24))continue;
+    const minus=ri(0,1)===1;
+    const T=ds.map((d,i)=>tm(i===0&&minus?ri(1,lv===3?3:2):0,d));
+    const r=frBuild(T,minus?['-','-']:['+','+'],lv,'บวกลบสามพจน์',{k:'t'});
+    if(r)return r;
+  }
+}
+/* โจทย์ปัญหา: Normal = ขั้นเดียว (รวมกัน / เหลือ / มากกว่ากันเท่าไร) • Advance = สองขั้น */
+const W9_ONE=[
+ {kind:'water',op:'-',unit:'ลิตร',cue:'คำว่า "เหลือ" ใช้การลบ',q:(nm,A,B)=>`${nm}มีน้ำ ${A} ลิตร ดื่มไป ${B} ลิตร เหลือน้ำกี่ลิตร`},
+ {kind:'ribbon',op:'-',unit:'เมตร',cue:'คำว่า "เหลือ" ใช้การลบ',q:(nm,A,B)=>`ริบบิ้นยาว ${A} เมตร ${nm}ตัดไปผูกของขวัญ ${B} เมตร เหลือริบบิ้นยาวกี่เมตร`},
+ {kind:'rope',op:'-',unit:'เมตร',cue:'"ยาวกว่ากันเท่าไร" ใช้การลบ (ยาวมาก − ยาวน้อย)',q:(nm,A,B)=>`เชือกสีแดงยาว ${A} เมตร เชือกสีฟ้ายาว ${B} เมตร เชือกสีแดงยาวกว่าเชือกสีฟ้ากี่เมตร`},
+ {kind:'flour',op:'+',unit:'กิโลกรัม',cue:'คำว่า "รวม" ใช้การบวก',q:(nm,A,B)=>`${nm}ใช้แป้ง ${A} กิโลกรัม และน้ำตาล ${B} กิโลกรัม ทำขนม รวมใช้ไปกี่กิโลกรัม`},
+ {kind:'walk',op:'+',unit:'กิโลเมตร',cue:'คำว่า "รวม" ใช้การบวก',q:(nm,A,B)=>`${nm}เดินจากบ้านไปตลาด ${A} กิโลเมตร แล้วเดินต่อไปโรงเรียนอีก ${B} กิโลเมตร รวมเดินกี่กิโลเมตร`},
+];
+const W9_TWO=[
+ {kind:'juice',ops:['-','-'],unit:'ลิตร',cue:'ดื่มไปสองครั้ง ลบสองครั้ง',q:(nm,A,B,C)=>`มีน้ำผลไม้ ${A} ลิตร วันแรกดื่มไป ${B} ลิตร วันที่สองดื่มไป ${C} ลิตร เหลือน้ำผลไม้กี่ลิตร`},
+ {kind:'rice',ops:['-','-'],unit:'กิโลกรัม',cue:'ใช้ไปสองครั้ง ลบสองครั้ง',q:(nm,A,B,C)=>`ข้าวสารถุงหนึ่งหนัก ${A} กิโลกรัม ${nm}หุงไป ${B} กิโลกรัม แล้วแบ่งให้เพื่อนบ้าน ${C} กิโลกรัม เหลือข้าวสารกี่กิโลกรัม`},
+ {kind:'ribbon2',ops:['+','-'],unit:'เมตร',cue:'ซื้อเพิ่มใช้การบวก ตัดไปใช้การลบ',q:(nm,A,B,C)=>`${nm}มีริบบิ้นยาว ${A} เมตร ซื้อเพิ่มอีก ${B} เมตร แล้วตัดไปผูกของขวัญ ${C} เมตร เหลือริบบิ้นยาวกี่เมตร`},
+ {kind:'tank',ops:['+','-'],unit:'ลิตร',cue:'เติมเพิ่มใช้การบวก ใช้ไปใช้การลบ',q:(nm,A,B,C)=>`ถังมีน้ำ ${A} ลิตร ${nm}เติมน้ำเพิ่ม ${B} ลิตร แล้วตักไปรดต้นไม้ ${C} ลิตร ในถังเหลือน้ำกี่ลิตร`},
+];
+function f9_word(lv){
+  const D=lv===3?[2,3,4,5,6,8,9,10,12,15,16,20]:[2,3,4,5,6,8,10,12];
+  for(;;){
+    const nm=pick(NAMES);
+    if(lv===3){
+      const tp=pick(W9_TWO),ds=[pick(D),pick(D),pick(D)];
+      const T=[tm(ri(2,5),ds[0]),tm(ri(0,1),ds[1]),tm(ri(0,1),ds[2])];
+      const r=frBuild(T,tp.ops,lv,'โจทย์ปัญหาเศษส่วน',{k:'w',kind:tp.kind,unit:tp.unit,cue:tp.cue,q:tp.q(nm,tS(T[0]),tS(T[1]),tS(T[2]))});
+      if(r)return r;
+      continue;
+    }
+    const tp=pick(W9_ONE),d1=pick(D),d2=pick(D);
+    if(d1===d2)continue;
+    const T=tp.op==='+'?[tm(ri(0,2),d1),tm(ri(0,1),d2)]
+      :tp.kind==='rope'?[tm(ri(2,4),d1),tm(ri(0,1),d2)]:[tm(ri(1,3),d1),tm(0,d2)];
+    const r=frBuild(T,[tp.op],lv,'โจทย์ปัญหาเศษส่วน',{k:'w',kind:tp.kind,unit:tp.unit,cue:tp.cue,q:tp.q(nm,tS(T[0]),tS(T[1]))});
+    if(r)return r;
+  }
+}
+
 const CH1_MIX=[g_place,g_place,g_place,g_place,g_expand,g_expand,g_expand,
   g_compare,g_compare,g_compare,g_order,g_order,g_order,
   g_frac,g_frac,g_frac,g_frac,g_round,g_round,g_round];
@@ -933,6 +1212,8 @@ const CH7_MIX=[g7_paren,g7_paren,g7_paren,g7_paren,g7_paren,
 const CH8_MIX=[i8_mul,i8_mul,i8_mul,i8_mul,i8_div,i8_div,i8_div,i8_div,
   i8_rem,i8_rem,i8_rem,i8_word,i8_word,
   d3_mul,d3_mul,d3_mul,d3_div,d3_div,d3_fillmul,d3_filldiv];
+const CH9_MIX=[f9_add2,f9_add2,f9_add2,f9_add2,f9_add2,f9_sub2,f9_sub2,f9_sub2,f9_sub2,f9_sub2,
+  f9_three,f9_three,f9_three,f9_three,f9_word,f9_word,f9_word,f9_simp,f9_simp,f9_simp];
 /* ---- ระดับความยาก: 1=Basic 2=Normal 3=Advance ---- */
 const rep=(g,n)=>Array(n).fill(g);
 const WORDS_EASY=[w_rope,w_weight,w_race,w_fruit,w_height,w_dist,w_tax];
@@ -959,6 +1240,9 @@ const LVPOOL={
  8:{1:[...rep(i8_mul,6),...rep(i8_div,6),...rep(d3_mul,4),...rep(d3_div,4)],
     2:CH8_MIX,
     3:[...rep(i8_mul,5),...rep(i8_rem,5),...rep(i8_word,4),...rep(d3_fillmul,3),...rep(d3_filldiv,3)]},
+ 9:{1:[...rep(f9_simp,5),...rep(f9_mixed,4),...rep(f9_lcd,4),...rep(f9_add2,4),...rep(f9_sub2,3)],
+    2:CH9_MIX,
+    3:[...rep(f9_three,6),...rep(f9_sub2,5),...rep(f9_word,5),...rep(f9_add2,4)]},
 };
 const LVNAME={1:'🟢 Basic',2:'🟡 Normal',3:'🔴 Advance'};
 const LVTIME={1:1200,2:1800,3:2400}; /* เวลาสอบ (วินาที): Basic 20 / Normal 30 / Advance 40 นาที */
@@ -972,6 +1256,7 @@ const CHMETA={
  6:{icon:'📒',cls:'ch6',grad:'linear-gradient(135deg,#0f766e,#2dd4bf)',sub:'ทศนิยม × ทศนิยม • ตำแหน่งจุดทศนิยม • หารด้วยจำนวนเต็ม/ทศนิยม • โจทย์ปัญหา'},
  7:{icon:'📓',cls:'ch7',grad:'linear-gradient(135deg,#c2185b,#f06292)',sub:'ทำในวงเล็บก่อน • บวกลบคูณหารระคน • โจทย์ปัญหาหลายขั้นตอน'},
  8:{icon:'📝',cls:'ch8',grad:'linear-gradient(135deg,#334155,#64748b)',sub:'ตั้งคูณ • หารยาว • หารมีเศษ • ทวน ×10 ×100 ×1000 — พื้นฐานก่อนลุยคูณหารทศนิยม'},
+ 9:{icon:'🍕',cls:'ch9',grad:'linear-gradient(135deg,#c2410c,#facc15)',sub:'ทำเป็นอย่างต่ำ • จำนวนคละ • ส่วนร่วมน้อยที่สุด • บวกลบต่างส่วน • ยืม 1 • โจทย์ปัญหา (แนว Suken 7)'},
 };
 
 /* ================= เนื้อหาบทเรียน (โหมดเรียนก่อนทำโจทย์) ================= */
@@ -1038,6 +1323,20 @@ function svgLadder(){
    ${ar(74,26,100,52,'×1000')}${ar(160,62,186,88,'×100')}${ar(246,98,272,124,'×10')}
    <text x="12" y="150" font-size="12.5" fill="#475569">ลงบันได (ใหญ่→เล็ก) = คูณ • ขึ้นบันได (เล็ก→ใหญ่) = หาร</text>
   </svg>`;
+}
+/* แถบเศษส่วน (บทที่ 9): rows=[[ตัวเศษ,ตัวส่วน,สี]] • ops=เครื่องหมายหน้าแต่ละแถว */
+function svgFracBars(rows,ops){
+  const W=210,H=24,G=12,x0=26;
+  let s='';
+  rows.forEach((r,i)=>{
+    const n=r[0],d=r[1],c=r[2],y=8+i*(H+G),w=W/d;
+    for(let j=0;j<d;j++)s+=`<rect x="${(x0+j*w).toFixed(2)}" y="${y}" width="${w.toFixed(2)}" height="${H}" fill="${j<n?c:'#f1f5f9'}" stroke="#64748b" stroke-width="1"/>`;
+    if(ops&&ops[i])s+=`<text x="${x0/2}" y="${y+H/2+6}" text-anchor="middle" font-size="18" font-weight="bold" fill="#39418a">${ops[i]}</text>`;
+    const lx=x0+W+24;
+    s+=`<text x="${lx}" y="${y+10}" text-anchor="middle" font-size="12" font-weight="bold" fill="#39418a">${n}</text><line x1="${lx-9}" y1="${y+13}" x2="${lx+9}" y2="${y+13}" stroke="#39418a" stroke-width="1.3"/><text x="${lx}" y="${y+25}" text-anchor="middle" font-size="12" font-weight="bold" fill="#39418a">${d}</text>`;
+  });
+  const h=8+rows.length*(H+G),wd=x0+W+48;
+  return `<svg class="frbar" width="${wd}" height="${h}" viewBox="0 0 ${wd} ${h}" style="max-width:100%">${s}</svg>`;
 }
 const LESSONS={
 1:[
@@ -1408,6 +1707,44 @@ const LESSONS={
   <div class="trybox"><b>ข้อ 4)</b> 27 × 1000 = ? และ 460 ÷ 100 = ?
    <details><summary>👀 กดดูเฉลย</summary><div class="tans">27 × 1000 = <b>27,000</b> (เติม 0 สามตัว) • 460 ÷ 100 = <b>4.6</b> (จุดเลื่อนซ้าย 2)</div></details></div>`},
 ],
+9:[
+ {t:'ส่วนเท่ากัน บวกลบได้เลย 🍕',h:`
+  <p><b>ตัวส่วน</b>บอกว่าแบ่งเป็นกี่ชิ้นเท่าๆ กัน <b>ตัวเศษ</b>บอกว่าเอามากี่ชิ้น — เหมือนพิซซ่าที่ตัดเป็นชิ้นขนาดเท่ากัน</p>
+  <div style="text-align:center">${svgFracBars([[1,5,'#f59e0b'],[2,5,'#10b981'],[3,5,'#6366f1']],['','+','='])}</div>
+  <div class="exbox">${fh('1/5')} + ${fh('2/5')} = ${fh('3/5')} → ชิ้นขนาดเท่ากัน (ส่วนเท่ากัน) <b>บวกตัวเศษได้เลย ตัวส่วนคงเดิม</b><br>ลบก็ทำแบบเดียวกัน: ${fh('6/7')} − ${fh('2/7')} = ${fh('4/7')}</div>
+  <div class="tipbox">⚠️ ห้ามบวกตัวส่วน! ${fh('1/5')} + ${fh('2/5')} ไม่ใช่ ${fh('3/10')} — เอาพิซซ่ามารวมกัน ชิ้นไม่ได้เล็กลงนะ</div>`},
+ {t:'ส่วนไม่เท่า → ทำส่วนให้เท่ากันด้วย ค.ร.น.',h:`
+  <p>ชิ้นคนละขนาดบวกกันตรงๆ ไม่ได้ ต้อง<b>ตัดใหม่ให้ชิ้นเท่ากัน</b>ก่อน คือทำตัวส่วนให้เท่ากันด้วย <b>ค.ร.น.</b> ของตัวส่วน</p>
+  <div style="text-align:center">${svgFracBars([[3,6,'#f59e0b'],[2,6,'#10b981'],[5,6,'#6366f1']],['','+','='])}
+   <div style="font-size:13px;color:#475569">แถบบน ${fh('1/2')} ตัดใหม่เป็น ${fh('3/6')} • แถบกลาง ${fh('1/3')} ตัดใหม่เป็น ${fh('2/6')}</div></div>
+  <div class="exbox">${fh('1/2')} + ${fh('1/3')} • ค.ร.น. ของ 2 กับ 3 คือ 6<br>${fh('1/2')} = ${fh('3/6')} (คูณบนและล่างด้วย 3) • ${fh('1/3')} = ${fh('2/6')} (คูณบนและล่างด้วย 2)<br>${fh('3/6')} + ${fh('2/6')} = <b>${fh('5/6')}</b></div>
+  <div class="exbox">อีกตัวอย่าง: ${fh('3/4')} + ${fh('1/6')} • ค.ร.น. ของ 4 กับ 6 คือ 12<br>${fh('9/12')} + ${fh('2/12')} = <b>${fh('11/12')}</b></div>
+  <div class="tipbox">💡 หา ค.ร.น. เร็วๆ: ไล่พหุคูณของตัวส่วนที่ใหญ่กว่า (6, 12, …) จนเจอตัวแรกที่ตัวส่วนอีกตัวหารลงตัว • ใช้ 4 × 6 = 24 ก็ได้ แต่ตัวเลขใหญ่และต้องทอนทีหลัง</div>`},
+ {t:'ทอนเป็นอย่างต่ำด้วย ห.ร.ม.',h:`
+  <p>เศษส่วน<b>อย่างต่ำ</b> คือเศษส่วนที่ไม่มีจำนวนไหน (นอกจาก 1) หารทั้งตัวเศษและตัวส่วนได้ลงตัวแล้ว</p>
+  <div style="text-align:center">${svgFracBars([[16,20,'#f59e0b'],[4,5,'#6366f1']],['','='])}</div>
+  <div class="exbox">${fh('16/20')} • ห.ร.ม. ของ 16 กับ 20 คือ 4<br>16 ÷ 4 = 4 , 20 ÷ 4 = 5 → <b>${fh('4/5')}</b> (แถบยาวเท่ากันเป๊ะ ค่าเท่าเดิม)</div>
+  <div class="exbox">หารทีละน้อยก็ได้ แต่ต้อง<b>ทอนจนสุด</b>: ${fh('16/20')} = ${fh('8/10')} = ${fh('4/5')}<br>ถ้าหยุดที่ ${fh('8/10')} ยังไม่ใช่อย่างต่ำ</div>
+  <div class="tipbox">⚠️ ต้องหารตัวเศษและตัวส่วนด้วย<b>จำนวนเดียวกัน</b>เสมอ • ข้อสอบ Suken ถ้าตอบเศษส่วนที่ยังไม่อย่างต่ำ = ไม่ได้คะแนน</div>`},
+ {t:'จำนวนคละ: แปลงไป-กลับ และการยืม',h:`
+  <div class="exbox"><b>จำนวนคละ → เศษเกิน:</b> จำนวนเต็ม × ตัวส่วน + ตัวเศษ<br>${fh('2 3/5')} → 2 × 5 + 3 = 13 → ${fh('13/5')}</div>
+  <div class="exbox"><b>เศษเกิน → จำนวนคละ:</b> เอาตัวเศษหารด้วยตัวส่วน ผลหารคือจำนวนเต็ม เศษคือตัวเศษ<br>${fh('17/6')} → 17 ÷ 6 = 2 เศษ 5 → ${fh('2 5/6')}</div>
+  <div class="exbox"><b>ลบแล้วเศษส่วนไม่พอ ต้องยืม 1:</b> ${fh('3 1/4')} − ${fh('2/3')}<br>ทำส่วนเป็น 12: ${fh('3 3/12')} − ${fh('8/12')} แต่ ${fh('3/12')} น้อยกว่า ${fh('8/12')}<br>ยืม 1 จาก 3 มาเป็น ${fh('12/12')}: 2 + ${fh('15/12')} − ${fh('8/12')} = <b>${fh('2 7/12')}</b></div>
+  <div class="tipbox">💡 ยืม 1 แล้วต้อง<b>ลดจำนวนเต็มลง 1</b> ด้วย (3 กลายเป็น 2) • อีกวิธี: แปลงเป็นเศษเกินทั้งหมด ${fh('39/12')} − ${fh('8/12')} = ${fh('31/12')} = ${fh('2 7/12')} ได้เท่ากัน</div>`},
+ {t:'กับดักที่เจอบ่อย + ลองทำ ✏️',h:`
+  <div class="tipbox">❌ <b>กับดัก 1</b> บวกเศษบวกส่วน: ${fh('1/3')} + ${fh('1/4')} = ${fh('2/7')} ผิด! ✔ ${fh('4/12')} + ${fh('3/12')} = ${fh('7/12')}<br>
+  ❌ <b>กับดัก 2</b> ทำส่วนเท่าแต่ลืมขยายตัวเศษ: ${fh('1/3')} + ${fh('1/4')} = ${fh('2/12')} ผิด!<br>
+  ❌ <b>กับดัก 3</b> ลบจำนวนคละโดยไม่ยืม: ${fh('4 1/6')} − ${fh('1/2')} เอา ${fh('3/6')} − ${fh('1/6')} ได้ ${fh('4 1/3')} ผิด! ✔ ${fh('3 2/3')}<br>
+  ❌ <b>กับดัก 4</b> ยืมแล้วลืมลดจำนวนเต็ม: ข้อเดิมได้ ${fh('4 2/3')} ผิด!</div>
+  <div class="bigf">ข้อสอบ Suken: ตอบเป็นเศษส่วนอย่างต่ำ<br>ถ้าเกิน 1 ให้ตอบเป็นจำนวนคละ</div>
+  <p>ระดับ 🔴 Advance ในเกมจะมีตัวเลือกที่ค่าถูกแต่ยังไม่อย่างต่ำปนมา ถ้าโจทย์เขียนว่า "ตอบเป็นเศษส่วนอย่างต่ำ" ต้องเลือกตัวที่ทอนสุดแล้วเท่านั้น</p>
+  <div class="trybox"><b>ข้อ 1)</b> ${fh('2/3')} + ${fh('1/4')} = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">ค.ร.น. ของ 3 กับ 4 คือ 12 → ${fh('8/12')} + ${fh('3/12')} = <b>${fh('11/12')}</b></div></details></div>
+  <div class="trybox"><b>ข้อ 2)</b> ${fh('2 1/5')} − ${fh('3/4')} = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">ส่วนเป็น 20: ${fh('2 4/20')} − ${fh('15/20')} → ยืม 1: 1 + ${fh('24/20')} − ${fh('15/20')} = <b>${fh('1 9/20')}</b></div></details></div>
+  <div class="trybox"><b>ข้อ 3)</b> ${fh('1/2')} + ${fh('1/6')} + ${fh('1/9')} = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">ค.ร.น. คือ 18 → ${fh('9/18')} + ${fh('3/18')} + ${fh('2/18')} = ${fh('14/18')} ทอนด้วย 2 → <b>${fh('7/9')}</b></div></details></div>`},
+],
 };
 
 
@@ -1479,7 +1816,8 @@ const QN=20;
 const CHNAME={1:'บทที่ 1 ทศนิยมเบื้องต้น',2:'บทที่ 2 บวก ลบ ทศนิยม และโจทย์ปัญหา',
   3:'บทที่ 3 คูณ หาร ด้วย 10 100 1000',4:'บทที่ 4 พื้นที่สี่เหลี่ยมด้านขนาน',5:'บทที่ 5 พื้นที่สามเหลี่ยม',
   6:'บทที่ 6 การคูณและหารทศนิยม',7:'บทที่ 7 โจทย์ระคนทศนิยม',
-  8:'บทที่ 8 ทบทวนคูณหารจำนวนเต็ม (เตรียมสอบ)'};
+  8:'บทที่ 8 ทบทวนคูณหารจำนวนเต็ม (เตรียมสอบ)',
+  9:'บทที่ 9 : บวกลบเศษส่วน'};
 const LET=['ก','ข','ค','ง'];
 let G=null;
 
@@ -1531,6 +1869,15 @@ function timeUp(){
   finish();
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+/* แสดงเศษส่วนแบบซ้อนบน-ล่าง (บทที่ 9 — เฉพาะข้อที่มี fr:true) • escape ก่อนเสมอ แล้วจึงแปลง "a/b" และ "w a/b" เป็น HTML
+   ข้อที่ไม่มี fr (บทที่ 1–8) ได้ผลเหมือน esc() เดิมทุกตัวอักษร */
+function fq(s,fr){
+  const h=esc(s);
+  if(!fr)return h;
+  return h.replace(/(^|[^\d\/])(?:(\d+) )?(\d+)\/(\d+)(?![\d\/])/g,(m,p,w,n,d)=>
+    p+(w?`<span class="frw">${w}`:'')+`<span class="fr"><span class="fn">${n}</span><span class="fd">${d}</span></span>`+(w?'</span>':''));
+}
+function fh(s){return fq(s,true);} /* ใช้ในเนื้อหาบทเรียนบทที่ 9 */
 function renderQ(){
   const cur=G.qs[G.i];
   document.getElementById('app').innerHTML=`
@@ -1545,11 +1892,11 @@ function renderQ(){
   <div class="bar"><div style="width:${(G.i)/QN*100}%"></div></div>
   <div class="card">
     <span class="qsec">${esc(cur.sec)}</span>
-    <div class="qtext">${esc(cur.q)}</div>
+    <div class="qtext">${fq(cur.q,cur.fr)}</div>
     ${cur.svg?`<div style="text-align:center;margin:4px 0 10px">${cur.svg}</div>`:''}
-    ${cur.choices.map((c,j)=>`<button class="choice" id="ch${j}" onclick="answer(${j})"><span class="kbd">${LET[j]}</span>${esc(c)}</button>`).join('')}
+    ${cur.choices.map((c,j)=>`<button class="choice" id="ch${j}" onclick="answer(${j})"><span class="kbd">${LET[j]}</span>${fq(c,cur.fr)}</button>`).join('')}
     <div class="fb" id="fb"></div>
-    <div class="whybox" id="why">💡 <b>วิธีคิด:</b> ${esc(cur.ex||'')}${cur.exsvg?`<div style="text-align:center;margin-top:6px">${cur.exsvg}</div>`:''}</div>
+    <div class="whybox" id="why">💡 <b>วิธีคิด:</b> ${fq(cur.ex||'',cur.fr)}${cur.exsvg?`<div style="text-align:center;margin-top:6px">${cur.exsvg}</div>`:''}</div>
     <button class="nextbtn" id="nx" onclick="next()">${G.i===QN-1?'ดูผลคะแนน 🏁':'ข้อถัดไป ▶'}</button>
   </div>`;
   window.scrollTo(0,0);
@@ -1568,6 +1915,7 @@ function answer(j){
   }else{
     document.getElementById('ch'+j).classList.add('wrong');
     fb.className='fb no';fb.textContent=`✗ ยังไม่ถูก คำตอบที่ถูกคือ ${LET[cur.correct]}. ${cur.choices[cur.correct]}`;
+    if(cur.fr)fb.innerHTML=fq(fb.textContent,true);
   }
   const wy=document.getElementById('why');
   if(wy&&cur.ex)wy.style.display='block';
@@ -1582,7 +1930,7 @@ function next(){
 function quizRec(status){
   return {chapter:G.ch,score:G.score,total:QN,status,cid:G.cid,
     secs:elapsedSecs(),
-    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,ex:q.ex,exsvg:q.exsvg,lv:q.lv,choices:q.choices,correct:q.correct,user:G.answers[j],sig:q.sig})),
+    items:G.qs.map((q,j)=>({sec:q.sec,q:q.q,svg:q.svg,ex:q.ex,exsvg:q.exsvg,lv:q.lv,choices:q.choices,correct:q.correct,user:G.answers[j],sig:q.sig,fr:q.fr})),
     sigs:G.qs.map(q=>q.sig).filter(Boolean)};
 }
 function saveProgress(){
@@ -1602,7 +1950,7 @@ function resumeQuiz(id){
   if(!r)return home();
   const lv=r.items&&r.items[0]&&r.items[0].lv?r.items[0].lv:2;
   const answers=r.items.map(it=>(it.user===null||it.user===undefined)?undefined:it.user);
-  const qs=(r.items||[]).map(it=>({sec:it.sec,q:it.q,svg:it.svg,ex:it.ex,exsvg:it.exsvg,lv:it.lv||lv,choices:it.choices,correct:it.correct,sig:it.sig}));
+  const qs=(r.items||[]).map(it=>({sec:it.sec,q:it.q,svg:it.svg,ex:it.ex,exsvg:it.exsvg,lv:it.lv||lv,choices:it.choices,correct:it.correct,sig:it.sig,fr:it.fr}));
   let i=0;while(i<qs.length&&answers[i]!==undefined)i++;
   const score=answers.reduce((a,u,j)=>a+(u===qs[j].correct?1:0),0);
   G={ch:r.ch,lv,qs,i,score,answers,t0:Date.now(),secsBase:r.secs||0,pendingId:id,cid:r.cid||null,startTs:r.startTs||r.ts,saveQ:Promise.resolve()};
@@ -1680,16 +2028,16 @@ function review(k){
     <div style="font-size:14px;color:#8a90ad;margin-bottom:6px">${when}${r.items&&r.items[0]&&r.items[0].lv?` • ระดับ ${LVNAME[r.items[0].lv]}`:''} • ${r.status==='pending'?`⏳ ทำยังไม่เรียบร้อย (ตอบแล้ว ${(r.items||[]).filter(it=>it.user!==undefined&&it.user!==null).length}/${r.total} ข้อ)`:`ได้ ${r.score}/${r.total} คะแนน${r.timedOut?' • ⏰ หมดเวลา — รอบนี้ไม่ผ่าน':''}`}</div>
     ${(r.items||[]).map((it,n)=>`
       <div class="ritem">
-        <div class="qtext"><span class="rnum">${n+1}</span>${esc(it.q)}</div>
+        <div class="qtext"><span class="rnum">${n+1}</span>${fq(it.q,it.fr||r.ch===9)}</div>
         ${(it.user===undefined||it.user===null)?'<div class="notdone">⏳ ข้อนี้ยังไม่ได้ทำ</div>':''}
         ${it.svg?`<div style="text-align:center;margin:4px 0 8px">${it.svg}</div>`:''}
         ${it.choices.map((c,j)=>{
           let cls='rch';let mark='';
           if(j===it.correct){cls+=' c';mark=' ✓';}
           else if(j===it.user){cls+=' w';mark=' ✗ (ที่ตอบ)';}
-          return `<div class="${cls}">${LET[j]}. ${esc(c)}${mark}</div>`;
+          return `<div class="${cls}">${LET[j]}. ${fq(c,it.fr||r.ch===9)}${mark}</div>`;
         }).join('')}
-        ${it.ex?`<div class="whybox" style="display:block">💡 <b>วิธีคิด:</b> ${esc(it.ex)}${it.exsvg?`<div style="text-align:center;margin-top:6px">${it.exsvg}</div>`:''}</div>`:''}
+        ${it.ex?`<div class="whybox" style="display:block">💡 <b>วิธีคิด:</b> ${fq(it.ex,it.fr||r.ch===9)}${it.exsvg?`<div style="text-align:center;margin-top:6px">${it.exsvg}</div>`:''}</div>`:''}
       </div>`).join('')}
     <button class="nextbtn" style="display:block" onclick="${backFn}">🏠 กลับ</button>
   </div>`;
@@ -1786,6 +2134,7 @@ const TOPICS={
  6:['การคูณทศนิยม','การหารทศนิยม','โจทย์ปัญหาคูณหารทศนิยม'],
  7:['ลำดับการคำนวณ','โจทย์ปัญหาหลายขั้นตอน'],
  8:['คูณจำนวนเต็ม','หารจำนวนเต็ม','โจทย์ปัญหาคูณหาร','คูณด้วย 10 100 1000','หารด้วย 10 100 1000'],
+ 9:['ทำเป็นอย่างต่ำ','จำนวนคละ ↔ เศษเกิน','ส่วนร่วมน้อยที่สุด','บวกเศษส่วนต่างส่วน','ลบเศษส่วน / จำนวนคละ','บวกลบสามพจน์','โจทย์ปัญหาเศษส่วน'],
 };
 function parentHome(){
   G=null;
