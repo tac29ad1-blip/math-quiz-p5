@@ -157,6 +157,87 @@
   .topicrow.tnone .tbar{background:repeating-linear-gradient(45deg,#f1f2f8,#f1f2f8 6px,#e7e9f4 6px,#e7e9f4 12px)}
   .topicrow.tnone .tpct{color:#a3a8c3;font-weight:600}
   #savest{position:fixed;right:14px;bottom:14px;z-index:30;background:#fff;color:#39418a;border:1px solid #d9dcef;border-radius:10px;padding:8px 12px;font-size:12px;box-shadow:0 3px 12px #0002;display:none}
+  /* ==== LA-CSS BEGIN ==== */
+  /* ==== CSS ใหม่ของบทเรียนอนิเมชั่น (la-* เท่านั้น) ==== */
+  .la-root{margin:4px 0 2px}
+  .la-svg{display:block;width:100%;max-width:440px;height:auto;margin:0 auto}
+  .la-svg text{font-family:inherit;font-weight:700;fill:#2c3350}
+  .la-svg text.la-mut{fill:#6b7194;font-weight:600}
+  .la-svg text.la-red{fill:#d63031}
+  .la-svg text.la-grn{fill:#1e8449}
+  .la-svg text.la-pur{fill:#7c3aed}
+  .la-svg text.la-org{fill:#c26a00}
+  .la-svg text.la-wht{fill:#fff}
+  .la-svg line,.la-svg path{stroke:#39418a;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .la-svg line.la-spur,.la-svg path.la-spur{stroke:#7c3aed}
+  .la-svg line.la-dash{stroke:#9b6ef3;stroke-dasharray:5 4}
+  .la-svg line.la-gl{stroke:#b9c4e0;stroke-width:1}
+  .la-svg circle.la-dotc{fill:#c2185b}
+  .la-svg circle.la-ring{fill:none;stroke:#f59e0b;stroke-width:2.5}
+  .la-svg rect.la-tbl{fill:#f8faff;stroke:#b9c4e0;stroke-width:1.5}
+  .la-svg rect.la-hl{fill:#fff3c4}
+  .la-svg rect.la-bar{fill:#9ec5f8}
+  .la-svg rect.la-bar2{fill:#c4b5fd}
+  .la-svg rect.la-tape{fill:#e8edf8;stroke:#b9c4e0;stroke-width:1}
+  .la-svg rect.la-pc{fill:#2f80ed;stroke:#fff;stroke-width:2}
+  .la-svg rect.la-rest{fill:#f5af19;stroke:#fff;stroke-width:2}
+  .la-svg rect.la-half{fill:none;stroke:#c26a00;stroke-width:2;stroke-dasharray:4 3}
+  .la-svg *{transform-box:fill-box;transform-origin:center}
+  .la-a{animation:la-pop .5s ease-out both}
+  .la-o{animation:la-fade .5s ease-out both}
+  .la-f{animation:la-fin .5s ease-out both}
+  .la-mv{animation:la-move .8s ease-in-out both}
+  .la-mvx{opacity:0;animation:la-movex 1.4s ease-in-out both}
+  .la-hop{animation:la-hop 1.6s ease-in-out both}
+  @keyframes la-pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes la-fade{from{opacity:0}to{opacity:1}}
+  @keyframes la-fin{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  @keyframes la-move{from{transform:translate(var(--la-dx,0px),var(--la-dy,0px))}to{transform:none}}
+  @keyframes la-movex{0%{opacity:1;transform:translate(var(--la-dx,0px),var(--la-dy,0px))}60%{opacity:1;transform:none}to{opacity:0;transform:none}}
+  @keyframes la-hop{0%{transform:translate(var(--la-dx,0px),0px)}25%{transform:translate(var(--la-dx,0px),0px)}45%{transform:translate(var(--la-dx1,0px),0px)}60%{transform:translate(var(--la-dx1,0px),0px)}80%{transform:none}to{transform:none}}
+  .la-still *{animation:none!important}
+  @media (prefers-reduced-motion:reduce){.la-root *{animation:none!important}}
+  /* รหัสสีตามบทบาท (data-role) — ใช้ทั้งบท · ใช้ #app ให้ชนะคลาสสีอื่นเสมอ */
+  #app [data-role="dd"]{fill:#1d4ed8;color:#1d4ed8}
+  #app [data-role="dv"]{fill:#c2410c;color:#c2410c}
+  #app [data-role="res"]{fill:#15803d;color:#15803d}
+  #app [data-role="rem"]{fill:#a16207;color:#a16207}
+  #app [data-role="dot"]{fill:#c2185b;color:#c2185b}
+  #app [data-role="bad"]{fill:#dc2626;color:#dc2626}
+  .la-lg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:#6b7194;margin:0 0 6px}
+  .la-lgc{display:inline-block;border:2px solid currentColor;border-radius:12px;padding:0 9px;font-weight:700;font-size:13px;background:#fff}
+  /* โฟกัส: ส่วนที่กำลังพูดถึงชัด ส่วนอื่นจาง (ใช้ fill/stroke-opacity ไม่ชน opacity ของอนิเมชั่น) */
+  .la-fz .la-svg :not(.la-focus):not(.la-focus *){fill-opacity:.3;stroke-opacity:.3}
+  .la-fz .la-svg .la-focus,.la-fz .la-svg .la-focus *{fill-opacity:1;stroke-opacity:1}
+  .la-mark{display:inline-block;font-weight:800;font-size:14px;border-radius:10px;padding:3px 12px;margin:0 0 6px}
+  .la-m-trap{background:#fdecea;color:#c0392b}
+  .la-m-check{background:#fff8e1;color:#8a5a00}
+  .la-m-fix{background:#e6f9ed;color:#1e8449}
+  .la-m-quiz{background:#eef2ff;color:#3b5bdb}
+  .la-m-why{background:#f3e8ff;color:#7c3aed}
+  .la-say{margin-top:6px}
+  .la-ctrls{display:flex;gap:8px;margin-top:12px}
+  .la-ctl{flex:1;border:none;border-radius:12px;padding:10px 6px;background:#eef2ff;color:#3b5bdb;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  .la-ctl:disabled{opacity:.4;cursor:default}
+  .la-next:disabled{opacity:.45;cursor:default;filter:none}
+  .la-map{display:flex;gap:6px;margin:0 0 12px}
+  .la-mb{flex:1;min-width:0;border:2px solid rgba(255,255,255,.6);background:rgba(255,255,255,.9);color:#39418a;border-radius:10px;padding:5px 0;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+  .la-mb.la-done{background:#e6f9ed;border-color:#9ad8b0;color:#1e8449}
+  .la-mb.la-on{background:#39418a;border-color:#fff;color:#fff}
+  .la-mb:disabled{opacity:.45;cursor:default}
+  .la-qq{font-size:17px;font-weight:700;line-height:1.7;margin:2px 0 10px}
+  .la-qcs{display:flex;flex-wrap:wrap;gap:8px}
+  .la-qc{flex:1;min-width:110px;border:2px solid #c7d2fe;background:#fff;color:#2c3350;border-radius:12px;padding:10px 6px;font-family:inherit;font-size:17px;font-weight:700;cursor:pointer}
+  .la-qc:disabled{cursor:default}
+  .la-qc.la-qok{background:#e6f9ed;border-color:#1e8449;color:#1e8449}
+  .la-qc.la-qno{background:#fdecea;border-color:#c0392b;color:#c0392b}
+  .la-qfb{margin-top:10px;border-radius:12px;padding:8px 12px;font-size:15px;line-height:1.7}
+  .la-qfb.la-qok{background:#e6f9ed;color:#14532d}
+  .la-qfb.la-qno{background:#fdecea;color:#7f1d1d}
+  .la-qretry{width:100%;margin-top:8px}
+  .la-sum{background:#fff8e1;border:2px solid #f5c518;border-radius:14px;padding:10px 14px 10px 30px;font-size:16px;line-height:1.8}
+  .la-sum li{margin:2px 0}
+  /* ==== LA-CSS END ==== */
 </style>
 </head>
 <body>
@@ -165,7 +246,7 @@
 <script>
 'use strict';
 /* ================= version check (กันหน้าเก่าค้างในเครื่อง) ================= */
-const VERSION='20261031a';
+const VERSION='20261109a';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
@@ -1747,6 +1828,757 @@ const LESSONS={
 ],
 };
 
+/* =====================================================================
+   (A) ข้อมูลบทเรียน — const LESSON6 (รูปเดียวกับ LESSONS[6] ตามแผน 3.1 + ขั้นชนิดใหม่ตามแผน 14)
+   ฉาก 1–5: {t,sum,steps:[…]} · ฉาก 6: {t,h}
+   ขั้นอนิเมชั่น: {say,draw,ms,mark,chk:[{eq,truth}], kind?} · kind: (ไม่มี)=ปกติ · 'why'=ขั้นเหตุผล · 'hop'=จุดกระโดด (+hops)
+                  · 'sum'=การ์ดสรุปจำ 3 ข้อ (+pts) — ขั้นสุดท้ายของฉาก
+   ขั้นคำถาม:   {kind:'quiz', q, choices:[{text,correct,why,eq}], chk} — ถูก 1 ข้อ · eq ของตัวเลือก = สมการตรวจ (จริงเฉพาะข้อถูก)
+   ตัวเลขทุกตัวตามแผนหัวข้อ 3.4 · ตัวเลขใหม่ (ขั้นแยกจังหวะ/ทำไม/คำถาม/สรุป) อยู่ใน chk · ยกเข้าเกมทั้งส่วน
+   ===================================================================== */
+
+// ---- ตำแหน่งที่ตรวจพิกัดได้ (ค่าตายตัว ไม่คำนวณจากป้าย) ----
+const LA_NL2={x0:40,x1:175,x18:283,xq:175}; // ฉาก 2: 0→40, 1.8→283, 1 อยู่ที่ 40+243×5/9 = 175 · ■ (บาท) ตรงแนว 175
+const LA_R483={v:'4.83',xs:[124,156,180],dot:140}; // ฉาก 1: 4.83 (จุดชิดเลข ช่องไฟเท่ากัน)
+const LA_R483X={v:'48.3',xs:[124,148,180],dot:164}; // ฉาก 1 กับดัก: 48.3 (ผิดโดยตั้งใจ)
+const LA_D952={v:'95.2',xs:[110,136,168],dot:152}; // ฉาก 4 ตัวตั้ง: 9 5 . 2
+const LA_Q28={v:'2.8',xs:[136,168],dot:152}; // ฉาก 4 ผลหาร: 2 อยู่บน 5 · 8 อยู่บน 2 · จุดตรงแนวจุดตัวตั้ง
+const LA_Q28X={v:'28',xs:[136,168],dot:null}; // ฉาก 4 กับดัก: ลืมดึงจุด
+// จุดกระโดด (ฉาก 3–5): ค่าหลังย้าย · xs หลัก · dot = ที่จุดลงจอด · from = ที่จุดเริ่ม (ก่อนกระโดด 1 ตำแหน่งไปทางขวา)
+const LA_H18={v:'18',xs:[140,172],dot:188,from:156};             // ฉาก 3 ตัวหาร 1.8 → 18
+const LA_H3600={v:'3600',xs:[104,136,168,200],dot:216,from:184}; // ฉาก 3 ตัวตั้ง 360 → 3600 (จุดซ่อนท้าย 360 · 0 ตัวท้ายเติมใหม่)
+const LA_H34={v:'34',xs:[140,172],dot:188,from:156};             // ฉาก 4 ตัวหาร 3.4 → 34
+const LA_H952={v:'95.2',xs:[110,142,184],dot:163,from:126};      // ฉาก 4 ตัวตั้ง 9.52 → 95.2
+const LA_H27={v:'27',xs:[64,96],dot:112,from:80};                // ฉาก 5 ตัวตั้ง 2.7 → 27
+const LA_H6={v:'6',xs:[228],dot:244,from:212};                   // ฉาก 5 ตัวหาร 0.6 → 6 (0 ข้างหน้าจางหาย)
+const LA_D3600={v:'3600',xs:[104,126,148,170],dot:null};         // ฉาก 3 ตัวตั้งในบ้าน
+const LA_Q200={v:'200',xs:[126,148,170],dot:null};               // ฉาก 3 ผลหาร: 2 อยู่บน 6 · 0 บน 0 · 0 บน 0
+const LA_D27={v:'27',xs:[110,136],dot:null};                     // ฉาก 5 ตัวตั้งในบ้าน
+const LA_SUM3=['ตัวหารมีทศนิยม → ย้ายจุดทั้งคู่เท่ากัน','คูณ 10 ทั้งคู่ ผลหารเท่าเดิม','ตรวจกลับ: ตัวหาร × ผลหาร = ตัวตั้ง'];
+const LA_SUM4=['ย้ายจุดให้ตัวหารเป็นจำนวนเต็มก่อน','หารยาวทีละรอบ: หาร → คูณ → ลบ → ดึงลง','ดึงเลขหลังจุดลงมา → ดึงจุดขึ้นทันที'];
+const LA_SUM5=['ข้อนี้คูณ 10 ไว้ จึงหารเศษกลับด้วย 10','2.7 = 0.6 × 4 + 0.3 → 4 ชิ้น เหลือ 0.3 m','4.5 คือ 4 ชิ้นกับครึ่งชิ้น'];
+const LA_TAPE={xs:[20,80,140,200,260],end:290,ticks:[20,80,140,200,260,290]}; // ฉาก 5: 1 m = 100 หน่วย · ขอบชิ้น 0, 0.6, 1.2, 1.8, 2.4 → ปลายเทป 2.7 · ticks = ขีดเส้นจำนวน (ค่าแยก ตรวจได้ว่าตรงขอบชิ้น)
+const LA_MUL={h:142,t:166,o:190}; // ฉาก 1 ตั้งคูณ: คอลัมน์หลักร้อย/สิบ/หน่วย
+const LA_SUM1=['คูณไม่สนจุดก่อน','นับทศนิยมรวมแล้วใส่จุด','ในเกม ตัวเลือกทุกข้อมีจำนวนตำแหน่งทศนิยมเท่ากันหมด → คูณจริงและประมาณ'];
+const LA_SUM2=['แยกสิ่งที่รู้กับสิ่งที่ถาม','ตาราง: ทำแบบเดียวกันทั้งสองแถว','ราคา ÷ ปริมาณ (ตัวตั้ง = ราคา)'];
+
+// ---- ตัวช่วยวาด SVG (d = หน่วงกี่วินาที · d=null คือวางนิ่ง ไม่เล่นอนิเมชั่น) ----
+// o.c = คลาสเพิ่ม (เช่น 'la-focus') · o.role = บทบาทสี (dd ตัวตั้ง · dv ตัวหาร · res ผลคูณ/ผลหาร · rem เศษ · dot จุด · bad ผิด)
+function laSvg(h,body){return `<svg class="la-svg" viewBox="0 0 320 ${h}" role="img">${body}</svg>`;}
+function laAt(d){return d==null?'':` style="animation-delay:${+(+d).toFixed(2)}s"`;}
+function laCls(base,d,c){const k=[];if(d!=null)k.push(base);if(c)k.push(c);return k.length?` class="${k.join(' ')}"`:'';}
+function laRole(o){return o.role?` data-role="${o.role}"`:'';}
+function laT(x,y,s,d,o){o=o||{};return `<text x="${x}" y="${y}"${laCls('la-a',d,o.c)}${laAt(d)} text-anchor="${o.an||'middle'}" font-size="${o.fs||18}"${laRole(o)}${o.at||''}>${s}</text>`;}
+// ตัวจบของขั้น: จบช้าสุดของขั้นเสมอ · ค่า data-la-final = ชื่อ animation ที่ตัวเล่นรอ
+function laF(x,y,s,d,o){o=o||{};return `<text x="${x}" y="${y}" class="la-f${o.c?' '+o.c:''}"${laAt(d)} text-anchor="${o.an||'middle'}" font-size="${o.fs||18}"${laRole(o)} data-la-final="la-fin">${s}</text>`;}
+function laL(x1,y1,x2,y2,d,o){o=o||{};return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${laCls('la-o',d,o.c)}${laAt(d)}${o.at||''}/>`;}
+function laP(p,d,o){o=o||{};return `<path d="${p}"${laCls('la-o',d,o.c)}${laAt(d)}/>`;}
+function laR(x,y,w,h,d,o){o=o||{};return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2"${laCls('la-o',d,o.c)}${laAt(d)}${o.at||''}/>`;}
+// จุดทศนิยม: mv=[หน่วง,dx,dy] = เริ่มที่ (x+dx, y+dy) แล้วเลื่อนเข้าที่ (x,y) · สภาพจบอยู่ที่ (x,y) เสมอ
+function laDot(x,y,mv,o){o=o||{};if(!mv)return `<circle cx="${x}" cy="${y}" r="3.5" class="la-dotc"${o.at||''}/>`;
+  return `<circle cx="${x}" cy="${y}" r="3.5" class="la-mv la-dotc" style="animation-delay:${mv[0]}s;--la-dx:${mv[1]}px;--la-dy:${mv[2]}px"${o.at||''}/>`;}
+// จุดกระโดดทีละตำแหน่ง: hp=[หน่วง,dx,dx1] = เริ่ม (x+dx) → กระโดดไป (x+dx1) → เข้าที่ (x) · สภาพจบอยู่ที่ (x,y) เสมอ
+function laHopDot(x,y,hp){return `<circle cx="${x}" cy="${y}" r="3.5" class="la-hop la-dotc" data-role="dot" style="animation-delay:${hp[0]}s;--la-dx:${hp[1]}px;--la-dx1:${hp[2]}px"/>`;}
+// โค้งกระโดด + ตัวนับ (data-hop = ครั้งที่) · หัวลูกศรหันตามทิศ (ไปซ้าย = แบบเดิมของฉาก 1 · ไปขวา = ฉาก 3–5 คูณ 10)
+function laHopArc(x1,x2,y,d,n){const m=(x1+x2)/2,k=x2<x1?1:-1;return laP(`M${x1} ${y} Q${m} ${y-16} ${x2} ${y} M${x2+3*k} ${y-8} L${x2} ${y} L${x2+8*k} ${y-3}`,d,{c:'la-spur la-focus'})+
+  laT(m,y-16,String(n),d,{fs:15,c:'la-pur la-focus',at:` data-hop="${n}"`});}
+// ฉาก 3–5: จุดกระโดดไปทางขวา 1 ตำแหน่ง (= คูณ 10) · sp = {v,xs,dot,from} ค่าหลังย้าย + x เริ่มของจุด · dd = หน่วงรายหลัก (หลักที่เติมใหม่)
+// la-hop: ช่วง 25%→45% จุดเลื่อนจาก from ไปที่ dot (--la-dx1:0) → ตัวนับโผล่ตอน d+0.4 วิ · จบ d+1.6 วิ
+function laNumHop(sp,y,d,role,dd){return laNum(sp,y,dd==null?null:dd,{fs:34,role,focus:true,hop:[d,sp.from-sp.dot,0]})+laHopArc(sp.from,sp.dot,y-38,+(d+0.4).toFixed(2),1);}
+// ตัวเลขทีละหลัก + จุด (sp = {v,xs,dot}) · dd = หน่วงของทุกหลัก หรือ array รายหลัก (null = นิ่ง)
+// หลัก = data-dg (ใช้เลือกวัดพิกัด) · o.role = บทบาทสีของหลัก · o.focus = โฟกัสทั้งกลุ่ม · o.mv / o.hop = จุดเลื่อน / จุดกระโดด
+function laNum(sp,y,dd,o){o=o||{};const ds=sp.v.replace('.','').split('');let s=`<g data-v="${sp.v}"${o.focus?' class="la-focus"':''}>`;
+  ds.forEach((ch,i)=>{const d=Array.isArray(dd)?dd[i]:dd;s+=laT(sp.xs[i],y,ch,d,{fs:o.fs||30,c:o.c,role:o.role,at:' data-dg="1"'});});
+  if(sp.dot!=null)s+=o.hop?laHopDot(sp.dot,y-3,o.hop):laDot(sp.dot,y-3,o.mv||null,{at:' data-role="dot"'});
+  return s+'</g>';}
+function laArw(x1,x2,y,d){const k=x2>x1?1:-1;return laP(`M${x1} ${y} L${x2} ${y} M${x2-7*k} ${y-5} L${x2} ${y} L${x2-7*k} ${y+5}`,d,{c:'la-spur'});}
+function laDn(x,y1,y2,d){return laP(`M${x} ${y1} L${x} ${y2} M${x-5} ${y2-7} L${x} ${y2} L${x+5} ${y2-7}`,d,{c:'la-spur'});}
+// ฉาก 1: ตาราง 10×10 (มุมซ้ายบน x,y · ช่องละ c)
+function laGrid(x,y,c,d){let s=`<g${laCls('la-o',d,'')}${laAt(d)}><rect x="${x}" y="${y}" width="${10*c}" height="${10*c}" class="la-tbl"/>`;
+  for(let i=1;i<10;i++)s+=`<line x1="${x+i*c}" y1="${y}" x2="${x+i*c}" y2="${y+10*c}" class="la-gl"/><line x1="${x}" y1="${y+i*c}" x2="${x+10*c}" y2="${y+i*c}" class="la-gl"/>`;
+  return s+'</g>';}
+// ฉาก 1: ส่วนบนของการตั้งคูณ 21 × 23 (นิ่ง) · fz = โฟกัสหลักของตัวคูณ ('o' หน่วย / 't' สิบ)
+function laMulTop(fz){const M=LA_MUL;return laT(M.t,30,'2',null,{fs:24})+laT(M.o,30,'1',null,{fs:24})+laT(120,58,'×',null,{fs:22})+
+  laT(M.t,58,'2',null,{fs:24,c:fz==='t'?'la-focus':''})+laT(M.o,58,'3',null,{fs:24,c:fz==='o'?'la-focus':''})+laL(110,68,205,68,null);}
+// การ์ดสรุป "จำ 3 ข้อ" (HTML ใน #la-root) · ข้อสุดท้ายเป็นตัวจบ
+function laSumCard(pts){let s='<div class="la-sum"><ol>';pts.forEach((p,i)=>{const d=+(0.2+0.6*i).toFixed(2),last=i===pts.length-1;
+  s+=`<li class="${last?'la-f':'la-a'}" style="animation-delay:${d}s"${last?' data-la-final="la-fin"':''}>${p}</li>`;});return s+'</ol></div>';}
+// ฉาก 3: ตั้งหารยาว 3600 ÷ 18 — ตัวหาร 18 นอกบ้าน + ตัวตั้ง 3600 ในบ้าน · fz = โฟกัสทั้งบ้าน
+function laDiv3(d,fz){const f=fz?'la-focus':'';return laT(52,76,'18',d,{fs:26,role:'dv',c:f})+laP('M74 46 Q87 64 74 84',d)+laL(74,46,186,46,d)+laNum(LA_D3600,76,d,{fs:26,role:'dd',focus:fz});}
+// ฉาก 3: ชิ้นส่วนของการหารยาวที่ทำเสร็จแล้ว (นิ่ง) · data-down = เลขที่ดึงลงมา
+const LA_LD3=[
+  ()=>laT(126,36,'2',null,{fs:26,role:'res'}),                                                                 // 0 ผลหาร 2
+  ()=>laT(104,106,'3',null,{fs:22})+laT(126,106,'6',null,{fs:22}),                                              // 1 คูณ 18 × 2 = 36
+  ()=>laT(88,102,'−',null,{fs:18})+laL(94,114,138,114,null)+laT(126,136,'0',null,{fs:22,role:'rem'}),          // 2 ลบ 36 − 36 = 0
+  ()=>laDn(148,86,120,null)+laT(148,136,'0',null,{fs:22,at:' data-down="0"'}),                                 // 3 ดึง 0 ลง
+  ()=>laT(148,36,'0',null,{fs:26,role:'res'})];                                                                 // 4 ผลหาร 0
+function laLD3(ix){return ix.map(i=>LA_LD3[i]()).join('');}
+// ฉาก 4: ตัวหาร 34 นอกบ้าน + ตัวตั้ง 95.2 ในบ้าน · fz = โฟกัสตัวตั้ง
+function laDiv4(d,fz){return laT(56,86,'34',d,{fs:28,role:'dv'})+laP('M80 54 Q93 72 80 94',d)+laL(80,54,196,54,d)+laNum(LA_D952,86,d,{fs:30,role:'dd',focus:fz});}
+// ฉาก 4: ชิ้นส่วนของการหารยาวที่ทำเสร็จแล้ว (นิ่ง)
+const LA_LD4=[
+  ()=>laT(136,42,'2',null,{fs:30,role:'res'}),                                                                 // 0 ผลหาร 2
+  ()=>laT(110,114,'6',null,{fs:24})+laT(136,114,'8',null,{fs:24}),                                              // 1 คูณ 34 × 2 = 68
+  ()=>laT(94,110,'−',null,{fs:18})+laL(98,122,150,122,null)+laT(110,146,'2',null,{fs:24,role:'rem'})+laT(136,146,'7',null,{fs:24,role:'rem'}), // 2 ลบ 95 − 68 = 27
+  ()=>laDn(168,92,128,null)+laT(168,146,'2',null,{fs:24,at:' data-down="2"'}),                                 // 3 ดึง 2 ลง → 272
+  ()=>laDot(LA_Q28.dot,39,null,{at:' data-role="dot"'}),                                                       // 4 จุดของผลหาร
+  ()=>laT(168,42,'8',null,{fs:30,role:'res'}),                                                                 // 5 ผลหาร 8
+  ()=>laT(110,174,'2',null,{fs:24})+laT(136,174,'7',null,{fs:24})+laT(168,174,'2',null,{fs:24})]; // 6 คูณ 34 × 8 = 272
+function laLD4(ix){return ix.map(i=>LA_LD4[i]()).join('');}
+// ฉาก 5: ตัวหาร 6 นอกบ้าน + ตัวตั้ง 27 ในบ้าน
+function laDiv5(fz){return laT(70,86,'6',null,{fs:28,role:'dv'})+laP('M84 54 Q97 72 84 94',null)+laL(84,54,160,54,null)+laNum(LA_D27,86,null,{fs:30,role:'dd',focus:fz});}
+// ฉาก 5: เทป + เส้นจำนวน (สัดส่วนจริง)
+function laTapeBase(d){const T=LA_TAPE,lab=['0','0.6','1.2','1.8','2.4','2.7'];let s=laR(T.xs[0],60,T.end-T.xs[0],24,d,{c:'la-tape'})+laL(T.ticks[0],100,T.ticks[5],100,d);
+  T.ticks.forEach((x,i)=>{s+=laL(x,94,x,106,d,{at:` data-tick="${lab[i]}"`})+laT(x,123,lab[i],d,{fs:14,at:` data-tl="${lab[i]}"`});});
+  return s;}
+function laPieces(ds){const T=LA_TAPE;let s='';for(let i=0;i<4;i++){const d=ds?ds[i]:null;
+  s+=laR(T.xs[i],60,T.xs[i+1]-T.xs[i],24,d,{c:'la-pc',at:` data-piece="${i+1}"`})+laT((T.xs[i]+T.xs[i+1])/2,77,String(i+1),d,{fs:13,c:'la-wht'});}return s;}
+function laRest(d){const T=LA_TAPE;return laR(T.xs[4],60,T.end-T.xs[4],24,d,{c:'la-rest',at:' data-rest="1"'});}
+// ฉาก 2: เส้นจำนวนคู่ (เส้น + ขีด 0 และ 1.8/360) · d=null นิ่ง · fz = โฟกัสคู่ 1.8/360
+function laNL2Base(d,fz){const N=LA_NL2,f=fz?'la-focus':'';return '<g transform="translate(0,52)">'+laL(N.x0,0,300,0,d)+laT(18,5,'บาท',d,{fs:13,c:'la-mut'})+
+    laL(N.x0,-8,N.x0,8,d,{at:' data-nl="B" data-v="0"'})+laT(N.x0,-14,'0',d,{fs:15})+
+    laL(N.x18,-8,N.x18,8,d==null?null:d+0.5,{c:f,at:' data-nl="B" data-v="360"'})+laT(N.x18,-14,'360',d==null?null:d+0.5,{fs:15,c:f})+'</g>'+
+  '<g transform="translate(0,122)">'+laL(N.x0,0,300,0,d)+laT(18,5,'ลิตร',d,{fs:13,c:'la-mut'})+
+    laL(N.x0,-8,N.x0,8,d,{at:' data-nl="L" data-v="0"'})+laT(N.x0,26,'0',d,{fs:15})+
+    laL(N.x18,-8,N.x18,8,d==null?null:d+0.5,{c:f,at:' data-nl="L" data-v="1.8"'})+laT(N.x18,26,'1.8',d==null?null:d+0.5,{fs:15,c:f})+'</g>';}
+
+const LESSON6=[
+ // ---------------- ฉาก 1 ----------------
+ {t:'คูณทศนิยม: สีทาผนัง 2.1 × 2.3',
+  sum:LA_SUM1.join(' · '),
+  steps:[
+  {say:'สี 1 dL ทาผนังได้ 2.1 m² · ถ้าใช้สี 2.3 dL จะทาได้กี่ m²?',
+   ms:2100,mark:'ok',chk:[],
+   draw:()=>laSvg(120,laT(160,34,'สี 1 dL → ทาได้ 2.1 m²',0.2,{fs:18})+laT(160,72,'สี 2.3 dL → ทาได้ ■ m²',0.9,{fs:18,c:'la-focus'})+
+     laF(160,106,'เราต้องหา ■',1.6,{fs:15,c:'la-pur la-focus'}))},
+  {say:'ใช้สี 2.3 dL ก็ได้ 2.1 m² อยู่ <b>2.3 เท่า</b> · จึงเขียนเป็นการคูณ <b>2.1 × 2.3 = ■</b>',
+   ms:1800,mark:'ok',chk:[],
+   draw:()=>laSvg(115,laT(160,34,'2.1 m² อยู่ 2.3 เท่า',0.1,{fs:17,c:'la-mut'})+
+     laT(196,88,'2.1 × 2.3 =',0.6,{fs:28,an:'end',c:'la-focus'})+laF(222,88,'■',1.3,{fs:28,role:'res',c:'la-focus'}))},
+  {kind:'why',say:'<b>ทำไม</b>ต้องนับตำแหน่งทศนิยม? ดูแผ่นตาราง 10 × 10 ช่อง แถบเดียวคือ <b>0.1</b> ของทั้งแผ่น',
+   ms:1900,mark:'ok',chk:[{eq:'10*10=100',truth:true},{eq:'1/10=0.1',truth:true}],
+   draw:()=>laSvg(150,laGrid(30,15,12,0.1)+laR(30,15,12,120,0.8,{c:'la-bar la-focus'})+
+     laT(232,46,'10 × 10 = 100 ช่อง',0.4,{fs:14,c:'la-mut'})+laT(232,82,'สีฟ้า 1 จาก 10 แถบ',1.0,{fs:15,c:'la-focus'})+
+     laF(232,114,'= 0.1 ของแผ่น',1.4,{fs:17,c:'la-pur la-focus'}))},
+  {kind:'why',say:'0.1 × 0.1 คือเอา 0.1 ของแถบนั้นอีกที · ได้ <b>1 ช่องจาก 100 ช่อง</b> คือ <b>0.01</b> (ส่วนร้อย)',
+   ms:2100,mark:'ok',chk:[{eq:'0.1*0.1=0.01',truth:true},{eq:'1/100=0.01',truth:true}],
+   draw:()=>laSvg(150,laGrid(30,15,12,null)+laR(30,15,12,120,null,{c:'la-bar'})+laR(30,123,12,12,0.4,{c:'la-pc la-focus'})+
+     `<circle cx="36" cy="129" r="13" class="la-o la-ring la-focus" style="animation-delay:0.6s"/>`+
+     laT(232,46,'0.1 × 0.1',0.6,{fs:20,c:'la-focus'})+laT(232,82,'= 1 ช่อง จาก 100',1.1,{fs:15})+
+     laF(232,118,'= 0.01',1.6,{fs:24,role:'res',c:'la-focus'}))},
+  {kind:'why',say:'ส่วนสิบ × ส่วนสิบ = <b>ส่วนร้อย</b> · 2.1 × 2.3 จึงได้ส่วนร้อย คือ<b>ทศนิยม 2 ตำแหน่ง</b>',
+   ms:2100,mark:'ok',chk:[{eq:'0.1*0.1=0.01',truth:true},{eq:'1+1=2',truth:true}],
+   draw:()=>laSvg(132,laT(160,30,'0.1 × 0.1 = 0.01',0.1,{fs:18})+laT(160,60,'ส่วนสิบ×ส่วนสิบ=ส่วนร้อย',0.6,{fs:16,c:'la-pur'})+
+     laT(160,90,'2.1 × 2.3 → ได้ส่วนร้อย',1.1,{fs:17,c:'la-focus'})+laF(160,120,'ทศนิยม 1 + 1 = 2 ตำแหน่ง',1.6,{fs:16,c:'la-grn la-focus'}))},
+  {say:'เริ่มคิดจริง: คูณแบบ<b>ไม่สนจุด</b>ก่อน · 2.1 × 2.3 ให้คิดเป็น <b>21 × 23</b>',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(110,laT(160,34,'2.1 × 2.3',0.1,{fs:24,c:'la-mut'})+laDn(160,46,70,0.5)+laF(160,100,'21 × 23',1.0,{fs:28,c:'la-focus'}))},
+  {say:'คูณหลักหน่วยก่อน: <b>21 × 3 = 63</b> · เขียน 63 ไว้แถวแรก',
+   ms:2000,mark:'ok',chk:[{eq:'1*3=3',truth:true},{eq:'2*3=6',truth:true},{eq:'21*3=63',truth:true}],
+   draw:()=>{const M=LA_MUL;return laSvg(110,laMulTop('o')+
+     '<g data-pp="63" class="la-focus">'+laT(M.o,94,'3',0.4,{fs:24})+laT(M.t,94,'6',1.0,{fs:24})+'</g>'+
+     laT(222,30,'1 × 3 = 3',0.4,{fs:13,an:'start',c:'la-mut la-focus'})+laT(222,52,'2 × 3 = 6',1.0,{fs:13,an:'start',c:'la-mut la-focus'})+
+     laF(214,94,'← 21 × 3',1.5,{fs:13,an:'start',c:'la-pur la-focus'}));}},
+  {say:'ต่อไปคูณหลักสิบ: เลข 2 ใน 23 คือ <b>20</b> → <b>21 × 20 = 420</b> เขียนไว้แถวที่สอง',
+   ms:2300,mark:'ok',chk:[{eq:'1*2=2',truth:true},{eq:'2*2=4',truth:true},{eq:'21*20=420',truth:true}],
+   draw:()=>{const M=LA_MUL;return laSvg(136,laMulTop('t')+laT(M.t,94,'6',null,{fs:24})+laT(M.o,94,'3',null,{fs:24})+
+     '<g data-pp="420" class="la-focus">'+laT(M.o,120,'0',0.3,{fs:24})+laT(M.t,120,'2',0.8,{fs:24})+laT(M.h,120,'4',1.3,{fs:24})+'</g>'+
+     laT(222,30,'1 × 2 = 2',0.8,{fs:13,an:'start',c:'la-mut la-focus'})+laT(222,52,'2 × 2 = 4',1.3,{fs:13,an:'start',c:'la-mut la-focus'})+
+     laF(214,120,'← 21 × 20',1.8,{fs:13,an:'start',c:'la-pur la-focus'}));}},
+  {say:'บวกสองแถว: <b>63 + 420 = 483</b> · ได้ 21 × 23 = 483',
+   ms:1900,mark:'ok',chk:[{eq:'63+420=483',truth:true},{eq:'21*23=483',truth:true}],
+   draw:()=>{const M=LA_MUL;return laSvg(170,laMulTop('')+laT(M.t,94,'6',null,{fs:24})+laT(M.o,94,'3',null,{fs:24})+
+     laT(M.h,120,'4',null,{fs:24})+laT(M.t,120,'2',null,{fs:24})+laT(M.o,120,'0',null,{fs:24})+laT(120,120,'+',0.1,{fs:22,c:'la-focus'})+laL(110,130,205,130,0.3)+
+     '<g data-pp="483" class="la-focus">'+laT(M.o,158,'3',0.6,{fs:26,role:'res'})+laT(M.t,158,'8',1.0,{fs:26,role:'res'})+laF(M.h,158,'4',1.4,{fs:26,role:'res'})+'</g>');}},
+  {say:'2.1 มีทศนิยม <b>1 ตำแหน่ง</b> และ 2.3 ก็มี <b>1 ตำแหน่ง</b> → รวม <b>2 ตำแหน่ง</b>',
+   ms:2000,mark:'ok',chk:[{eq:'1+1=2',truth:true}],
+   draw:()=>laSvg(132,laT(80,36,'2.1',0.1,{fs:26})+`<circle cx="93" cy="27" r="13" class="la-o la-ring la-focus" style="animation-delay:0.3s"/>`+laT(205,36,'1 ตำแหน่ง',0.4,{fs:15,c:'la-mut la-focus'})+
+     laT(80,76,'2.3',0.7,{fs:26})+`<circle cx="93" cy="67" r="13" class="la-o la-ring la-focus" style="animation-delay:0.9s"/>`+laT(205,76,'1 ตำแหน่ง',1.0,{fs:15,c:'la-mut la-focus'})+
+     laF(160,118,'รวม 1 + 1 = 2 ตำแหน่ง',1.5,{fs:18,c:'la-pur la-focus'}))},
+  {kind:'hop',hops:2,say:'เริ่มที่ท้าย 483 แล้วให้จุด<b>กระโดดไปทางซ้ายทีละ 1 ตำแหน่ง</b> 2 ครั้ง → ได้ <b>4.83</b>',
+   ms:2700,mark:'ok',chk:[{eq:'1+1=2',truth:true},{eq:'2.1*2.3=4.83',truth:true}],
+   draw:()=>laSvg(150,'<g transform="translate(0,20)">'+laNum(LA_R483,80,null,{fs:34,role:'res',focus:true,hop:[0.3,56,28]})+
+     laHopArc(196,168,44,0.7,1)+laHopArc(168,140,44,1.26,2)+'</g>'+
+     laF(160,138,'2.1 × 2.3 = 4.83',2.2,{fs:18,c:'la-pur la-focus'}))},
+  {say:'เช็คด้วยการประมาณ: 2.1 ≈ 2 และ 2.3 ≈ 2 → 2 × 2 = 4 · คำตอบ 4.83 ≈ 5 อยู่แถวๆ 4–5 ✓',
+   ms:1800,mark:'ok',chk:[{eq:'2*2=4',truth:true}],
+   draw:()=>laSvg(122,laT(160,30,'ประมาณ 2.1 ≈ 2, 2.3 ≈ 2',0.1,{fs:16})+laT(160,66,'2 × 2 = 4',0.7,{fs:24,c:'la-focus'})+
+     laF(160,104,'4.83 อยู่แถวๆ 4–5 ✓',1.3,{fs:20,c:'la-grn la-focus'}))},
+  {say:'เหล็กยาว 1 m หนัก 3.2 kg · ถ้ายาว 0.8 m จะหนัก 3.2 × 0.8 = <b>2.56 kg</b>',
+   ms:2500,mark:'ok',chk:[{eq:'32*8=256',truth:true},{eq:'3.2*0.8=2.56',truth:true}],
+   draw:()=>laSvg(172,laT(160,22,'เหล็กยาว 1 m หนัก 3.2 kg',0.1,{fs:15})+laR(20,34,250,16,0.3,{c:'la-bar'})+laT(276,47,'1 m',0.3,{fs:13,an:'start'})+
+     laT(160,80,'ยาว 0.8 m หนักเท่าไร?',0.8,{fs:15})+laR(20,90,200,16,1.0,{c:'la-bar2 la-focus'})+laT(226,103,'0.8 m',1.0,{fs:13,an:'start',c:'la-focus'})+
+     laT(160,136,'3.2 × 0.8 = 2.56',1.6,{fs:22,c:'la-focus'})+laF(160,162,'32×8 = 256 → 2 ตำแหน่ง',2.0,{fs:13,c:'la-mut la-focus'}))},
+  {kind:'why',say:'คูณด้วย 0.8 ซึ่ง<b>น้อยกว่า 1</b> ผลจึงน้อยลง · คูณด้วย 2.3 ซึ่ง<b>มากกว่า 1</b> ผลจึงมากขึ้น',
+   ms:1800,mark:'ok',chk:[{eq:'2.1*2.3=4.83',truth:true},{eq:'3.2*0.8=2.56',truth:true}],
+   draw:()=>laSvg(112,laT(110,40,'2.1 × 2.3 = 4.83',0.1,{fs:17})+laT(262,40,'มากขึ้น ↑',0.5,{fs:16,c:'la-grn'})+
+     laT(110,86,'3.2 × 0.8 = 2.56',0.9,{fs:17,c:'la-focus'})+laF(262,86,'น้อยลง ↓',1.3,{fs:16,c:'la-org la-focus'}))},
+  {say:'⚠️ <b>กับดักตัวอย่าง</b>: ถ้าใส่จุดผิดที่ จะได้ 2.1 × 2.3 = <b>48.3</b> ❌',
+   ms:2100,mark:'trap',chk:[{eq:'2.1*2.3=48.3',truth:false}],
+   draw:()=>laSvg(155,laT(160,30,'2.1 × 2.3 = ?',0.1,{fs:22})+laNum(LA_R483X,90,0.4,{fs:34,role:'bad',focus:true,mv:[0.7,32,0]})+
+     laF(160,140,'48.3 ❌',1.6,{fs:26,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ประมาณได้ 2 × 2 = 4 · แต่ 48.3 ใหญ่กว่า 4 มาก แปลว่า<b>ใส่จุดผิดที่</b>',
+   ms:1800,mark:'check',chk:[{eq:'2*2=4',truth:true},{eq:'2.1*2.3=48.3',truth:false}],
+   draw:()=>laSvg(140,laT(160,34,'2.1 × 2.3 ≈ 2 × 2 = 4',0.1,{fs:20})+laT(160,72,'คำตอบต้องอยู่แถวๆ 4–5',0.7,{fs:17})+
+     laF(160,112,'48.3 ใหญ่เกินไป ❌',1.3,{fs:20,role:'bad',c:'la-focus'}))},
+  {say:'✅ แบบที่ถูกคือ <b>4.83</b> อยู่แถวๆ 4–5 ตามที่ประมาณ · จุดอยู่หลังเลข 4 เพราะต้องมีทศนิยม 2 ตำแหน่ง',
+   ms:2300,mark:'fix',chk:[{eq:'2.1*2.3=4.83',truth:true}],
+   draw:()=>laSvg(165,laNum(LA_R483,60,0.1,{fs:34,role:'res',focus:true,mv:[0.3,56,0]})+laT(160,110,'2.1 × 2.3 = 4.83 ✅',1.2,{fs:20,c:'la-grn'})+
+     laF(160,150,'ต้องคูณให้ถูกจริงๆ',1.8,{fs:17,c:'la-pur'}))},
+  {kind:'quiz',q:'2.1 × 2.3 = ? (ลองนับตำแหน่งทศนิยมดูนะ)',
+   choices:[{text:'48.3',correct:false,eq:'2.1*2.3=48.3',why:'48.3 มีทศนิยมแค่ 1 ตำแหน่ง · ประมาณได้ 2 × 2 = 4 แต่ 48.3 ใหญ่เกินไป'},
+     {text:'4.83',correct:true,eq:'2.1*2.3=4.83',why:'21 × 23 = 483 ใส่จุด 2 ตำแหน่ง ได้ 4.83 อยู่แถวๆ 4–5 ✓'},
+     {text:'0.483',correct:false,eq:'2.1*2.3=0.483',why:'0.483 มีทศนิยม 3 ตำแหน่ง มากไป 1 ตำแหน่ง · ประมาณ 2 × 2 = 4 แต่ 0.483 เล็กเกินไป'}],
+   chk:[{eq:'2.1*2.3=4.83',truth:true},{eq:'2.1*2.3=48.3',truth:false},{eq:'2.1*2.3=0.483',truth:false},{eq:'2*2=4',truth:true},{eq:'21*23=483',truth:true}]},
+  {kind:'quiz',q:'3.2 × 0.8 ได้ผลมากกว่า หรือน้อยกว่า 3.2?',
+   choices:[{text:'มากกว่า 3.2',correct:false,eq:'3.2*0.8>3.2',why:'คูณแล้วไม่ได้มากขึ้นเสมอไป · 0.8 น้อยกว่า 1 ผลจึงน้อยลง'},
+     {text:'น้อยกว่า 3.2',correct:true,eq:'3.2*0.8<3.2',why:'0.8 น้อยกว่า 1 ผลจึงน้อยลง: 3.2 × 0.8 = 2.56'}],
+   chk:[{eq:'3.2*0.8<3.2',truth:true},{eq:'3.2*0.8>3.2',truth:false},{eq:'3.2*0.8=2.56',truth:true}]},
+  {kind:'sum',pts:LA_SUM1,say:'📌 <b>จำ 3 ข้อ</b>',
+   ms:1900,mark:'ok',chk:[],draw:()=>laSumCard(LA_SUM1)}
+ ]},
+ // ---------------- ฉาก 2 ----------------
+ {t:'โจทย์ปัญหา → เส้นจำนวนคู่และตาราง',
+  sum:LA_SUM2.join(' · '),
+  steps:[
+  {say:'น้ำส้ม 1.8 ลิตร ราคา 360 บาท · ถ้าซื้อ 1 ลิตร จะราคาเท่าไร?',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(110,laT(160,36,'1.8 ลิตร ราคา 360 บาท',0.2,{fs:19})+laF(160,80,'1 ลิตร ราคา ■ บาท ?',1.0,{fs:19,c:'la-pur la-focus'}))},
+  {say:'แยกให้ออกก่อน: <b>อะไรรู้แล้ว</b> กับ <b>อะไรที่ถาม</b>',
+   ms:1900,mark:'ok',chk:[],
+   draw:()=>laSvg(140,laT(160,26,'สิ่งที่รู้',0.1,{fs:14,c:'la-mut la-focus'})+laT(160,56,'1.8 ลิตร ราคา 360 บาท',0.4,{fs:19,c:'la-focus'})+
+     laT(160,92,'สิ่งที่ถาม',1.0,{fs:14,c:'la-mut la-focus'})+laF(160,122,'1 ลิตร ราคา ■ บาท',1.4,{fs:19,c:'la-pur la-focus'}))},
+  {say:'วาด<b>เส้นจำนวนคู่</b>: เส้นบนเป็นบาท เส้นล่างเป็นลิตร · 1.8 ลิตร อยู่ตรงกับ 360 บาท',
+   ms:2100,mark:'ok',chk:[],
+   draw:()=>{const N=LA_NL2;return laSvg(165,laNL2Base(0.1,true)+laL(N.x18,62,N.x18,112,1.1,{c:'la-dash la-focus'})+
+     laF(N.x18-30,92,'คู่กัน',1.6,{fs:13,an:'end',c:'la-pur la-focus'}));}},
+  {say:'1 ลิตรน้อยกว่า 1.8 ลิตร จึงอยู่<b>ก่อนถึง 1.8</b> · ราคา ■ ก็อยู่ตรงแนวเดียวกัน',
+   ms:1800,mark:'ok',chk:[],
+   draw:()=>{const N=LA_NL2;return laSvg(165,laNL2Base(null,false)+
+     '<g transform="translate(0,122)">'+laL(N.x1,-8,N.x1,8,0.3,{c:'la-spur la-focus',at:' data-nl="L" data-v="1"'})+laT(N.x1,26,'1',0.3,{fs:15,c:'la-pur la-focus'})+'</g>'+
+     laL(N.x1,62,N.x1,112,0.8,{c:'la-dash la-focus'})+
+     '<g transform="translate(0,52)">'+laL(N.xq,-8,N.xq,8,1.1,{c:'la-spur la-focus',at:' data-nl="B" data-v="■"'})+laF(N.xq,-14,'■',1.3,{fs:16,c:'la-pur la-focus'})+'</g>');}},
+  {kind:'why',say:'<b>ทำไม</b>ต้องหาร? ลองเลขง่ายๆ: 2 ลิตร 360 บาท → 1 ลิตร = 360 ÷ 2 = <b>180 บาท</b>',
+   ms:2000,mark:'ok',chk:[{eq:'360/2=180',truth:true}],
+   draw:()=>laSvg(150,laT(160,26,'2 ลิตร ราคา 360 บาท',0.1,{fs:17})+laR(40,40,240,22,0.3,{c:'la-bar'})+laL(160,36,160,66,0.7,{c:'la-focus'})+
+     laT(100,86,'180',0.9,{fs:15,c:'la-focus'})+laT(220,86,'180',0.9,{fs:15,c:'la-focus'})+
+     laF(160,126,'1 ลิตร 360 ÷ 2 = 180 บาท',1.5,{fs:18,c:'la-grn la-focus'}))},
+  {kind:'why',say:'1.8 ลิตรก็คิดแบบเดียวกัน: ลิตร ÷ 1.8 ได้ 1 ลิตร · ราคาก็ต้อง <b>÷ 1.8</b> เหมือนกัน',
+   ms:2600,mark:'ok',chk:[{eq:'1.8/1.8=1',truth:true}],
+   draw:()=>laSvg(165,laR(20,40,280,80,0.1,{c:'la-tbl'})+laL(20,80,300,80,0.1)+laL(100,40,100,120,0.1)+laL(200,40,200,120,0.1)+
+     laT(60,66,'ลิตร',0.2,{fs:15})+laT(60,106,'บาท',0.2,{fs:15})+laT(250,66,'1.8',0.5,{fs:20})+laT(250,106,'360',0.5,{fs:20})+
+     laT(150,66,'1',0.8,{fs:20,c:'la-pur'})+laT(150,106,'■',1.1,{fs:20,c:'la-pur'})+
+     '<g class="la-focus">'+laArw(240,160,28,1.4)+laT(200,18,'÷ 1.8',1.4,{fs:13,c:'la-pur'})+laArw(240,160,134,1.9)+laF(200,156,'÷ 1.8',2.1,{fs:13,c:'la-pur'})+'</g>')},
+  {say:'ต่อตารางไปเรื่อยๆ: ลิตร ×2 ราคาก็ ×2 · ลิตร ×3 ราคาก็ ×3 ไปคู่กันเสมอ',
+   ms:2600,mark:'ok',chk:[{eq:'1.8*2=3.6',truth:true},{eq:'1.8*3=5.4',truth:true},{eq:'1.8*4=7.2',truth:true},{eq:'1.8*5=9',truth:true},
+     {eq:'360*2=720',truth:true},{eq:'360*3=1080',truth:true},{eq:'360*4=1440',truth:true},{eq:'360*5=1800',truth:true}],
+   draw:()=>{const Lv=['1.8','3.6','5.4','7.2','9'],Bv=['360','720','1080','1440','1800'];
+     let s=laT(36,60,'ลิตร',0.1,{fs:14})+laT(36,98,'บาท',0.1,{fs:14})+laL(10,74,315,74,0.1);
+     for(let k=0;k<5;k++){const x=90+50*k,d=0.2+0.45*k,f=k===1||k===2?'la-focus':'';
+       s+=laT(x,24,'×'+(k+1),d,{fs:13,c:'la-pur '+f})+laT(x,60,Lv[k],d+0.05,{fs:16,c:f})+(k<4?laT(x,98,Bv[k],d+0.1,{fs:16,c:f}):laF(x,98,Bv[k],d+0.1,{fs:16,c:f}));}
+     return laSvg(112,s);}},
+  {say:'เขียน<b>ประโยคสัญลักษณ์</b>: ราคา ÷ ปริมาณ = ราคาต่อ 1 ลิตร → <span data-role="dd">360</span> ÷ <span data-role="dv">1.8</span> = ■',
+   ms:1900,mark:'ok',chk:[],
+   draw:()=>laSvg(132,laT(112,36,'ราคา',0.1,{fs:20,role:'dd'})+laT(160,36,'÷',0.1,{fs:20})+laT(214,36,'ปริมาณ',0.1,{fs:20,role:'dv'})+
+     laT(160,66,'= ราคาต่อ 1 ลิตร',0.6,{fs:15,c:'la-mut'})+
+     laT(100,114,'360',1.0,{fs:30,role:'dd',c:'la-focus'})+laT(146,114,'÷',1.0,{fs:30,c:'la-focus'})+laT(188,114,'1.8',1.0,{fs:30,role:'dv',c:'la-focus'})+
+     laT(228,114,'=',1.0,{fs:30,c:'la-focus'})+laF(262,114,'■',1.4,{fs:30,role:'res',c:'la-focus'}))},
+  {say:'⚠️ <b>ลูกเคยพลาดแบบนี้</b>: เขียนเป็น 1.8 ÷ 360 ❌ คือสลับตัวตั้งกับตัวหาร',
+   ms:1600,mark:'trap',chk:[],
+   draw:()=>laSvg(124,laT(108,48,'1.8',0.2,{fs:30,role:'dv',c:'la-focus'})+laT(160,48,'÷',0.2,{fs:30,c:'la-focus'})+laT(214,48,'360',0.2,{fs:30,role:'dd',c:'la-focus'})+
+     laP('M108 62 Q160 88 214 62 M108 62 L116 58 M108 62 L113 70 M214 62 L206 58 M214 62 L209 70',0.7,{c:'la-spur la-focus'})+
+     laF(160,112,'สลับตัวตั้งกับตัวหาร ❌',1.1,{fs:17,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ตรวจ: 1.8 ÷ 360 = 0.005 คือ<b>ลิตรต่อบาท</b> · หน่วยไม่ตรงกับที่ถาม (เราถามราคาต่อลิตร)',
+   ms:1800,mark:'check',chk:[{eq:'1.8/360=0.005',truth:true}],
+   draw:()=>laSvg(124,laT(160,34,'1.8 ÷ 360 = 0.005',0.1,{fs:22})+laT(160,70,'ได้ ลิตรต่อบาท',0.7,{fs:17,c:'la-focus'})+
+     laF(160,108,'แต่เราถาม บาทต่อลิตร ❌',1.3,{fs:16,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ตรวจกลับ: ถ้า 1 ลิตรราคา 0.005 บาท · 1.8 ลิตรจะราคาแค่ 1.8 × 0.005 = 0.009 บาท ไม่ใช่ 360 บาท',
+   ms:1800,mark:'check',chk:[{eq:'1.8*0.005=0.009',truth:true},{eq:'1.8*0.005=360',truth:false}],
+   draw:()=>laSvg(128,laT(160,30,'1 ลิตร ราคา 0.005 บาท ?',0.1,{fs:16})+laT(160,70,'1.8 × 0.005 = 0.009',0.7,{fs:22,c:'la-focus'})+
+     laF(160,112,'0.009 ≠ 360 ❌',1.3,{fs:20,role:'bad',c:'la-focus'}))},
+  {say:'✅ ตัวตั้ง = <span data-role="dd">ราคา 360</span> · ตัวหาร = <span data-role="dv">ปริมาณ 1.8</span> → <b>360 ÷ 1.8 = ■</b>',
+   ms:1700,mark:'fix',chk:[],
+   draw:()=>laSvg(130,laT(160,32,'ตัวตั้ง = ราคา 360',0.1,{fs:17,role:'dd'})+laT(160,62,'ตัวหาร = ปริมาณ 1.8',0.6,{fs:17,role:'dv'})+
+     laF(160,112,'360 ÷ 1.8 = ■ ✅',1.2,{fs:24,c:'la-grn la-focus'}))},
+  {kind:'quiz',q:'น้ำส้ม 1.8 ลิตร 360 บาท อยากรู้ราคา 1 ลิตร ต้องเขียนแบบไหน?',
+   choices:[{text:'1.8 ÷ 360',correct:false,eq:'1.8*(1.8/360)=360',why:'สลับที่กัน · ตรวจกลับ 1.8 × 0.005 = 0.009 ไม่ใช่ 360'},
+     {text:'360 ÷ 1.8',correct:true,eq:'1.8*(360/1.8)=360',why:'ราคา ÷ ปริมาณ = ราคาต่อ 1 ลิตร · ตัวตั้งคือราคา 360'}],
+   chk:[{eq:'1.8*(360/1.8)=360',truth:true},{eq:'1.8*(1.8/360)=360',truth:false},{eq:'1.8*0.005=0.009',truth:true}]},
+  {say:'ได้ประโยคแล้ว! คำตอบของ 360 ÷ 1.8 ไปหากันใน<b>ฉากถัดไป</b>',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(105,laT(160,40,'360 ÷ 1.8 = ?',0.1,{fs:26,c:'la-focus'})+laF(160,86,'ไปหาคำตอบกันในฉากถัดไป ▶',1.0,{fs:16,c:'la-pur'}))},
+  {kind:'sum',pts:LA_SUM2,say:'📌 <b>จำ 3 ข้อ</b>',
+   ms:1900,mark:'ok',chk:[],draw:()=>laSumCard(LA_SUM2)}
+ ]},
+ // ---------------- ฉาก 3 ----------------
+ {t:'หารทศนิยม: ย้ายจุดทั้งคู่ (360 ÷ 1.8)',
+  sum:LA_SUM3.join(' · '),
+  steps:[
+  {say:'กฎของการหาร: คูณ<b>ทั้งตัวตั้งและตัวหาร</b>ด้วยเลขเดียวกันที่ไม่ใช่ 0 ผลหารเท่าเดิม · เช่น 6 ÷ 3 = 2 และ 12 ÷ 6 = 2',
+   ms:2500,mark:'ok',chk:[{eq:'6/3=2',truth:true},{eq:'6*2=12',truth:true},{eq:'3*2=6',truth:true},{eq:'12/6=2',truth:true},{eq:'2>0',truth:true}],
+   draw:()=>laSvg(168,laT(110,40,'6',0.1,{fs:26,role:'dd'})+laT(140,40,'÷',0.1,{fs:26})+laT(170,40,'3',0.1,{fs:26,role:'dv'})+laT(200,40,'=',0.1,{fs:26})+laT(230,40,'2',0.3,{fs:26,role:'res'})+
+     '<g class="la-focus">'+laDn(110,50,96,0.8)+laT(86,78,'×2',0.9,{fs:14,c:'la-pur'})+laDn(170,50,96,0.8)+laT(194,78,'×2',0.9,{fs:14,c:'la-pur'})+'</g>'+
+     laT(110,124,'12',1.3,{fs:26,role:'dd',c:'la-focus'})+laT(140,124,'÷',1.3,{fs:26,c:'la-focus'})+laT(170,124,'6',1.3,{fs:26,role:'dv',c:'la-focus'})+laT(200,124,'=',1.3,{fs:26,c:'la-focus'})+laT(230,124,'2',1.6,{fs:26,role:'res',c:'la-focus'})+
+     laF(160,158,'ผลหารเท่าเดิม ✓',2.0,{fs:16,c:'la-grn la-focus'}))},
+  {say:'ถ้าคูณ 10 <b>แค่ตัวตั้ง</b>: 60 ÷ 3 = 20 ไม่เท่ากับ 2 ✗ · ต้องคูณ<b>ทั้งคู่</b>ด้วยเลขเดียวกันเสมอ',
+   ms:2500,mark:'ok',chk:[{eq:'6/3=2',truth:true},{eq:'6*10=60',truth:true},{eq:'60/3=20',truth:true}],
+   draw:()=>laSvg(168,laT(110,40,'6',0.1,{fs:26,role:'dd'})+laT(140,40,'÷',0.1,{fs:26})+laT(170,40,'3',0.1,{fs:26,role:'dv'})+laT(200,40,'=',0.1,{fs:26})+laT(230,40,'2',0.3,{fs:26,role:'res'})+
+     '<g class="la-focus">'+laDn(110,50,96,0.8)+laT(84,78,'×10',0.9,{fs:14,c:'la-red'})+'</g>'+laT(170,78,'ไม่คูณ',0.9,{fs:13,c:'la-mut'})+
+     laT(110,124,'60',1.3,{fs:26,role:'dd',c:'la-focus'})+laT(140,124,'÷',1.3,{fs:26,c:'la-focus'})+laT(170,124,'3',1.3,{fs:26,role:'dv',c:'la-focus'})+laT(200,124,'=',1.3,{fs:26,c:'la-focus'})+laT(236,124,'20',1.6,{fs:26,role:'bad',c:'la-focus'})+
+     laF(160,158,'ผลหารไม่เท่าเดิม ✗',2.0,{fs:16,role:'bad',c:'la-focus'}))},
+  {kind:'why',say:'<b>ทำไม</b>คูณ 10 ทั้งคู่ได้? น้ำส้ม 1.8 ลิตร 360 บาท ถ้าซื้อ <b>10 เท่า</b> ก็ได้ 18 ลิตร จ่าย 3600 บาท',
+   ms:2000,mark:'ok',chk:[{eq:'1.8*10=18',truth:true},{eq:'360*10=3600',truth:true}],
+   draw:()=>laSvg(160,laT(100,40,'1.8 ลิตร',0.1,{fs:20,role:'dv'})+laT(226,40,'360 บาท',0.1,{fs:20,role:'dd'})+
+     '<g class="la-focus">'+laDn(100,52,86,0.5)+laT(66,74,'×10',0.5,{fs:14,c:'la-pur'})+laDn(226,52,86,0.5)+laT(262,74,'×10',0.5,{fs:14,c:'la-pur'})+'</g>'+
+     laT(100,112,'18 ลิตร',1.0,{fs:20,role:'dv',c:'la-focus'})+laT(226,112,'3600 บาท',1.0,{fs:20,role:'dd',c:'la-focus'})+
+     laF(160,150,'ได้ 10 เท่า จ่าย 10 เท่า',1.5,{fs:16,c:'la-pur la-focus'}))},
+  {kind:'why',say:'ซื้อ 10 เท่า จ่าย 10 เท่า <b>ราคาต่อลิตรจึงเท่าเดิม</b> · 360 ÷ 1.8 กับ 3600 ÷ 18 ได้คำตอบเท่ากัน',
+   ms:1900,mark:'ok',chk:[{eq:'360/1.8=3600/18',truth:true}],
+   draw:()=>laSvg(132,laT(160,34,'ราคาต่อ 1 ลิตร',0.1,{fs:15,c:'la-mut'})+laT(160,74,'360 ÷ 1.8 = 3600 ÷ 18',0.6,{fs:22,c:'la-focus'})+
+     laF(160,114,'คำตอบเท่ากัน ✓',1.4,{fs:18,c:'la-grn la-focus'}))},
+  {kind:'hop',hops:1,say:'ตัวหาร 1.8 มีทศนิยม <b>1 ตำแหน่ง</b> → จุดกระโดดไปทางขวา 1 ตำแหน่ง (คือคูณ 10) ได้ <b>18</b>',
+   ms:2100,mark:'ok',chk:[{eq:'1.8*10=18',truth:true}],
+   draw:()=>laSvg(160,laT(160,24,'1.8 มีทศนิยม 1 ตำแหน่ง',0.1,{fs:15,c:'la-mut'})+laNumHop(LA_H18,104,0.4,'dv')+
+     laF(160,146,'1.8 × 10 = 18',1.6,{fs:18,c:'la-pur la-focus'}))},
+  {kind:'hop',hops:1,say:'ตัวตั้งต้องย้ายเท่ากัน · 360 ไม่มีจุด ให้คิดว่าจุดซ่อนอยู่ท้าย แล้วกระโดด 1 ตำแหน่ง เติม 0 ได้ <b>3600</b>',
+   ms:2100,mark:'ok',chk:[{eq:'360*10=3600',truth:true}],
+   draw:()=>laSvg(160,laT(160,24,'ตัวตั้งก็ย้าย 1 ตำแหน่ง',0.1,{fs:15,c:'la-mut'})+laNumHop(LA_H3600,104,0.4,'dd',[null,null,null,1.1])+
+     laF(160,146,'360 × 10 = 3600',1.6,{fs:18,c:'la-pur la-focus'}))},
+  {say:'ได้ <span data-role="dd">3600</span> ÷ <span data-role="dv">18</span> ตัวหารเป็นจำนวนเต็มแล้ว (จุดท้ายสุดไม่ต้องเขียน) · ตั้งหารยาว 18 อยู่นอกบ้าน 3600 อยู่ในบ้าน',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(132,laDiv3(0.2,true)+laF(160,122,'ผลหารจะเขียนไว้ข้างบน',1.0,{fs:14,c:'la-pur la-focus'}))},
+  {kind:'quiz',q:'360 ÷ 1.8 มีคำตอบเท่ากับข้อไหน?',
+   choices:[{text:'360 ÷ 18',correct:false,eq:'360/1.8=360/18',why:'ย้ายจุดแค่ตัวหาร ผลหารจะเปลี่ยน · ต้องคูณ 10 ทั้งตัวตั้งและตัวหาร'},
+     {text:'3600 ÷ 18',correct:true,eq:'360/1.8=3600/18',why:'คูณ 10 ทั้งตัวตั้งและตัวหาร ผลหารเท่าเดิม'}],
+   chk:[{eq:'360/1.8=3600/18',truth:true},{eq:'360/1.8=360/18',truth:false}]},
+  {kind:'div',say:'<b>หาร</b>: 3 น้อยกว่า 18 จึงใช้ 36 · 36 ÷ 18 = 2 เขียน <span data-role="res">2</span> ไว้บนเลข 6',
+   ms:1600,mark:'ok',chk:[{eq:'3<18',truth:true},{eq:'36/18=2',truth:true}],
+   draw:()=>laSvg(100,laR(92,52,46,30,0.2,{c:'la-hl'})+laDiv3(null,true)+laT(198,64,'36 ÷ 18 = 2',0.5,{fs:13,an:'start',c:'la-focus'})+
+     laF(126,36,'2',1.1,{fs:26,role:'res',c:'la-focus'}))},
+  {kind:'mul',say:'<b>คูณ</b>: 18 × 2 = 36 · เขียน 36 ไว้ใต้ 36',
+   ms:1500,mark:'ok',chk:[{eq:'18*2=36',truth:true}],
+   draw:()=>laSvg(120,laDiv3(null,false)+laLD3([0])+laT(198,88,'18 × 2 = 36',0.2,{fs:13,an:'start',c:'la-focus'})+
+     '<g class="la-focus">'+laT(126,106,'6',0.5,{fs:22})+laF(104,106,'3',1.0,{fs:22})+'</g>')},
+  {kind:'sub',say:'<b>ลบ</b>: 36 − 36 = 0 · รอบนี้ไม่มีเศษ',
+   ms:1600,mark:'ok',chk:[{eq:'36-36=0',truth:true}],
+   draw:()=>laSvg(150,laDiv3(null,false)+laLD3([0,1])+'<g class="la-focus">'+laT(88,102,'−',0.2,{fs:18})+laL(94,114,138,114,0.4)+'</g>'+
+     laT(198,112,'36 − 36 = 0',0.6,{fs:13,an:'start',c:'la-focus'})+laF(126,136,'0',1.1,{fs:22,role:'rem',c:'la-focus'}))},
+  {kind:'down',say:'<b>ดึงลง</b>: ดึง 0 ตัวถัดไปลงมา · 0 ÷ 18 = 0 จึงเขียน <span data-role="res">0</span> ไว้ข้างบน',
+   ms:1800,mark:'ok',chk:[{eq:'0/18=0',truth:true}],
+   draw:()=>laSvg(150,laDiv3(null,false)+laLD3([0,1,2])+'<g class="la-focus">'+laDn(148,86,120,0.2)+'</g>'+laT(148,136,'0',0.6,{fs:22,c:'la-focus',at:' data-down="0"'})+
+     laT(198,136,'0 ÷ 18 = 0',0.9,{fs:13,an:'start',c:'la-focus'})+laF(148,36,'0',1.3,{fs:26,role:'res',c:'la-focus'}))},
+  {kind:'down',say:'ดึง 0 ตัวสุดท้ายลงมา 0 ÷ 18 = 0 ก็<b>เติม 0</b> อีกตัว · ได้ <b>3600 ÷ 18 = 200</b>',
+   ms:2200,mark:'ok',chk:[{eq:'0/18=0',truth:true},{eq:'3600/18=200',truth:true}],
+   draw:()=>laSvg(188,laDiv3(null,false)+laLD3([1,2,3])+'<g class="la-focus">'+laDn(170,86,120,0.2)+'</g>'+laT(170,136,'0',0.6,{fs:22,c:'la-focus',at:' data-down="0"'})+
+     laT(198,136,'0 ÷ 18 = 0',0.9,{fs:13,an:'start',c:'la-focus'})+laNum(LA_Q200,36,[null,null,1.2],{fs:26,role:'res',focus:true})+
+     laF(160,180,'3600 ÷ 18 = 200',1.7,{fs:20,c:'la-grn la-focus'}))},
+  {say:'⚠️ <b>ลูกเคยพลาดแบบนี้</b>: ย้ายจุดแค่ตัวหาร 1.8 → 18 แต่ตัวตั้งยังเป็น 360 · ได้ 360 ÷ 18 = 20 ❌',
+   ms:1600,mark:'trap',chk:[{eq:'360/18=20',truth:true},{eq:'360/1.8=20',truth:false}],
+   draw:()=>laSvg(130,laT(160,30,'1.8 → 18 แต่ 360 ไม่ย้าย',0.1,{fs:15,c:'la-mut'})+laT(160,74,'360 ÷ 18 = 20',0.4,{fs:28,role:'bad',c:'la-focus'})+
+     laF(160,114,'ย้ายจุดแค่ตัวหาร ❌',1.1,{fs:18,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ตรวจกลับ: ตัวหาร × ผลหาร ต้องได้ตัวตั้ง · 1.8 × 20 = 36 ไม่ใช่ 360 ❌',
+   ms:1800,mark:'check',chk:[{eq:'1.8*20=36',truth:true},{eq:'1.8*20=360',truth:false}],
+   draw:()=>laSvg(125,laT(160,32,'ตรวจกลับ: ตัวหาร × ผลหาร',0.1,{fs:15,c:'la-mut'})+laT(160,70,'1.8 × 20 = 36',0.6,{fs:26,c:'la-focus'})+
+     laF(160,112,'36 ≠ 360 ❌',1.3,{fs:22,role:'bad',c:'la-focus'}))},
+  {say:'✅ ย้ายจุด<b>ทั้งคู่</b>: 3600 ÷ 18 = 200 · ตรวจกลับ 1.8 × 200 = 360 ✓ <b>1 ลิตรราคา 200 บาท</b>',
+   ms:2000,mark:'fix',chk:[{eq:'3600/18=200',truth:true},{eq:'1.8*200=360',truth:true},{eq:'360/1.8=200',truth:true}],
+   draw:()=>laSvg(135,laT(160,34,'1.8 × 200 = 360 ✅',0.1,{fs:22,c:'la-grn'})+laT(160,74,'360 ÷ 1.8 = 200',0.8,{fs:26,c:'la-focus'})+
+     laF(160,120,'1 ลิตร ราคา 200 บาท',1.5,{fs:20,c:'la-pur la-focus'}))},
+  {kind:'quiz',q:'น้ำส้ม 1.8 ลิตร 360 บาท · 1 ลิตรราคากี่บาท?',
+   choices:[{text:'20',correct:false,eq:'1.8*20=360',why:'ย้ายจุดแค่ตัวหาร · ตรวจกลับ 1.8 × 20 = 36 ไม่ใช่ 360'},
+     {text:'200',correct:true,eq:'1.8*200=360',why:'3600 ÷ 18 = 200 · ตรวจกลับ 1.8 × 200 = 360 ✓'}],
+   chk:[{eq:'1.8*200=360',truth:true},{eq:'1.8*20=360',truth:false},{eq:'1.8*20=36',truth:true},{eq:'3600/18=200',truth:true}]},
+  {kind:'sum',pts:LA_SUM3,say:'📌 <b>จำ 3 ข้อ</b>',
+   ms:1900,mark:'ok',chk:[],draw:()=>laSumCard(LA_SUM3)}
+ ]},
+ // ---------------- ฉาก 4 ----------------
+ {t:'ตั้งหารยาว + ดึงจุดขึ้น (9.52 ÷ 3.4)',
+  sum:LA_SUM4.join(' · '),
+  steps:[
+  {say:'โจทย์ <b>9.52 ÷ 3.4</b> · ตัวหาร 3.4 ยังมีทศนิยม ต้องทำให้เป็น<b>จำนวนเต็ม</b>ก่อน',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(116,laT(104,56,'9.52',0.1,{fs:30,role:'dd'})+laT(160,56,'÷',0.1,{fs:30})+laT(210,56,'3.4',0.1,{fs:30,role:'dv',c:'la-focus'})+
+     laF(160,100,'ให้ตัวหารเป็นจำนวนเต็ม',1.0,{fs:15,c:'la-pur la-focus'}))},
+  {kind:'hop',hops:1,say:'ตัวหาร 3.4 มีทศนิยม <b>1 ตำแหน่ง</b> → จุดกระโดดไปทางขวา 1 ตำแหน่ง (คือคูณ 10) ได้ <b>34</b>',
+   ms:2100,mark:'ok',chk:[{eq:'3.4*10=34',truth:true}],
+   draw:()=>laSvg(160,laT(160,24,'3.4 มีทศนิยม 1 ตำแหน่ง',0.1,{fs:15,c:'la-mut'})+laNumHop(LA_H34,104,0.4,'dv')+
+     laF(160,146,'3.4 × 10 = 34',1.6,{fs:18,c:'la-pur la-focus'}))},
+  {kind:'hop',hops:1,say:'ตัวตั้งต้องย้ายเท่ากัน: จุดของ 9.52 กระโดดไปทางขวา <b>1 ตำแหน่ง</b> ได้ <b>95.2</b>',
+   ms:2100,mark:'ok',chk:[{eq:'9.52*10=95.2',truth:true}],
+   draw:()=>laSvg(160,laT(160,24,'ตัวตั้งก็ย้าย 1 ตำแหน่ง',0.1,{fs:15,c:'la-mut'})+laNumHop(LA_H952,104,0.4,'dd')+
+     laF(160,146,'9.52 × 10 = 95.2',1.6,{fs:18,c:'la-pur la-focus'}))},
+  {say:'ตั้งหารยาว <b>95.2 ÷ 34</b> ได้คำตอบเท่ากับ 9.52 ÷ 3.4 · หารเหมือนจำนวนเต็ม แต่ต้องระวังจุด',
+   ms:1500,mark:'ok',chk:[{eq:'9.52/3.4=95.2/34',truth:true}],
+   draw:()=>laSvg(132,laDiv4(0.2,true)+laF(160,124,'9.52 ÷ 3.4 = 95.2 ÷ 34',1.0,{fs:16,c:'la-pur la-focus'}))},
+  {kind:'div',say:'<b>หาร</b>: 34 ลงใน 95 ได้กี่ครั้ง? ได้ <span data-role="res">2</span> ครั้ง เพราะ 34 × 3 = 102 เกิน 95',
+   ms:1700,mark:'ok',chk:[{eq:'34*2<95',truth:true},{eq:'34*3=102',truth:true},{eq:'102>95',truth:true}],
+   draw:()=>laSvg(110,laR(98,60,50,32,0.2,{c:'la-hl'})+laDiv4(null,true)+laT(204,74,'34 × 3 = 102',0.5,{fs:13,an:'start',c:'la-focus'})+
+     laT(204,96,'เกิน 95 ✗',0.8,{fs:13,an:'start',c:'la-focus'})+laF(136,42,'2',1.2,{fs:30,role:'res',c:'la-focus'}))},
+  {kind:'mul',say:'<b>คูณ</b>: 34 × 2 = 68 · เขียน 68 ไว้ใต้ 95',
+   ms:1500,mark:'ok',chk:[{eq:'34*2=68',truth:true}],
+   draw:()=>laSvg(130,laDiv4(null,false)+laLD4([0])+laT(204,104,'34 × 2 = 68',0.2,{fs:13,an:'start',c:'la-focus'})+
+     '<g class="la-focus">'+laT(136,114,'8',0.5,{fs:24})+laF(110,114,'6',1.0,{fs:24})+'</g>')},
+  {kind:'sub',say:'<b>ลบ</b>: 95 − 68 = 27 · 27 น้อยกว่า 34 แปลว่าเลข 2 ถูกแล้ว',
+   ms:1700,mark:'ok',chk:[{eq:'95-68=27',truth:true},{eq:'27<34',truth:true}],
+   draw:()=>laSvg(160,laDiv4(null,false)+laLD4([0,1])+'<g class="la-focus">'+laT(94,110,'−',0.2,{fs:18})+laL(98,122,150,122,0.4)+'</g>'+
+     laT(204,128,'95 − 68 = 27',0.6,{fs:13,an:'start',c:'la-focus'})+'<g class="la-focus">'+laT(136,146,'7',0.8,{fs:24,role:'rem'})+laF(110,146,'2',1.2,{fs:24,role:'rem'})+'</g>')},
+  {kind:'down',say:'<b>ดึงลง</b>: ดึงเลข 2 ตัวถัดไปลงมาต่อท้าย 27 ได้ <b>272</b>',
+   ms:1600,mark:'ok',chk:[],
+   draw:()=>laSvg(160,laDiv4(null,false)+laLD4([0,1,2])+'<g class="la-focus">'+laDn(168,92,128,0.2)+'</g>'+laT(168,146,'2',0.7,{fs:24,c:'la-focus',at:' data-down="2"'})+
+     laF(204,150,'ได้ 272',1.1,{fs:15,an:'start',c:'la-pur la-focus'}))},
+  {kind:'move',say:'เลข 2 ที่ดึงลงมาอยู่<b>หลังจุด</b> · ก่อนหารต่อ ให้<b>ดึงจุดขึ้น</b>ไปที่ผลหาร ตรงกับจุดของตัวตั้ง',
+   ms:1900,mark:'ok',chk:[],
+   draw:()=>laSvg(160,laDiv4(null,false)+laLD4([0,1,2,3])+`<circle cx="${LA_D952.dot}" cy="83" r="10" class="la-o la-ring la-focus" style="animation-delay:0.2s"/>`+
+     '<g class="la-focus">'+laDot(LA_Q28.dot,39,[0.6,0,44],{at:' data-role="dot"'})+'</g>'+laF(204,42,'ดึงจุดขึ้น!',1.4,{fs:15,an:'start',c:'la-pur la-focus'}))},
+  {kind:'why',say:'<b>ทำไม</b>ต้องดึงจุดขึ้น? เพราะผลหารเขียน<b>ตรงหลัก</b>กับตัวตั้ง เลขที่หารจากหลังจุดจึงต้องอยู่หลังจุดเหมือนกัน',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(176,laL(136,20,136,100,0.2,{c:'la-dash la-focus'})+laL(168,20,168,100,0.4,{c:'la-dash la-focus'})+laDiv4(null,false)+laLD4([0,4])+
+     laT(136,120,'หลักหน่วย',0.4,{fs:13,c:'la-focus'})+laT(168,140,'หลักส่วนสิบ',0.6,{fs:13,c:'la-focus'})+
+     laF(160,168,'หลักตรงกัน จุดจึงตรงกัน',1.0,{fs:15,c:'la-pur la-focus'}))},
+  {kind:'div',say:'<b>หาร</b>: 34 ลงใน 272 ได้ <span data-role="res">8</span> ครั้ง เพราะ 34 × 9 = 306 เกิน 272 · เขียน 8 ไว้หลังจุด',
+   ms:1700,mark:'ok',chk:[{eq:'34*9=306',truth:true},{eq:'306>272',truth:true}],
+   draw:()=>laSvg(160,laR(98,126,86,28,0.2,{c:'la-hl'})+laDiv4(null,false)+laLD4([0,1,4])+'<g class="la-focus">'+laLD4([2,3])+'</g>'+
+     laT(204,96,'34 × 9 = 306',0.5,{fs:13,an:'start',c:'la-focus'})+laT(204,118,'เกิน 272 ✗',0.8,{fs:13,an:'start',c:'la-focus'})+
+     laF(168,42,'8',1.2,{fs:30,role:'res',c:'la-focus'}))},
+  {kind:'mul',say:'<b>คูณ</b>: 34 × 8 = 272 · เขียน 272 ไว้ใต้ 272',
+   ms:1500,mark:'ok',chk:[{eq:'34*8=272',truth:true}],
+   draw:()=>laSvg(190,laDiv4(null,false)+laLD4([0,1,2,3,4,5])+laT(204,178,'34 × 8 = 272',0.2,{fs:13,an:'start',c:'la-focus'})+
+     '<g class="la-focus">'+laT(168,174,'2',0.4,{fs:24})+laT(136,174,'7',0.7,{fs:24})+laF(110,174,'2',1.0,{fs:24})+'</g>')},
+  {kind:'sub',say:'<b>ลบ</b>: 272 − 272 = 0 หารลงตัว · ได้ 95.2 ÷ 34 = <b>2.8</b>',
+   ms:1800,mark:'ok',chk:[{eq:'272-272=0',truth:true},{eq:'95.2/34=2.8',truth:true}],
+   draw:()=>laSvg(248,laDiv4(null,false)+laLD4([1,2,3,6])+laNum(LA_Q28,42,null,{fs:30,role:'res'})+'<g class="la-focus">'+laT(94,170,'−',0.1,{fs:18})+laL(98,182,180,182,0.2)+'</g>'+
+     laT(204,206,'272 − 272 = 0',0.5,{fs:13,an:'start',c:'la-focus'})+laT(168,206,'0',0.8,{fs:24,role:'rem',c:'la-focus'})+
+     laF(160,238,'95.2 ÷ 34 = 2.8',1.3,{fs:18,c:'la-grn la-focus'}))},
+  {say:'ตรวจกลับด้วยการคูณ: 3.4 × 2.8 → 34 × 28 = 952 ใส่จุด 2 ตำแหน่ง ได้ 9.52 ✓ ตรงกับตัวตั้ง',
+   ms:1800,mark:'ok',chk:[{eq:'34*28=952',truth:true},{eq:'3.4*2.8=9.52',truth:true},{eq:'1+1=2',truth:true}],
+   draw:()=>laSvg(125,laT(160,34,'3.4 × 2.8 = 9.52 ✓',0.1,{fs:24,c:'la-grn la-focus'})+laT(160,72,'34 × 28 = 952',0.7,{fs:18})+
+     laF(160,110,'ใส่จุด 1 + 1 = 2 ตำแหน่ง',1.3,{fs:15,c:'la-pur'}))},
+  {say:'⚠️ <b>กับดักตัวอย่าง</b>: ถ้าหารเสร็จแต่<b>ลืมดึงจุดขึ้น</b> จะได้ 9.52 ÷ 3.4 = 28 ❌',
+   ms:1500,mark:'trap',chk:[{eq:'9.52/3.4=28',truth:false}],
+   draw:()=>laSvg(150,laDiv4(null,false)+laNum(LA_Q28X,42,[0.3,0.6],{fs:30,role:'bad',focus:true})+laF(160,138,'ลืมดึงจุด → ได้ 28 ❌',1.0,{fs:17,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ประมาณ: 9.52 ≈ 10 และ 3.4 ≈ 3 · 3 × 3 = 9 ใกล้ 10 → คำตอบต้องอยู่แถวๆ 3 แต่ 28 ใหญ่เกินไปมาก',
+   ms:1900,mark:'check',chk:[{eq:'3*3=9',truth:true},{eq:'9.52/3.4=28',truth:false}],
+   draw:()=>laSvg(130,laT(160,34,'9.52 ÷ 3.4 ≈ 10 ÷ 3',0.1,{fs:18})+laT(160,72,'3 × 3 = 9 ใกล้ 10',0.7,{fs:26,c:'la-focus'})+
+     laF(160,114,'28 ใหญ่เกินไป ❌',1.4,{fs:20,role:'bad',c:'la-focus'}))},
+  {say:'✅ <b>9.52 ÷ 3.4 = 2.8</b> ใกล้ 3 ตามที่ประมาณ ✓ · ครูเตือน: อย่าลืมดึงจุดขึ้นมาด้วย',
+   ms:2800,mark:'fix',chk:[{eq:'9.52/3.4=2.8',truth:true}],
+   draw:()=>laSvg(172,laDiv4(null,false)+laNum(LA_Q28,42,[0.2,1.4],{fs:30,role:'res',focus:true,mv:[0.5,0,44]})+
+     laT(160,130,'อย่าลืมดึงจุดขึ้นมาด้วย',1.8,{fs:16,c:'la-pur'})+laF(160,162,'9.52 ÷ 3.4 = 2.8 ✅',2.3,{fs:20,c:'la-grn la-focus'}))},
+  {kind:'quiz',q:'9.52 ÷ 3.4 = ? (อย่าลืมเรื่องจุดนะ)',
+   choices:[{text:'28',correct:false,eq:'9.52/3.4=28',why:'ลืมดึงจุดขึ้น · ประมาณแถวๆ 3 (3 × 3 = 9 ใกล้ 10) แต่ 28 ใหญ่เกินไป'},
+     {text:'2.8',correct:true,eq:'9.52/3.4=2.8',why:'95.2 ÷ 34 = 2.8 ดึงจุดขึ้นตรงกับตัวตั้ง ใกล้ 3 ✓'}],
+   chk:[{eq:'9.52/3.4=2.8',truth:true},{eq:'9.52/3.4=28',truth:false},{eq:'3*3=9',truth:true},{eq:'95.2/34=2.8',truth:true}]},
+  {kind:'sum',pts:LA_SUM4,say:'📌 <b>จำ 3 ข้อ</b>',
+   ms:1900,mark:'ok',chk:[],draw:()=>laSumCard(LA_SUM4)}
+ ]},
+ // ---------------- ฉาก 5 ----------------
+ {t:'หารมีเศษ: ตัดเทป 2.7 m ชิ้นละ 0.6 m',
+  sum:LA_SUM5.join(' · '),
+  steps:[
+  {say:'เทปยาว 2.7 m ตัดเป็นชิ้น ชิ้นละ 0.6 m · จะได้กี่ชิ้น และเหลือเท่าไร?',
+   ms:1500,mark:'ok',chk:[],
+   draw:()=>laSvg(116,laR(20,30,270,24,0.1,{c:'la-tape'})+laT(155,78,'เทปยาว 2.7 m',0.4,{fs:16})+laF(155,106,'ชิ้นละ 0.6 m ได้กี่ชิ้น?',1.0,{fs:16,c:'la-pur la-focus'}))},
+  {say:'ตัดทีละ 0.6 m: 0.6, 1.2, 1.8, 2.4 → ได้ <b>4 ชิ้น</b> (0.6 × 4 = 2.4)',
+   ms:3000,mark:'ok',chk:[{eq:'0.6*4=2.4',truth:true}],
+   draw:()=>laSvg(155,laTapeBase(0.1)+'<g class="la-focus">'+laPieces([0.5,1.0,1.5,2.0])+'</g>'+laF(160,148,'ได้ 4 ชิ้น',2.5,{fs:18,c:'la-pur la-focus'}))},
+  {say:'ส่วนที่เหลือ 2.7 − 2.4 = <b>0.3 m</b> · สั้นกว่า 0.6 m จึงตัดอีกชิ้นไม่ได้',
+   ms:2100,mark:'ok',chk:[{eq:'2.7-2.4=0.3',truth:true},{eq:'0.3<0.6',truth:true}],
+   draw:()=>laSvg(160,laTapeBase(null)+laPieces(null)+'<g class="la-focus">'+laRest(0.3)+laT(275,52,'0.3',0.8,{fs:13,role:'rem'})+'</g>'+
+     laT(150,26,'2.7 − 2.4 = 0.3',1.2,{fs:18,c:'la-focus'})+laF(160,152,'4 ชิ้น เหลือ 0.3 m',1.6,{fs:18,c:'la-pur la-focus'}))},
+  {kind:'hop',hops:1,say:'ตั้งหารแบบไม่มีจุด: <b>คูณ 10 ทั้งคู่</b> จุดของ 2.7 และ 0.6 กระโดดไปทางขวา 1 ตำแหน่ง ได้ 27 ÷ 6',
+   ms:2500,mark:'ok',chk:[{eq:'2.7*10=27',truth:true},{eq:'0.6*10=6',truth:true}],
+   draw:()=>laSvg(160,laT(160,24,'0 ข้างหน้าไม่ต้องเขียน',0.1,{fs:14,c:'la-mut'})+laNumHop(LA_H27,104,0.4,'dd')+laT(150,104,'÷',null,{fs:30})+
+     '<text x="196" y="104" class="la-mvx" style="animation-delay:1s" text-anchor="middle" font-size="34" data-role="dv">0</text>'+laNumHop(LA_H6,104,0.4,'dv')+
+     laF(160,148,'2.7 ÷ 0.6 → 27 ÷ 6',2.0,{fs:18,c:'la-pur la-focus'}))},
+  {kind:'div',say:'<b>หาร</b>: 6 ลงใน 27 ได้ <span data-role="res">4</span> ครั้ง เพราะ 6 × 5 = 30 เกิน 27',
+   ms:1600,mark:'ok',chk:[{eq:'6*4<27',truth:true},{eq:'6*5=30',truth:true},{eq:'30>27',truth:true}],
+   draw:()=>laSvg(110,laR(98,60,50,32,0.2,{c:'la-hl'})+laDiv5(true)+laT(180,74,'6 × 5 = 30',0.4,{fs:13,an:'start',c:'la-focus'})+
+     laT(180,96,'เกิน 27 ✗',0.7,{fs:13,an:'start',c:'la-focus'})+laF(136,42,'4',1.1,{fs:30,role:'res',c:'la-focus'}))},
+  {kind:'mul',say:'<b>คูณ</b>: 6 × 4 = 24 · เขียน 24 ไว้ใต้ 27',
+   ms:1500,mark:'ok',chk:[{eq:'6*4=24',truth:true}],
+   draw:()=>laSvg(130,laDiv5(false)+laT(136,42,'4',null,{fs:30,role:'res'})+laT(180,104,'6 × 4 = 24',0.2,{fs:13,an:'start',c:'la-focus'})+
+     '<g class="la-focus">'+laT(136,114,'4',0.5,{fs:24})+laF(110,114,'2',1.0,{fs:24})+'</g>')},
+  {kind:'sub',say:'<b>ลบ</b>: 27 − 24 = 3 · 3 น้อยกว่า 6 ได้ชิ้นเต็มเพิ่มไม่ได้ จึงเหลือ<b>เศษ 3</b> ในการหารนี้ คือ 27 = 6 × 4 + 3',
+   ms:1900,mark:'ok',chk:[{eq:'27-24=3',truth:true},{eq:'3<6',truth:true},{eq:'27=6*4+3',truth:true}],
+   draw:()=>laSvg(196,laDiv5(false)+laT(136,42,'4',null,{fs:30,role:'res'})+laT(110,114,'2',null,{fs:24})+laT(136,114,'4',null,{fs:24})+
+     '<g class="la-focus">'+laT(94,110,'−',0.2,{fs:18})+laL(98,122,150,122,0.4)+'</g>'+laT(180,134,'27 − 24 = 3',0.6,{fs:13,an:'start',c:'la-focus'})+
+     laT(136,146,'3',1.0,{fs:24,role:'rem',c:'la-focus'})+laF(160,186,'27 = 6 × 4 + 3',1.4,{fs:20,c:'la-pur la-focus'}))},
+  {kind:'why',say:'<b>ทำไม</b>ต้องหารกลับ? ตอนตั้งหารเราคูณ 10 ไว้ เศษ 3 จึงโตไป 10 เท่า → เศษจริง = 3 ÷ 10 = <b>0.3</b>',
+   ms:2000,mark:'ok',chk:[{eq:'3/10=0.3',truth:true}],
+   draw:()=>laSvg(150,laT(160,30,'27 = 6 × 4 + 3',0.1,{fs:20})+laT(160,62,'ตอนตั้งหาร เราคูณ 10 ไว้',0.5,{fs:14,c:'la-mut'})+
+     laT(160,100,'3 ÷ 10 = 0.3',1.0,{fs:24,role:'rem',c:'la-focus'})+laF(160,138,'เศษจริง = 0.3 m',1.5,{fs:18,c:'la-grn la-focus'}))},
+  {kind:'why',say:'หารกลับด้วย 10 ทั้งสมการ: 27 → 2.7, 6 → 0.6, 3 → 0.3 ได้ <b>2.7 = 0.6 × 4 + 0.3</b> · 4 คือจำนวนชิ้น ไม่ต้องหาร',
+   ms:2000,mark:'ok',chk:[{eq:'27/10=2.7',truth:true},{eq:'6/10=0.6',truth:true},{eq:'3/10=0.3',truth:true},{eq:'2.7=0.6*4+0.3',truth:true}],
+   draw:()=>laSvg(150,laT(160,32,'27 = 6 × 4 + 3',0.1,{fs:20})+'<g class="la-focus">'+laDn(160,44,74,0.5)+laT(196,64,'÷10',0.5,{fs:14,c:'la-pur'})+'</g>'+
+     laT(160,104,'2.7 = 0.6 × 4 + 0.3',1.0,{fs:24,c:'la-focus'})+laF(160,140,'4 = จำนวนชิ้น ไม่ต้องหาร',1.5,{fs:15,c:'la-pur la-focus'}))},
+  {say:'⚠️ <b>ลูกเคยพลาดแบบนี้</b>: ตอบว่า 4 ชิ้น เหลือ 3 m ❌ · เอาเศษ 3 ของ 27 ÷ 6 มาตอบเลย ลืมหารกลับด้วย 10',
+   ms:1500,mark:'trap',chk:[{eq:'2.7=0.6*4+3',truth:false}],
+   draw:()=>laSvg(126,laT(160,40,'4 ชิ้น เหลือ 3 m',0.2,{fs:24,role:'bad',c:'la-focus'})+laT(160,76,'2.7 = 0.6 × 4 + 3 ?',0.5,{fs:17,c:'la-mut'})+
+     laF(160,112,'ลืมหารเศษกลับด้วย 10 ❌',1.0,{fs:16,role:'bad',c:'la-focus'}))},
+  {say:'🔍 ตรวจกลับ: 0.6 × 4 + 3 = 5.4 ไม่ใช่ 2.7 ❌ · เศษ 3 m ยาวกว่าเทปทั้งม้วน (2.7 m) อีก เป็นไปไม่ได้',
+   ms:2000,mark:'check',chk:[{eq:'0.6*4+3=5.4',truth:true},{eq:'0.6*4+3=2.7',truth:false}],
+   draw:()=>laSvg(150,laT(160,30,'ตรวจกลับ',0.1,{fs:14,c:'la-mut'})+laT(160,66,'0.6 × 4 + 3 = 5.4',0.5,{fs:22,c:'la-focus'})+
+     laT(160,102,'5.4 ≠ 2.7 ❌',1.0,{fs:20,role:'bad',c:'la-focus'})+laF(160,138,'เศษยาวกว่าเทปทั้งม้วน!',1.5,{fs:16,role:'bad',c:'la-focus'}))},
+  {say:'✅ 0.6 × 4 + 0.3 = 2.7 ✓ → <b>ได้ 4 ชิ้น เหลือ 0.3 m</b>',
+   ms:1500,mark:'fix',chk:[{eq:'0.6*4+0.3=2.7',truth:true}],
+   draw:()=>laSvg(196,laTapeBase(null)+laPieces(null)+'<g class="la-focus">'+laRest(null)+'</g>'+laT(160,152,'0.6 × 4 + 0.3 = 2.7 ✅',0.2,{fs:20,c:'la-grn la-focus'})+
+     laF(160,184,'4 ชิ้น เหลือ 0.3 m',1.0,{fs:20,c:'la-pur la-focus'}))},
+  {kind:'quiz',q:'เทป 2.7 m ตัดชิ้นละ 0.6 m ได้ 4 ชิ้น · เหลือเท่าไร?',
+   choices:[{text:'3 m',correct:false,eq:'2.7=0.6*4+3',why:'ลืมหารเศษกลับด้วย 10 · ตรวจกลับ 0.6 × 4 + 3 = 5.4 ยาวกว่าเทปอีก'},
+     {text:'0.3 m',correct:true,eq:'2.7=0.6*4+0.3',why:'27 = 6 × 4 + 3 หารกลับด้วย 10 ได้ 2.7 = 0.6 × 4 + 0.3 ✓'}],
+   chk:[{eq:'2.7=0.6*4+0.3',truth:true},{eq:'2.7=0.6*4+3',truth:false},{eq:'0.6*4+3=5.4',truth:true},{eq:'27=6*4+3',truth:true}]},
+  {say:'ถ้าโจทย์ถามว่า <b>2.7 ÷ 0.6 เท่ากับเท่าไร</b> ต้องหารต่อจนลงตัว ได้ <b>4.5</b> · ไม่ได้ตอบเป็นชิ้นกับเศษ',
+   ms:1900,mark:'ok',chk:[{eq:'2.7/0.6=4.5',truth:true}],
+   draw:()=>laSvg(146,laT(160,28,'ถาม: กี่ชิ้น เหลือเท่าไร',0.1,{fs:15,c:'la-mut'})+laT(160,56,'→ 4 ชิ้น เหลือ 0.3 m',0.4,{fs:17})+
+     laT(160,96,'ถาม: 2.7 ÷ 0.6 = ?',0.9,{fs:15,c:'la-mut la-focus'})+laF(160,128,'→ หารต่อได้ 4.5',1.4,{fs:20,role:'res',c:'la-focus'}))},
+  {say:'4.5 คือ <b>4 ชิ้นเต็ม กับอีกครึ่งชิ้น</b> · ครึ่งของ 0.6 m คือ 0.6 ÷ 2 = 0.3 m ไม่ใช่เศษ 0.5 m',
+   ms:2100,mark:'ok',chk:[{eq:'0.6/2=0.3',truth:true},{eq:'2.7/0.6=4.5',truth:true}],
+   draw:()=>laSvg(196,laTapeBase(null)+laPieces(null)+laRest(null)+laR(260,60,58,24,0.3,{c:'la-half la-focus'})+laT(286,50,'ครึ่งชิ้น',0.7,{fs:14,c:'la-org la-focus'})+
+     laT(160,152,'2.7 ÷ 0.6 = 4.5',1.1,{fs:18})+laF(160,184,'4 ชิ้นเต็ม + ครึ่งชิ้น',1.6,{fs:16,c:'la-pur la-focus'}))},
+  {kind:'quiz',q:'2.7 ÷ 0.6 = 4.5 หมายความว่าอะไร?',
+   choices:[{text:'4 ชิ้น เหลือ 0.5 m',correct:false,eq:'2.7=0.6*4+0.5',why:'0.6 × 4 + 0.5 = 2.9 ≠ 2.7 · 0.5 คือครึ่งชิ้น ไม่ใช่ 0.5 m'},
+     {text:'4 ชิ้นเต็ม กับครึ่งชิ้น',correct:true,eq:'0.6*4+0.6/2=2.7',why:'ครึ่งชิ้นยาว 0.6 ÷ 2 = 0.3 m ตรงกับส่วนที่เหลือพอดี ✓'}],
+   chk:[{eq:'0.6*4+0.6/2=2.7',truth:true},{eq:'2.7=0.6*4+0.5',truth:false},{eq:'0.6*4+0.5=2.9',truth:true},{eq:'0.6/2=0.3',truth:true},{eq:'2.7/0.6=4.5',truth:true}]},
+  {kind:'sum',pts:LA_SUM5,say:'📌 <b>จำ 3 ข้อ</b>',
+   ms:1900,mark:'ok',chk:[],draw:()=>laSumCard(LA_SUM5)}
+ ]},
+ // ---------------- ฉาก 6 (คัดลอกตรงตัวจาก LESSONS[6] ใน online.html) ----------------
+ {t:'ลองทำดูเอง! ✏️',h:`
+  <p>นับตำแหน่งจุดดีๆ นะ</p>
+  <div class="trybox"><b>ข้อ 1)</b> 0.7 × 0.4 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">7 × 4 = 28 → ใส่จุด 1+1 = 2 ตำแหน่ง → <b>0.28</b></div></details></div>
+  <div class="trybox"><b>ข้อ 2)</b> 5.48 ÷ 4 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">548 ÷ 4 = 137 → จุดตรงกับตัวตั้ง → <b>1.37</b> (เช็ค: 1.37 × 4 = 5.48 ✓)</div></details></div>
+  <div class="trybox"><b>ข้อ 3)</b> 7.2 ÷ 0.9 = ?
+   <details><summary>👀 กดดูเฉลย</summary><div class="tans">เลื่อนจุดขวา 1 ทั้งคู่ → 72 ÷ 9 = <b>8</b></div></details></div>`}
+];
+
+/* =====================================================================
+   (B) ตัวเล่น (player) — ส่วนที่จะยกเข้าเกม (แผน 3.2 + 3.3 บรรทัดแรก + 14.1/14.7)
+   ทางออกเรียก lessonExit()/lessonFinish() · บันทึกดูจบเรียก lessonMarkSeen() · บันทึกฉากจบเรียก lessonMarkScene(k)
+   — 4 ตัวนี้อยู่ในส่วน (C)
+   ===================================================================== */
+let LESSON_GEN=0; // เพิ่มขึ้นตลอดอายุหน้า ไม่รีเซ็ตเมื่อปิด/เปิดบทเรียนใหม่
+let LA=null;      // สถานะกลางตัวเดียว
+const LESSON_MARKS={trap:'❌ แบบนี้ผิด',check:'🔍 ตรวจกลับ',fix:'✅ แบบที่ถูก'};
+const LESSON_ROLES={dd:'ตัวตั้ง',dv:'ตัวหาร',res:'ผลคูณ/ผลหาร',rem:'เศษ',dot:'จุดทศนิยม',bad:'ผิด'};
+function lessonReduced(){try{return typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches===true;}catch(e){return false;}}
+function lessonCount(k){return LESSON6[k].steps?LESSON6[k].steps.length:1;}
+function lessonPos(k,j){let p=0;for(let i=0;i<k;i++)p+=lessonCount(i);return p+j;}
+function lessonTotal(){return lessonPos(LESSON6.length,0);}
+function lessonFinName(html){const m=/data-la-final="(la-[a-z0-9-]+)"/.exec(html);return m?m[1]:null;}
+// บทบาทสีที่ขั้นใช้ (ภาพ + คำบรรยาย) · legend แสดงเฉพาะบทบาทที่ใช้ครั้งแรกของฉาก (ก่อนตัวภาพ)
+function lessonRolesOf(st){if(st.kind==='quiz')return [];const s=new Set();for(const m of (st.draw()+st.say).matchAll(/data-role="([a-z]+)"/g))s.add(m[1]);return [...s];}
+function lessonLegend(k,j){const sc=LESSON6[k],seen=new Set();for(let i=0;i<j;i++)lessonRolesOf(sc.steps[i]).forEach(r=>seen.add(r));
+  const nw=lessonRolesOf(sc.steps[j]).filter(r=>!seen.has(r)&&LESSON_ROLES[r]);
+  return nw.length?`<div class="la-lg">สี: ${nw.map(r=>`<span class="la-lgc" data-role="${r}">● ${LESSON_ROLES[r]}</span>`).join('')}</div>`:'';}
+function lessonCleanup(){
+  if(!LA)return;
+  if(LA.timer!==null){clearTimeout(LA.timer);LA.timer=null;}
+  if(LA.off){LA.off();LA.off=null;}
+}
+// ขั้นจบ: ครั้งเดียวต่อ gen · gen ไม่ตรง หรือ #la-root หลุดจาก DOM แล้ว = ไม่ทำอะไร
+function stepDone(gen,why){
+  if(!LA||gen!==LA.gen||LA.done)return false;
+  const root=LA.root;
+  if(!root||!root.isConnected)return false;
+  LA.done=true;LA.why=why;
+  lessonCleanup();
+  const pos=lessonPos(LA.scene,LA.step);
+  if(pos>LA.unlocked)LA.unlocked=pos;
+  const sc=LESSON6[LA.scene];
+  if(sc.steps&&LA.step===sc.steps.length-1&&!LA.sdone[LA.scene]){LA.sdone[LA.scene]=true;lessonMarkScene(LA.scene);} // จบฉาก = ผ่านขั้นสุดท้าย
+  const b=document.getElementById('la-next');
+  if(b)b.disabled=false;
+  return true;
+}
+// ฉากแรกที่ยังไม่จบ (ก่อนดูจบ: ไปได้ถึงฉากนี้ · หลังดูจบ: ไปได้ทุกฉาก)
+function lessonFrontier(){if(!LA.forced)return LESSON6.length-1;let k=0;while(k<LESSON6.length-1&&LA.sdone[k])k++;return k;}
+// เปิดบทเรียน: forced = ยังไม่เคยดูจบ · prog = ฉากที่จบแล้ว (array ของ true) → เริ่มที่ขั้นแรกของฉากแรกที่ยังไม่จบ
+function lessonStart(forced,lv,uid,prog){
+  lessonCleanup();
+  const sd=[];for(let k=0;k<LESSON6.length-1;k++)sd[k]=forced?!!(prog&&prog[k]):true;
+  LA={ch:6,scene:0,step:0,gen:0,done:false,timer:null,forced:!!forced,lv:lv==null?null:lv,uid:uid==null?null:uid,
+      unlocked:forced?-1:lessonTotal()-1,root:null,off:null,why:'',sdone:sd,qa:{},pick:null};
+  if(LA.forced){const fr=lessonFrontier();LA.scene=fr;LA.unlocked=lessonPos(fr,0)-1;}
+  lessonRender('play');
+}
+// แถบแผนที่ฉาก: ✓ = จบแล้ว · ฉากที่ยังไม่ถึงกดไม่ได้
+function lessonMapBar(){
+  if(!LA)return '';
+  const fr=lessonFrontier();
+  return `<div class="la-map">${LESSON6.map((s,k)=>{const dn=k<LESSON6.length-1&&LA.sdone[k];
+    return `<button class="la-mb${dn?' la-done':''}${k===LA.scene?' la-on':''}" onclick="lessonJump(${k})"${k>fr?' disabled':''}>${k+1}${dn?' ✓':''}</button>`;}).join('')}</div>`;
+}
+function lessonQuizHtml(st,solved,pick){
+  let fb='';
+  if(solved){const c=st.choices.find(c=>c.correct);fb=`<div class="la-qfb la-qok">✅ ถูกต้อง! ${c.why}</div>`;}
+  else if(pick!=null&&st.choices[pick])fb=`<div class="la-qfb la-qno">❌ ยังไม่ใช่ · ${st.choices[pick].why}</div><button class="la-ctl la-qretry" onclick="lessonRetry()">↺ ลองอีกครั้ง</button>`;
+  const lock=solved||pick!=null;
+  return `<div class="la-qq">${st.q}</div><div class="la-qcs">${st.choices.map((c,i)=>`<button class="la-qc${solved&&c.correct?' la-qok':''}${!solved&&pick===i?' la-qno':''}" onclick="lessonAnswer(${i})"${lock?' disabled':''}>${c.text}</button>`).join('')}</div>${fb}`;
+}
+// mode: 'play' = เล่นอนิเมชั่น · 'still' = แสดงสภาพจบทันที (ใช้ตอน ◀ ย้อน / ตอบคำถาม) · keep = ไม่เลื่อนขึ้นบนสุด
+function lessonRender(mode,keep){
+  if(!LA)return;
+  lessonCleanup();
+  const gen=LA.gen=++LESSON_GEN;
+  LA.done=false;LA.why='';LA.root=null;
+  const app=document.getElementById('app');
+  const sc=LESSON6[LA.scene],n=LESSON6.length,pos=lessonPos(LA.scene,LA.step),tot=lessonTotal();
+  const top=`<div class="topbar"><span class="pill">บทที่ 6</span><span class="pill">📖 ฉาก ${LA.scene+1}/${n}${sc.steps?` · ขั้น ${LA.step+1}/${sc.steps.length}`:''}</span><button class="exit" onclick="lessonExit()">ออก</button></div>
+  <div class="bar"><div style="width:${Math.round((pos+1)/tot*100)}%"></div></div>${lessonMapBar()}`;
+  const head=`<div class="card"><span class="qsec">📖 บทเรียน · ฉาก ${LA.scene+1}</span><div class="qtext">${sc.t}</div>`;
+  if(!sc.steps){ // หน้า "ลองทำดูเอง" (ฉากสุดท้าย)
+    const reached=LA.unlocked>=pos-1;
+    if(reached){if(pos>LA.unlocked)LA.unlocked=pos;LA.forced=false;}
+    app.innerHTML=top+head+`
+    <div id="la-root" class="la-root la-still"><div class="lesson">${sc.h}</div></div>
+    <div class="btnrow"><button class="nextbtn ghost" onclick="lessonPrev()">◀ ย้อน</button><button class="nextbtn alt" onclick="lessonFinish()">${lessonFinishLabel()}</button></div></div>`;
+    LA.root=document.getElementById('la-root');
+    if(typeof scrollTo==='function')scrollTo(0,0);
+    if(reached)lessonMarkSeen();
+    stepDone(gen,'static');
+    return;
+  }
+  const st=sc.steps[LA.step],last=LA.step===sc.steps.length-1;
+  const ctrls=`<div class="la-ctrls"><button class="la-ctl" onclick="lessonPrev()"${pos===0?' disabled':''}>◀ ย้อน</button><button class="la-ctl" onclick="lessonReplay()">↻ เล่นซ้ำ</button></div>
+    <button id="la-next" class="nextbtn la-next" style="display:block" onclick="lessonNext()" disabled>ถัดไป ▶</button></div>`;
+  if(st.kind==='quiz'){ // ขั้นคำถาม: ไม่มีอนิเมชั่น/ตัวจบ · ปลดเมื่อตอบถูกเท่านั้น
+    const solved=!!LA.qa[LA.scene+':'+LA.step];
+    app.innerHTML=top+head+`<div class="la-mark la-m-quiz">❓ ลองตอบดู</div><div id="la-root" class="la-root la-still">${lessonQuizHtml(st,solved,LA.pick)}</div>`+ctrls;
+    LA.root=document.getElementById('la-root');
+    if(!keep&&typeof scrollTo==='function')scrollTo(0,0);
+    if(solved)stepDone(gen,'answered');
+    return;
+  }
+  const body=st.draw(),fin=lessonFinName(body);
+  const rm=lessonReduced(),still=mode==='still'||rm;
+  const badge=LESSON_MARKS[st.mark]?`<div class="la-mark la-m-${st.mark}">${LESSON_MARKS[st.mark]}</div>`:st.kind==='why'?'<div class="la-mark la-m-why">💡 ทำไม</div>':'';
+  const say=`<div class="lesson la-say">${st.say}</div>`; // การ์ดสรุป: หัว "จำ 3 ข้อ" อยู่เหนือการ์ด
+  app.innerHTML=top+head+`${badge}${lessonLegend(LA.scene,LA.step)}${st.kind==='sum'?say:''}<div id="la-root" class="la-root${still?' la-still':''}${/\bla-focus\b/.test(body)?' la-fz':''}">${body}</div>
+    ${st.kind!=='sum'?say:''}
+    ${last&&st.kind!=='sum'?`<div class="tipbox">📌 <b>สรุปฉากนี้:</b> ${sc.sum}</div>`:''}`+ctrls;
+  const root=LA.root=document.getElementById('la-root');
+  if(!keep&&typeof scrollTo==='function')scrollTo(0,0);
+  if(still){stepDone(gen,rm?'reduced':'still');return;}
+  if(!LA.forced&&pos<=LA.unlocked){stepDone(gen,'passed');return;} // ดูจบบทแล้ว: เล่นให้ดูแต่ไม่ล็อกปุ่ม · ระหว่างดูครั้งแรก เล่นภาพใหม่เมื่อไรต้องรอจบเสมอ
+  const h=function(e){
+    if(!e||!fin||e.animationName!==fin)return;
+    const t=e.target;
+    if(!t||typeof t.getAttribute!=='function'||t.getAttribute('data-la-final')===null)return;
+    stepDone(gen,'event');
+  };
+  root.addEventListener('animationend',h);
+  LA.off=function(){root.removeEventListener('animationend',h);};
+  LA.timer=setTimeout(function(){stepDone(gen,'fallback');},st.ms+600);
+}
+function lessonNext(){
+  if(!LA||!LA.done)return; // ขั้นปัจจุบันยังไม่จบ/ยังไม่ตอบถูก = ไปต่อไม่ได้
+  const sc=LESSON6[LA.scene];
+  if(sc.steps&&LA.step<sc.steps.length-1)LA.step++;
+  else if(LA.scene<LESSON6.length-1){LA.scene++;LA.step=0;}
+  else return;
+  LA.pick=null;
+  lessonRender('play');
+}
+function lessonPrev(){
+  if(!LA)return;
+  if(LA.step>0)LA.step--;
+  else if(LA.scene>0){LA.scene--;LA.step=lessonCount(LA.scene)-1;}
+  else return;
+  LA.pick=null;
+  lessonRender('still');
+}
+// ↻ เล่นซ้ำ · บนขั้นคำถาม = ล้างคำตอบ (ต้องตอบใหม่)
+function lessonReplay(){
+  if(!LA||!LESSON6[LA.scene].steps)return;
+  const st=LESSON6[LA.scene].steps[LA.step];
+  if(st.kind==='quiz'){delete LA.qa[LA.scene+':'+LA.step];LA.pick=null;lessonRender('still');return;}
+  lessonRender('play');
+}
+// กระโดดฉาก: ไปได้ถึงฉากแรกที่ยังไม่จบ (ก่อนดูจบ) · ทุกฉาก (หลังดูจบ)
+function lessonJump(k){
+  if(!LA)return;
+  k=+k;if(!(k>=0&&k<LESSON6.length))return;
+  if(k>lessonFrontier())return;
+  LA.scene=k;LA.step=0;LA.pick=null;lessonRender('play');
+}
+// ตอบคำถาม: ถูก → จำไว้ในสถานะหน้า + ปลดปุ่มถัดไป · ผิด → แสดงเหตุผล + ปุ่มลองอีกครั้ง (ไม่ไปต่อ) · ไม่นับคะแนน ไม่บันทึก
+function lessonAnswer(i){
+  if(!LA)return false;
+  const sc=LESSON6[LA.scene],st=sc.steps&&sc.steps[LA.step];
+  if(!st||st.kind!=='quiz')return false;
+  const key=LA.scene+':'+LA.step;
+  if(LA.qa[key]||LA.pick!=null)return false;
+  i=+i;const c=st.choices[i];if(!c)return false;
+  if(c.correct){LA.qa[key]=true;LA.pick=null;lessonRender('still',true);return true;}
+  LA.pick=i;lessonRender('still',true);return false;
+}
+function lessonRetry(){
+  if(!LA||LA.pick==null)return;
+  LA.pick=null;lessonRender('still',true);
+}
+
+/* =====================================================================
+   (G) ส่วนเชื่อมเกม — index.html (ใช้คนเดียว · uid='local') ตามแผน 17.2 + 15.3 · แทนส่วน (C) ของหน้าทดลอง
+   ตอนโหลดหน้า: มีแค่การประกาศ + LESSONS[6]=LESSON6 (ไม่มี side effect อื่น)
+   คีย์: dq5_lessonseen:v1:local:6 (ค่า = ms ที่ดูจบ) · dq5_lessonprog:v1:local:6 (ค่า −1..4 = ฉากไกลสุดที่จบต่อเนื่อง)
+   ===================================================================== */
+LESSONS[6]=LESSON6; // แทนสไลด์นิ่งบท 6 ตอนรัน (literal LESSONS ไม่แตะ)
+const LESSON_ANIM_CH={6:true};
+const LESSON_SEEN_MEM=new Map(); // คีย์เต็ม → true · กัน storage อ่าน/เขียนล้มแล้ววนบังคับในหน้าเดียวกัน
+const LESSON_PROG_MEM=new Map(); // คีย์เต็ม → lastCompleted (−1..4) · อ่าน = max(storage ที่อ่านได้, MEM)
+function lessonKey(kind){return 'dq5_lesson'+kind+':v1:local:6';}
+function lessonStore(){try{return typeof localStorage!=='undefined'&&localStorage?localStorage:null;}catch(e){return null;}}
+function lessonSeen(){
+  const k=lessonKey('seen');
+  if(LESSON_SEEN_MEM.has(k))return true;
+  try{const s=lessonStore();return !!s&&s.getItem(k)!==null;}catch(e){return false;}
+}
+function lessonMarkSeen(){
+  const k=lessonKey('seen');
+  LESSON_SEEN_MEM.set(k,true);
+  try{const s=lessonStore();if(s)s.setItem(k,String(Date.now()));}catch(e){}
+}
+// ค่าความคืบหน้าใน storage: ต้องตรง /^-?\d+$/ และอยู่ −1..4 · ไม่งั้น/อ่านล้ม → −1 (ไม่ใช้ Number(v)/+v ตรง ๆ)
+function lessonProgStored(){
+  try{
+    const s=lessonStore(),v=s?s.getItem(lessonKey('prog')):null;
+    if(typeof v!=='string'||!/^-?\d+$/.test(v))return -1;
+    const n=parseInt(v,10);
+    return n>=-1&&n<=4?n:-1;
+  }catch(e){return -1;}
+}
+function lessonProgMem(){const k=lessonKey('prog');return LESSON_PROG_MEM.has(k)?LESSON_PROG_MEM.get(k):-1;}
+function lessonLoadProg(){
+  const last=Math.max(lessonProgStored(),lessonProgMem());
+  const p=[];for(let k=0;k<=4;k++)p[k]=k<=last;
+  return p;
+}
+// จบฉาก k: ค่าใหม่ = max(อ่านล่าสุดจาก storage, MEM, k) · เขียน storage เฉพาะเมื่อมากกว่าค่าเดิม (ห้ามถอยหลัง) · เขียนล้ม → MEM
+function lessonMarkScene(k){
+  if(!(Number.isInteger(k)&&k>=0&&k<=4))return;
+  const key=lessonKey('prog'),st=lessonProgStored(),nv=Math.max(st,lessonProgMem(),k);
+  LESSON_PROG_MEM.set(key,nv);
+  if(nv<=st)return;
+  try{const s=lessonStore();if(s)s.setItem(key,String(nv));}catch(e){}
+}
+function lessonFinishLabel(){
+  return LA&&LA.lv!=null?`✏️ เริ่มทำโจทย์ (ระดับ ${LVNAME[LA.lv]})`:'✏️ ไปทำโจทย์เลย! (เริ่มระดับ Basic)';
+}
+function lessonExit(){lessonCleanup();LA=null;home();}
+function lessonFinish(){
+  if(!LA||LESSON6[LA.scene].steps)return; // ทำงานเฉพาะหน้าสุดท้าย ("ลองทำดูเอง")
+  const lv=LA.lv;
+  lessonCleanup();LA=null;
+  startQuiz(6,lv||1);
+}
+// ปุ่มระดับ 🟢🟡🔴 บนหน้าหลัก: บทที่มีบทเรียนอนิเมชั่น + ยังไม่เคยดูจบ → เปิดบทเรียนโหมดบังคับ (จำ lv) · ไม่งั้นเข้ารอบตรง
+function startQuizUI(ch,lv){
+  if(LESSON_ANIM_CH[ch]&&!lessonSeen()){lessonStart(true,lv,'local',lessonLoadProg());return;}
+  startQuiz(ch,lv);
+}
+
 
 /* ================= server API ================= */
 const ROOT='https://ycstpsjkpsqoukpvfcxz.supabase.co/functions/v1/quiz';
@@ -2046,6 +2878,7 @@ function review(k){
 let L=null;
 function startLesson(ch){L={ch:+ch,i:0};renderLesson();}
 function renderLesson(){
+  if(LESSON_ANIM_CH[L.ch]){lessonStart(!lessonSeen(),null,'local',lessonLoadProg());return;} // (G) บทอนิเมชั่น → ตัวเล่น · บทอื่นแบบเดิม
   const slides=LESSONS[L.ch], s=slides[L.i], n=slides.length;
   document.getElementById('app').innerHTML=`
   <div class="topbar">
@@ -2107,9 +2940,9 @@ function home(){
       <button onclick="startLesson(${ch})">📖 เรียนบทนี้</button>
     </div>
     <div class="btnpair lvpick">
-      <button onclick="startQuiz(${ch},1)">🟢 Basic</button>
-      <button onclick="startQuiz(${ch},2)">🟡 Normal</button>
-      <button onclick="startQuiz(${ch},3)">🔴 Advance</button>
+      <button onclick="startQuizUI(${ch},1)">🟢 Basic</button>
+      <button onclick="startQuizUI(${ch},2)">🟡 Normal</button>
+      <button onclick="startQuizUI(${ch},3)">🔴 Advance</button>
     </div>
     ${(PEND[ch]||[]).map(p=>`<button class="resumebtn" onclick="resumeQuiz(${p.id})">⏳ ทำต่อรอบที่ค้างไว้ — ${p.n}/${QN} ข้อ (${LVNAME[p.lv]}${p.rm>0?` • เหลือเวลา ${Math.max(1,Math.ceil(p.rm/60))} นาที`:' • ⏰ หมดเวลาแล้ว'})</button>`).join('')}
   </div>`).join('')}
